@@ -3,22 +3,16 @@ import { supabaseAdmin } from '@/src/lib/supabase/server'
 
 // Request numbers are always assigned server-side — the browser must never
 // be trusted to generate or supply one.
+//
+// Generation itself is delegated to public.next_request_number(), a
+// SECURITY DEFINER Postgres function backed by a row-locked counter table
+// (see the migration in the project notes). That makes it atomic under
+// concurrency and immune to number reuse after a row is deleted — unlike
+// the previous "look at MAX(request_number) among existing rows" approach,
+// which could hand out an already-used number once the row that used it
+// was gone.
 export async function generateRequestNumber(): Promise<string> {
-  const year = new Date().getFullYear()
-  const prefix = `DA-${year}-`
-
-  const { data, error } = await supabaseAdmin
-    .from('parts_requests')
-    .select('request_number')
-    .like('request_number', `${prefix}%`)
-    .order('request_number', { ascending: false })
-    .limit(1)
-
+  const { data, error } = await supabaseAdmin.rpc('next_request_number', { p_prefix: 'DA' })
   if (error) throw error
-
-  const lastNumber = data?.[0]?.request_number as string | undefined
-  const lastSequence = lastNumber ? parseInt(lastNumber.slice(prefix.length), 10) : 0
-  const nextSequence = Number.isFinite(lastSequence) ? lastSequence + 1 : 1
-
-  return `${prefix}${String(nextSequence).padStart(6, '0')}`
+  return data as string
 }

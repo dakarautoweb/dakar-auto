@@ -3,9 +3,6 @@ import { supabaseAdmin } from '@/src/lib/supabase/server'
 import { generateRequestNumber } from './request-number'
 import type { SubmitPartsRequestInput } from './types'
 
-const MAX_REQUEST_NUMBER_ATTEMPTS = 3
-const UNIQUE_VIOLATION = '23505'
-
 const SIDE_LABELS: Record<string, string> = {
   left: 'Side: Left',
   right: 'Side: Right',
@@ -69,43 +66,24 @@ export async function createPartsRequestRecord(input: SubmitPartsRequestInput): 
 
   const whatsappPhone = input.contact.whatsappSameAsPhone ? input.contact.phone : input.contact.whatsappPhone
 
-  let requestRow: { id: string; request_number: string } | null = null
-  let lastError: unknown = null
+  const requestNumber = await generateRequestNumber()
+  const { data: requestRow, error: requestError } = await supabaseAdmin
+    .from('parts_requests')
+    .insert({
+      request_number: requestNumber,
+      vehicle_id: vehicleId,
+      customer_name: input.contact.name.trim(),
+      customer_email: input.contact.email.trim() || null,
+      customer_phone: input.contact.phone.trim(),
+      whatsapp_phone: whatsappPhone?.trim() || null,
+      whatsapp_same_as_phone: input.contact.whatsappSameAsPhone,
+      preferred_contact_method: input.contact.preferredContact,
+      locale: input.locale,
+    })
+    .select('id, request_number')
+    .single()
 
-  for (let attempt = 0; attempt < MAX_REQUEST_NUMBER_ATTEMPTS; attempt++) {
-    const requestNumber = await generateRequestNumber()
-    const { data, error } = await supabaseAdmin
-      .from('parts_requests')
-      .insert({
-        request_number: requestNumber,
-        vehicle_id: vehicleId,
-        customer_name: input.contact.name.trim(),
-        customer_email: input.contact.email.trim() || null,
-        customer_phone: input.contact.phone.trim(),
-        whatsapp_phone: whatsappPhone?.trim() || null,
-        whatsapp_same_as_phone: input.contact.whatsappSameAsPhone,
-        preferred_contact_method: input.contact.preferredContact,
-        locale: input.locale,
-      })
-      .select('id, request_number')
-      .single()
-
-    if (!error) {
-      requestRow = data
-      break
-    }
-
-    if (error.code === UNIQUE_VIOLATION) {
-      lastError = error
-      continue
-    }
-
-    throw error
-  }
-
-  if (!requestRow) {
-    throw lastError ?? new Error('Failed to allocate a request number')
-  }
+  if (requestError) throw requestError
 
   const { data: itemRow, error: itemError } = await supabaseAdmin
     .from('parts_request_items')
