@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
-import { UploadIcon } from '@/src/components/home/icons'
 import type { PartCondition, PartSide } from '@/src/services/requests/types'
-import type { PartFormState } from './types'
+import { PhotoUpload } from './photo-upload'
+import type { PartFormState, SelectedPhoto } from './types'
 
 const SIDE_RELEVANT_CATEGORIES = new Set(['lighting', 'braking', 'body', 'suspension', 'electrical', 'other'])
 
@@ -20,12 +20,16 @@ export function PartDetailsStep({
   dict,
   category,
   initialValue,
+  photos,
+  onPhotosChange,
   onBack,
   onContinue,
 }: {
   dict: Dictionary
   category: string
   initialValue?: PartFormState | null
+  photos: SelectedPhoto[]
+  onPhotosChange: (photos: SelectedPhoto[]) => void
   onBack: () => void
   onContinue: (part: PartFormState) => void
 }) {
@@ -141,13 +145,7 @@ export function PartDetailsStep({
           />
         </div>
 
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-muted-foreground">{dict.wizard.partDetails.photoLabel}</span>
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center">
-            <UploadIcon className="h-6 w-6 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{dict.wizard.partDetails.photoComingSoon}</p>
-          </div>
-        </div>
+        <PhotoUpload dict={dict} photos={photos} onChange={onPhotosChange} />
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">

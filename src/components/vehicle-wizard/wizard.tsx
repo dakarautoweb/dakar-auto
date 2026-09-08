@@ -4,7 +4,8 @@ import { useState, useTransition } from 'react'
 import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { submitPartsRequestAction } from '@/src/services/requests/actions'
-import type { ConfirmedVehicle, ContactFormState, PartFormState, WizardStep } from './types'
+import { submitPartsRequestWithPhotos } from '@/src/services/requests/submit-with-photos'
+import type { AttachmentSummary, ConfirmedVehicle, ContactFormState, PartFormState, SelectedPhoto, WizardStep } from './types'
 import { ProgressSteps } from './progress-steps'
 import { VinStep } from './vin-step'
 import { ManualVehicleForm } from './manual-vehicle-form'
@@ -34,12 +35,14 @@ export function VehicleWizard({
   const [categoryChoice, setCategoryChoice] = useState<string | null>(null)
   const [partPhase, setPartPhase] = useState<'category' | 'details'>('category')
   const [part, setPart] = useState<PartFormState | null>(null)
+  const [photos, setPhotos] = useState<SelectedPhoto[]>([])
 
   const [contact, setContact] = useState<ContactFormState | null>(null)
 
   const [submitting, startSubmit] = useTransition()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [requestNumber, setRequestNumber] = useState<string | null>(null)
+  const [attachmentSummary, setAttachmentSummary] = useState<AttachmentSummary | null>(null)
 
   function handleVehicleConfirmed(confirmed: ConfirmedVehicle) {
     setVehicle(confirmed)
@@ -71,9 +74,23 @@ export function VehicleWizard({
     if (!vehicle || !part || !contact) return
     setSubmitError(null)
     startSubmit(async () => {
-      const result = await submitPartsRequestAction({ vehicle, part, contact, locale })
+      if (photos.length === 0) {
+        const result = await submitPartsRequestAction({ vehicle, part, contact, locale })
+        if (result.ok) {
+          setRequestNumber(result.requestNumber)
+        } else {
+          setSubmitError(dict.wizard.review.errorGeneric)
+        }
+        return
+      }
+
+      const result = await submitPartsRequestWithPhotos(
+        { vehicle, part, contact, locale },
+        photos.map((p) => ({ file: p.file, attachmentType: p.attachmentType }))
+      )
       if (result.ok) {
         setRequestNumber(result.requestNumber)
+        setAttachmentSummary(result.attachments)
       } else {
         setSubmitError(dict.wizard.review.errorGeneric)
       }
@@ -81,7 +98,7 @@ export function VehicleWizard({
   }
 
   if (requestNumber) {
-    return <SuccessStep dict={dict} requestNumber={requestNumber} />
+    return <SuccessStep dict={dict} requestNumber={requestNumber} attachmentSummary={attachmentSummary} />
   }
 
   return (
@@ -110,6 +127,8 @@ export function VehicleWizard({
             dict={dict}
             category={categoryChoice}
             initialValue={part}
+            photos={photos}
+            onPhotosChange={setPhotos}
             onBack={() => setPartPhase('category')}
             onContinue={handlePartContinue}
           />
@@ -132,6 +151,7 @@ export function VehicleWizard({
             dict={dict}
             vehicle={vehicle}
             part={part}
+            photos={photos}
             contact={contact}
             submitting={submitting}
             submitError={submitError}

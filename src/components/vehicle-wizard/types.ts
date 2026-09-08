@@ -1,5 +1,6 @@
 import type { VehicleResult } from '@/src/services/vin/types'
 import type { PartCondition, PartSide, PreferredContact } from '@/src/services/requests/types'
+import type { AttachmentType } from '@/src/services/attachments/types'
 
 export type WizardStep = 'vehicle' | 'parts' | 'contact' | 'review'
 
@@ -51,4 +52,16 @@ export type ContactFormState = {
   whatsappSameAsPhone: boolean
   whatsappPhone: string
   preferredContact: PreferredContact
+}
+
+export type SelectedPhoto = {
+  id: string
+  file: File
+  previewUrl: string
+  attachmentType: AttachmentType
+}
+
+export type AttachmentSummary = {
+  uploaded: number
+  failed: number
 }

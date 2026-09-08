@@ -190,8 +190,22 @@
       "quantityLabel": "Quantity",
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Add any useful detail about the part you need.",
-      "photoLabel": "Part Photo",
-      "photoComingSoon": "Photo upload will be available soon. For now, please describe the part in detail.",
+      "photos": {
+        "title": "Add photos",
+        "description": "Add up to 5 photos to help us identify the part.",
+        "optional": "Optional",
+        "dropHint": "Drag and drop photos here, or click to browse",
+        "browse": "Choose photos",
+        "remove": "Remove",
+        "countLabel": "photos",
+        "typePart": "Part",
+        "typeDamage": "Damage",
+        "typeVin": "VIN plate",
+        "typeOther": "Other",
+        "errorTooMany": "You can add up to 5 photos.",
+        "errorTooLarge": "Each photo must be under 8MB.",
+        "errorInvalidType": "Unsupported format. Use JPG, PNG, or WEBP."
+      },
       "continue": "Continue"
     },
     "contact": {
@@ -213,6 +227,7 @@
       "title": "Review & Submit",
       "vehicleSection": "Vehicle",
       "partSection": "Part",
+      "photosSection": "Photos",
       "contactSection": "Contact",
       "preferredSection": "Preferred Contact",
       "edit": "Edit",
@@ -224,6 +239,9 @@
       "title": "Request Sent Successfully",
       "description": "Our team will review your request and get back to you shortly.",
       "requestNumberLabel": "Request Number",
+      "photosAttachedOne": "1 photo attached to your request.",
+      "photosAttachedOther": "{count} photos attached to your request.",
+      "photosPartialWarning": "Some photos couldn't be uploaded, but your request was received successfully.",
       "whatsappCta": "Chat on WhatsApp",
       "emailCta": "Send an Email",
       "backHome": "Back to Home"

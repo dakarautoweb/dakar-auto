@@ -40,6 +40,14 @@ export function buildAdminNotificationEmail(data: PartsRequestEmailData): { subj
       value: escapeHtml([sideLabel, conditionLabel, `Quantité : ${data.part.quantity}`].filter(Boolean).join(' · ')),
     },
     { label: 'Reçue le', value: escapeHtml(formatTimestamp(data.submittedAt)) },
+    ...(data.attachmentCount
+      ? [
+          {
+            label: 'Photos',
+            value: `${data.attachmentCount} photo${data.attachmentCount > 1 ? 's' : ''} jointe${data.attachmentCount > 1 ? 's' : ''} à la demande`,
+          },
+        ]
+      : []),
   ]
 
   const body = `

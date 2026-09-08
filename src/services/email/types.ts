@@ -5,6 +5,9 @@ export type PartsRequestEmailData = {
   requestNumber: string
   locale: Locale
   submittedAt: Date
+  // Number of photos successfully uploaded and attached to the request.
+  // Admin-only context — the customer confirmation doesn't mention it.
+  attachmentCount?: number
   vehicle: {
     vin: string | null
     year: number | null

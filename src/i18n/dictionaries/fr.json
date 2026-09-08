@@ -190,8 +190,22 @@
       "quantityLabel": "Quantité",
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Ajoutez tout détail utile sur la pièce recherchée.",
-      "photoLabel": "Photo de la pièce",
-      "photoComingSoon": "L’envoi de photos sera bientôt disponible. Décrivez la pièce en détail pour le moment.",
+      "photos": {
+        "title": "Ajouter des photos",
+        "description": "Ajoutez jusqu’à 5 photos pour nous aider à identifier la pièce.",
+        "optional": "Optionnel",
+        "dropHint": "Glissez-déposez vos photos ici, ou cliquez pour parcourir",
+        "browse": "Choisir des photos",
+        "remove": "Supprimer",
+        "countLabel": "photos",
+        "typePart": "Pièce",
+        "typeDamage": "Dommage",
+        "typeVin": "Plaque VIN",
+        "typeOther": "Autre",
+        "errorTooMany": "Vous pouvez ajouter jusqu’à 5 photos.",
+        "errorTooLarge": "Chaque photo doit faire moins de 8 Mo.",
+        "errorInvalidType": "Format non pris en charge. Utilisez JPG, PNG ou WEBP."
+      },
       "continue": "Continuer"
     },
     "contact": {
@@ -213,6 +227,7 @@
       "title": "Vérifier et envoyer",
       "vehicleSection": "Véhicule",
       "partSection": "Pièce",
+      "photosSection": "Photos",
       "contactSection": "Contact",
       "preferredSection": "Contact préféré",
       "edit": "Modifier",
@@ -224,6 +239,9 @@
       "title": "Demande envoyée avec succès",
       "description": "Notre équipe va examiner votre demande et vous recontacter rapidement.",
       "requestNumberLabel": "Numéro de demande",
+      "photosAttachedOne": "1 photo jointe à votre demande.",
+      "photosAttachedOther": "{count} photos jointes à votre demande.",
+      "photosPartialWarning": "Certaines photos n’ont pas pu être envoyées, mais votre demande a bien été reçue.",
       "whatsappCta": "Discuter sur WhatsApp",
       "emailCta": "Envoyer un email",
       "backHome": "Retour à l’accueil"

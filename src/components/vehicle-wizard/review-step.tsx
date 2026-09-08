@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
-import type { ConfirmedVehicle, ContactFormState, PartFormState, WizardStep } from './types'
+import type { ConfirmedVehicle, ContactFormState, PartFormState, SelectedPhoto, WizardStep } from './types'
 
 export function ReviewStep({
   dict,
   vehicle,
   part,
+  photos,
   contact,
   submitting,
   submitError,
@@ -15,6 +16,7 @@ export function ReviewStep({
   dict: Dictionary
   vehicle: ConfirmedVehicle
   part: PartFormState
+  photos: SelectedPhoto[]
   contact: ContactFormState
   submitting: boolean
   submitError: string | null
@@ -69,6 +71,26 @@ export function ReviewStep({
         </p>
         {part.description && <p className="mt-1 text-sm text-muted-foreground">{part.description}</p>}
       </ReviewSection>
+
+      {photos.length > 0 && (
+        <ReviewSection
+          title={`${dict.wizard.review.photosSection} · ${dict.wizard.partDetails.photos.optional}`}
+          onEdit={() => onEdit('parts')}
+          editLabel={dict.wizard.review.edit}
+        >
+          <div className="flex flex-wrap gap-2">
+            {photos.map((photo) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={photo.id}
+                src={photo.previewUrl}
+                alt=""
+                className="h-16 w-16 rounded-lg border border-border object-cover"
+              />
+            ))}
+          </div>
+        </ReviewSection>
+      )}
 
       <ReviewSection title={dict.wizard.review.contactSection} onEdit={() => onEdit('contact')} editLabel={dict.wizard.review.edit}>
         <p className="font-medium">{contact.name}</p>

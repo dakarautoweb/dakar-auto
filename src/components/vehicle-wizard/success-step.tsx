@@ -2,8 +2,24 @@ import Link from 'next/link'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { WHATSAPP_LINK, EMAIL_ADDRESS } from '@/src/lib/contact-info'
 import { CheckCircleIcon } from '@/src/components/home/icons'
+import type { AttachmentSummary } from './types'
 
-export function SuccessStep({ dict, requestNumber }: { dict: Dictionary; requestNumber: string }) {
+export function SuccessStep({
+  dict,
+  requestNumber,
+  attachmentSummary,
+}: {
+  dict: Dictionary
+  requestNumber: string
+  attachmentSummary?: AttachmentSummary | null
+}) {
+  const photosAttachedText =
+    attachmentSummary && attachmentSummary.uploaded > 0
+      ? attachmentSummary.uploaded === 1
+        ? dict.wizard.success.photosAttachedOne
+        : dict.wizard.success.photosAttachedOther.replace('{count}', String(attachmentSummary.uploaded))
+      : null
+
   return (
     <div className="flex flex-col items-center rounded-2xl border border-border bg-surface/60 p-8 text-center shadow-md sm:p-12">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent">
@@ -18,6 +34,11 @@ export function SuccessStep({ dict, requestNumber }: { dict: Dictionary; request
         </p>
         <p className="mt-0.5 font-mono text-lg font-semibold">{requestNumber}</p>
       </div>
+
+      {photosAttachedText && <p className="mt-3 text-sm text-muted-foreground">{photosAttachedText}</p>}
+      {attachmentSummary && attachmentSummary.failed > 0 && (
+        <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">{dict.wizard.success.photosPartialWarning}</p>
+      )}
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <a

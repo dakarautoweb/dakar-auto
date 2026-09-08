@@ -267,3 +267,11 @@ export function CheckCircleIcon({ className = 'h-6 w-6' }: IconProps) {
     </svg>
   )
 }
+
+export function XIcon({ className = 'h-4 w-4' }: IconProps) {
+  return (
+    <svg {...shared} className={className}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  )
+}
