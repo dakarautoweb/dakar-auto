@@ -130,8 +130,11 @@
       "errorLength": "The VIN must be exactly 17 characters.",
       "errorCharacters": "The VIN cannot contain the letters I, O, or Q.",
       "errorGeneric": "Something went wrong. Please try again.",
+      "retry": "Try again",
       "notFoundTitle": "Vehicle Not Found",
-      "notFoundDescription": "We couldn't identify this VIN. You can try again or select your vehicle manually.",
+      "notFoundDescription": "We couldn't automatically identify this vehicle. You can select your vehicle manually.",
+      "unavailableTitle": "Service Temporarily Unavailable",
+      "unavailableDescription": "The identification service is temporarily unavailable. You can continue by selecting your vehicle manually.",
       "demoHint": "Demo mode: try one of these sample VINs.",
       "demoVinsLabel": "Sample VINs"
     },
@@ -251,9 +254,251 @@
       "requiredField": "This field is required."
     }
   },
+  "admin": {
+    "brand": "Dakar Auto",
+    "brandSuffix": "Admin",
+    "login": {
+      "title": "Admin login",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "submit": "Log in",
+      "submitting": "Signing in...",
+      "errorMissingFields": "Please enter your email and password.",
+      "errorInvalidCredentials": "Incorrect email or password.",
+      "errorNotAdmin": "This account doesn't have access to the admin area."
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "requests": "Parts Requests",
+      "vehicleRequests": "Vehicle Requests",
+      "logout": "Log out"
+    },
+    "accessDenied": {
+      "title": "Access denied",
+      "description": "You don't have the required permissions to access this area.",
+      "backToLogin": "Back to login"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "cards": {
+        "total": "Total Requests",
+        "requestReceived": "New",
+        "onTreatment": "On Treatment",
+        "partsFound": "Parts Found",
+        "today": "Today",
+        "vehicleRequests": "Vehicle Requests"
+      },
+      "recentTitle": "Recent Requests",
+      "viewAll": "View all requests"
+    },
+    "table": {
+      "requestNumber": "Request #",
+      "date": "Date",
+      "customer": "Customer",
+      "vehicle": "Vehicle",
+      "part": "Part",
+      "status": "Status",
+      "preferredContact": "Preferred Contact",
+      "open": "Open",
+      "empty": "No requests yet."
+    },
+    "requests": {
+      "title": "Parts Requests",
+      "searchPlaceholder": "Search: request #, customer, phone, email, VIN...",
+      "statusAll": "All statuses",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first"
+    },
+    "statuses": {
+      "request_received": "Request received",
+      "on_treatment": "On treatment",
+      "parts_found": "Parts found",
+      "direct_communication": "Direct communication",
+      "closed": "Closed",
+      "cancelled": "Cancelled"
+    },
+    "detail": {
+      "backToList": "Back to requests",
+      "createdAtLabel": "Created",
+      "localeLabel": "Language",
+      "notProvided": "Not provided",
+      "customerSection": "Customer",
+      "actions": {
+        "whatsapp": "WhatsApp",
+        "call": "Call",
+        "email": "Email",
+        "copyPhone": "Copy phone",
+        "copyEmail": "Copy email",
+        "copied": "Copied!"
+      },
+      "vehicleSection": "Vehicle",
+      "vehicle": {
+        "vin": "VIN",
+        "year": "Year",
+        "make": "Make",
+        "model": "Model",
+        "trim": "Trim",
+        "engine": "Engine",
+        "transmission": "Transmission",
+        "bodyStyle": "Body Style",
+        "fuelType": "Fuel Type",
+        "drivetrain": "Drivetrain",
+        "identificationMethod": "Identification Method"
+      },
+      "partsSection": "Requested Parts",
+      "part": {
+        "category": "Category",
+        "subcategory": "Subcategory",
+        "partName": "Part Name",
+        "side": "Side",
+        "quantity": "Quantity",
+        "condition": "Condition Preference",
+        "description": "Description"
+      },
+      "photosSection": "Photos",
+      "photosEmpty": "No photos attached.",
+      "photosUnavailable": "Photo unavailable",
+      "notesSection": "Internal Notes",
+      "notesDescription": "Visible only to the Dakar Auto team — never sent to the customer.",
+      "notesPlaceholder": "Add an internal note...",
+      "notesSave": "Save",
+      "notesSaving": "Saving...",
+      "notesSaved": "Notes saved.",
+      "notesError": "Failed to save notes.",
+      "statusUpdateSection": "Change status",
+      "statusUpdateNoteLabel": "Note (optional)",
+      "statusUpdateNotePlaceholder": "Add context about this status change...",
+      "statusUpdateSubmit": "Update status",
+      "statusUpdateSubmitting": "Updating...",
+      "statusUpdateSuccess": "Status updated.",
+      "statusUpdateError": "Failed to update status.",
+      "historySection": "Status History",
+      "historyEmpty": "No status changes yet.",
+      "historyChangedBy": "By",
+      "historyUnknownAdmin": "Admin",
+      "historyNoNote": "—",
+      "historyFrom": "from",
+      "historyTo": "to"
+    },
+    "vehicleRequests": {
+      "title": "Vehicle Requests",
+      "searchPlaceholder": "Search: request #, customer, phone, email, make, model...",
+      "statusAll": "All statuses",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first",
+      "empty": "No vehicle requests yet.",
+      "table": {
+        "requestNumber": "Request #",
+        "date": "Date",
+        "customer": "Customer",
+        "vehicle": "Requested Vehicle",
+        "status": "Status"
+      }
+    },
+    "vehicleStatuses": {
+      "request_received": "Request received",
+      "on_treatment": "On treatment",
+      "vehicle_found": "Vehicle found",
+      "direct_communication": "Direct communication",
+      "closed": "Closed",
+      "cancelled": "Cancelled"
+    },
+    "vehicleRequestDetail": {
+      "backToList": "Back to vehicle requests",
+      "createdAtLabel": "Created",
+      "localeLabel": "Language",
+      "notProvided": "Not provided",
+      "customerSection": "Customer",
+      "vehicleSection": "Vehicle Wanted",
+      "vehicle": {
+        "make": "Make",
+        "model": "Model",
+        "yearRange": "Years",
+        "color": "Color",
+        "engine": "Engine",
+        "transmission": "Transmission",
+        "mileageRange": "Mileage",
+        "trimLevel": "Trim Level",
+        "budgetRange": "Budget",
+        "otherPreferences": "Other Preferences"
+      },
+      "notesSection": "Internal Notes",
+      "notesDescription": "Visible only to the Dakar Auto team — never sent to the customer.",
+      "notesPlaceholder": "Add an internal note...",
+      "notesSave": "Save",
+      "notesSaving": "Saving...",
+      "notesSaved": "Notes saved.",
+      "notesError": "Failed to save notes.",
+      "statusUpdateSection": "Change status",
+      "statusUpdateSubmit": "Update status",
+      "statusUpdateSubmitting": "Updating...",
+      "statusUpdateSuccess": "Status updated.",
+      "statusUpdateError": "Failed to update status.",
+      "historyNotTracked": "Status change history isn't tracked yet for vehicle requests."
+    }
+  },
+  "vehicleRequestWizard": {
+    "steps": {
+      "vehicle": "Vehicle",
+      "budget": "Budget",
+      "contact": "Contact",
+      "review": "Review"
+    },
+    "vehicleStep": {
+      "title": "The vehicle you're looking for",
+      "description": "Give us as much detail as you can about the vehicle you want.",
+      "makeLabel": "Make",
+      "makePlaceholder": "e.g. Toyota",
+      "modelLabel": "Model",
+      "modelPlaceholder": "e.g. Hilux",
+      "yearFromLabel": "Year (from)",
+      "yearToLabel": "Year (to)",
+      "colorLabel": "Color",
+      "colorPlaceholder": "e.g. White",
+      "engineLabel": "Engine",
+      "enginePlaceholder": "e.g. 2.4L Diesel",
+      "transmissionLabel": "Transmission",
+      "transmissionPlaceholder": "e.g. Automatic",
+      "mileageMinLabel": "Min Mileage",
+      "mileageMaxLabel": "Max Mileage",
+      "trimLevelLabel": "Trim Level",
+      "trimLevelPlaceholder": "e.g. SR5",
+      "continue": "Continue"
+    },
+    "budgetStep": {
+      "title": "Budget & preferences",
+      "description": "Help us target the right vehicles for you.",
+      "budgetMinLabel": "Min Budget",
+      "budgetMaxLabel": "Max Budget",
+      "currencyLabel": "Currency",
+      "otherPreferencesLabel": "Other Preferences",
+      "otherPreferencesPlaceholder": "Options, history, specific preferences...",
+      "continue": "Continue"
+    },
+    "review": {
+      "title": "Review & Submit",
+      "vehicleSection": "Vehicle Wanted",
+      "budgetSection": "Budget & Preferences",
+      "contactSection": "Contact",
+      "preferredSection": "Preferred Contact",
+      "edit": "Edit",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "errorGeneric": "Something went wrong while sending your request. Please try again.",
+      "notSpecified": "Not specified"
+    },
+    "success": {
+      "title": "Vehicle Request Sent",
+      "description": "Our team will review your request and get back to you shortly.",
+      "requestNumberLabel": "Request Number",
+      "whatsappCta": "Chat on WhatsApp",
+      "emailCta": "Send an Email",
+      "backHome": "Back to Home"
+    }
+  },
   "sourceVehiclePage": {
-    "title": "Request a Vehicle",
-    "description": "Full vehicle requests are coming soon. In the meantime, contact us directly to tell us which vehicle you're looking for."
+    "title": "Source a Vehicle",
+    "description": "Tell us which vehicle you're looking for and our team will help you find it."
   },
   "legal": {
     "privacyTitle": "Privacy Policy",

@@ -36,6 +36,7 @@ export function ManualVehicleForm({
     if (!isValid) return
     onConfirm({
       source: 'manual',
+      identificationSource: null,
       vin: null,
       year: Number(year),
       make,

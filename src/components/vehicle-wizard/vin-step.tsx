@@ -96,14 +96,37 @@ export function VinStep({
           </p>
         )}
 
-        {result?.status === 'not_found' && (
+        {(result?.status === 'not_found' || result?.status === 'unavailable') && (
           <div className="mt-4 rounded-xl border border-border bg-background p-4">
-            <p className="font-medium">{dict.wizard.vin.notFoundTitle}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{dict.wizard.vin.notFoundDescription}</p>
+            <p className="font-medium">
+              {result.status === 'not_found' ? dict.wizard.vin.notFoundTitle : dict.wizard.vin.unavailableTitle}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {result.status === 'not_found' ? dict.wizard.vin.notFoundDescription : dict.wizard.vin.unavailableDescription}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => canSubmit && runLookup(vin)}
+                disabled={!canSubmit}
+                className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-medium transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {dict.wizard.vin.retry}
+              </button>
+              <button
+                type="button"
+                onClick={onManual}
+                className="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:opacity-90"
+              >
+                {dict.wizard.vin.manualCta}
+              </button>
+            </div>
           </div>
         )}
-        {(result?.status === 'error' || result?.status === 'invalid') && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{dict.wizard.vin.errorGeneric}</p>
+        {result?.status === 'invalid' && (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+            {result.reason === 'length' ? dict.wizard.vin.errorLength : dict.wizard.vin.errorCharacters}
+          </p>
         )}
 
         <div className="mt-5 flex flex-wrap gap-3">

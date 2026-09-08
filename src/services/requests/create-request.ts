@@ -14,6 +14,15 @@ function buildItemDescription(side: string | null, description: string): string 
   return parts.length > 0 ? parts.join('\n\n') : null
 }
 
+// Reusing an existing vehicles row by VIN is safe for the immutable build
+// data a VIN encodes (make/model/year/trim/engine/...) — a VIN identifies
+// one specific physical vehicle, so that data doesn't change over time.
+// The one accepted gap: a handful of rows created before this task used
+// the old mock provider, so a real Auto.dev decode of the same VIN today
+// would resolve to a fresher record than what's stored. Not worth an
+// active migration for a handful of test-era rows; a future improvement
+// could re-decode and refresh vehicles.vin_api_data on reuse if that ever
+// matters in practice.
 async function findOrCreateVehicleId(vehicle: SubmitPartsRequestInput['vehicle']): Promise<string> {
   if (vehicle.vin) {
     const { data: existing, error: findError } = await supabaseAdmin
@@ -42,7 +51,23 @@ async function findOrCreateVehicleId(vehicle: SubmitPartsRequestInput['vehicle']
       drivetrain: vehicle.drivetrain,
       image_url: vehicle.imageUrl,
       identification_method: vehicle.source,
-      vin_api_data: vehicle.source === 'vin' ? { provider: 'mock', ...vehicle } : null,
+      // Normalized fields only — never API keys/headers/raw HTTP debug info.
+      vin_api_data:
+        vehicle.source === 'vin'
+          ? {
+              provider: vehicle.identificationSource ?? 'unknown',
+              vin: vehicle.vin,
+              year: vehicle.year,
+              make: vehicle.make,
+              model: vehicle.model,
+              trim: vehicle.trim,
+              engine: vehicle.engine,
+              transmission: vehicle.transmission,
+              bodyStyle: vehicle.bodyStyle,
+              fuelType: vehicle.fuelType,
+              drivetrain: vehicle.drivetrain,
+            }
+          : null,
     })
     .select('id')
     .single()

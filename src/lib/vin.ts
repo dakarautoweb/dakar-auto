@@ -16,3 +16,11 @@ export function validateVin(vin: string): VinValidationError | null {
 export function isValidVin(vin: string): boolean {
   return validateVin(vin) === null
 }
+
+// For logs only — never log a full VIN. Keeps the last 4 characters, which
+// is enough to correlate a log line with a support conversation without
+// reproducing an identifier tied to a real vehicle/owner.
+export function maskVin(vin: string): string {
+  if (vin.length <= 4) return '*'.repeat(vin.length)
+  return '*'.repeat(vin.length - 4) + vin.slice(-4)
+}

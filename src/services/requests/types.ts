@@ -6,6 +6,9 @@ export type PreferredContact = 'whatsapp' | 'phone' | 'email'
 
 export type SubmitVehicleInput = {
   source: 'vin' | 'manual'
+  // The specific VIN provider that produced this data ('auto_dev' | 'mock'),
+  // null for manual entries — stored in vehicles.vin_api_data.provider.
+  identificationSource: string | null
   vin: string | null
   year: number | null
   make: string

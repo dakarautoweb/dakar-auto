@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { BodyIcon } from '@/src/components/home/icons'
 import type { ConfirmedVehicle } from './types'
@@ -15,6 +16,8 @@ export function VehicleResultCard({
   onEditVin?: () => void
   onNotMine: () => void
 }) {
+  const [imageFailed, setImageFailed] = useState(false)
+
   const details = (
     [
       vehicle.trim && { label: dict.wizard.result.trimLabel, value: vehicle.trim },
@@ -31,9 +34,19 @@ export function VehicleResultCard({
       <h2 className="text-xl font-bold tracking-tight">{dict.wizard.result.title}</h2>
 
       <div className="mt-5 flex flex-col gap-6 sm:flex-row sm:items-center">
-        <div className="flex h-28 w-full shrink-0 items-center justify-center rounded-xl border border-border bg-gradient-to-br from-background to-surface text-accent sm:w-40">
-          <BodyIcon className="h-12 w-12" />
-        </div>
+        {vehicle.imageUrl && !imageFailed ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={vehicle.imageUrl}
+            alt=""
+            onError={() => setImageFailed(true)}
+            className="h-28 w-full shrink-0 rounded-xl border border-border bg-surface object-cover sm:w-40"
+          />
+        ) : (
+          <div className="flex h-28 w-full shrink-0 items-center justify-center rounded-xl border border-border bg-gradient-to-br from-background to-surface text-accent sm:w-40">
+            <BodyIcon className="h-12 w-12" />
+          </div>
+        )}
 
         <div>
           <p className="text-xl font-bold tracking-tight">

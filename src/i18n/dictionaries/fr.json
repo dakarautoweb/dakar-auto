@@ -130,8 +130,11 @@
       "errorLength": "Le VIN doit contenir exactement 17 caractères.",
       "errorCharacters": "Le VIN ne peut pas contenir les lettres I, O ou Q.",
       "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+      "retry": "Réessayer",
       "notFoundTitle": "Véhicule introuvable",
-      "notFoundDescription": "Nous n’avons pas pu identifier ce VIN. Vous pouvez réessayer ou sélectionner votre véhicule manuellement.",
+      "notFoundDescription": "Nous n’avons pas pu identifier ce véhicule automatiquement. Vous pouvez sélectionner votre véhicule manuellement.",
+      "unavailableTitle": "Service temporairement indisponible",
+      "unavailableDescription": "Le service d’identification est temporairement indisponible. Vous pouvez continuer en sélectionnant votre véhicule manuellement.",
       "demoHint": "Mode démo : essayez un de ces VIN d’exemple.",
       "demoVinsLabel": "VIN d’exemple"
     },
@@ -251,9 +254,251 @@
       "requiredField": "Ce champ est requis."
     }
   },
+  "admin": {
+    "brand": "Dakar Auto",
+    "brandSuffix": "Admin",
+    "login": {
+      "title": "Connexion administrateur",
+      "emailLabel": "Adresse e-mail",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion en cours...",
+      "errorMissingFields": "Veuillez renseigner votre e-mail et votre mot de passe.",
+      "errorInvalidCredentials": "E-mail ou mot de passe incorrect.",
+      "errorNotAdmin": "Ce compte n’a pas accès à l’espace administrateur."
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "requests": "Demandes de pièces",
+      "vehicleRequests": "Demandes de véhicules",
+      "logout": "Déconnexion"
+    },
+    "accessDenied": {
+      "title": "Accès refusé",
+      "description": "Vous n’avez pas les droits nécessaires pour accéder à cet espace.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "cards": {
+        "total": "Total des demandes",
+        "requestReceived": "Nouvelles",
+        "onTreatment": "En cours de traitement",
+        "partsFound": "Pièces trouvées",
+        "today": "Aujourd’hui",
+        "vehicleRequests": "Demandes de véhicules"
+      },
+      "recentTitle": "Demandes récentes",
+      "viewAll": "Voir toutes les demandes"
+    },
+    "table": {
+      "requestNumber": "N° de demande",
+      "date": "Date",
+      "customer": "Client",
+      "vehicle": "Véhicule",
+      "part": "Pièce",
+      "status": "Statut",
+      "preferredContact": "Contact préféré",
+      "open": "Ouvrir",
+      "empty": "Aucune demande pour le moment."
+    },
+    "requests": {
+      "title": "Demandes de pièces",
+      "searchPlaceholder": "Rechercher : n° de demande, client, téléphone, e-mail, VIN...",
+      "statusAll": "Tous les statuts",
+      "sortNewest": "Plus récentes",
+      "sortOldest": "Plus anciennes"
+    },
+    "statuses": {
+      "request_received": "Demande reçue",
+      "on_treatment": "En cours de traitement",
+      "parts_found": "Pièces trouvées",
+      "direct_communication": "Contact direct",
+      "closed": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "detail": {
+      "backToList": "Retour aux demandes",
+      "createdAtLabel": "Créée le",
+      "localeLabel": "Langue",
+      "notProvided": "Non renseigné",
+      "customerSection": "Client",
+      "actions": {
+        "whatsapp": "WhatsApp",
+        "call": "Appeler",
+        "email": "E-mail",
+        "copyPhone": "Copier le téléphone",
+        "copyEmail": "Copier l’e-mail",
+        "copied": "Copié !"
+      },
+      "vehicleSection": "Véhicule",
+      "vehicle": {
+        "vin": "VIN",
+        "year": "Année",
+        "make": "Marque",
+        "model": "Modèle",
+        "trim": "Finition",
+        "engine": "Moteur",
+        "transmission": "Transmission",
+        "bodyStyle": "Carrosserie",
+        "fuelType": "Carburant",
+        "drivetrain": "Transmission intégrale",
+        "identificationMethod": "Méthode d’identification"
+      },
+      "partsSection": "Pièces demandées",
+      "part": {
+        "category": "Catégorie",
+        "subcategory": "Sous-catégorie",
+        "partName": "Nom de la pièce",
+        "side": "Côté",
+        "quantity": "Quantité",
+        "condition": "État préféré",
+        "description": "Description"
+      },
+      "photosSection": "Photos",
+      "photosEmpty": "Aucune photo jointe.",
+      "photosUnavailable": "Photo indisponible",
+      "notesSection": "Notes internes",
+      "notesDescription": "Visibles uniquement par l’équipe Dakar Auto — jamais envoyées au client.",
+      "notesPlaceholder": "Ajouter une note interne...",
+      "notesSave": "Enregistrer",
+      "notesSaving": "Enregistrement...",
+      "notesSaved": "Notes enregistrées.",
+      "notesError": "Échec de l’enregistrement des notes.",
+      "statusUpdateSection": "Changer le statut",
+      "statusUpdateNoteLabel": "Note (optionnelle)",
+      "statusUpdateNotePlaceholder": "Ajouter un contexte sur ce changement de statut...",
+      "statusUpdateSubmit": "Mettre à jour le statut",
+      "statusUpdateSubmitting": "Mise à jour...",
+      "statusUpdateSuccess": "Statut mis à jour.",
+      "statusUpdateError": "Échec de la mise à jour du statut.",
+      "historySection": "Historique des statuts",
+      "historyEmpty": "Aucun changement de statut pour le moment.",
+      "historyChangedBy": "Par",
+      "historyUnknownAdmin": "Administrateur",
+      "historyNoNote": "—",
+      "historyFrom": "de",
+      "historyTo": "à"
+    },
+    "vehicleRequests": {
+      "title": "Demandes de véhicules",
+      "searchPlaceholder": "Rechercher : n° de demande, client, téléphone, e-mail, marque, modèle...",
+      "statusAll": "Tous les statuts",
+      "sortNewest": "Plus récentes",
+      "sortOldest": "Plus anciennes",
+      "empty": "Aucune demande de véhicule pour le moment.",
+      "table": {
+        "requestNumber": "N° de demande",
+        "date": "Date",
+        "customer": "Client",
+        "vehicle": "Véhicule recherché",
+        "status": "Statut"
+      }
+    },
+    "vehicleStatuses": {
+      "request_received": "Demande reçue",
+      "on_treatment": "En cours de traitement",
+      "vehicle_found": "Véhicule trouvé",
+      "direct_communication": "Contact direct",
+      "closed": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "vehicleRequestDetail": {
+      "backToList": "Retour aux demandes de véhicules",
+      "createdAtLabel": "Créée le",
+      "localeLabel": "Langue",
+      "notProvided": "Non renseigné",
+      "customerSection": "Client",
+      "vehicleSection": "Véhicule recherché",
+      "vehicle": {
+        "make": "Marque",
+        "model": "Modèle",
+        "yearRange": "Années",
+        "color": "Couleur",
+        "engine": "Moteur",
+        "transmission": "Transmission",
+        "mileageRange": "Kilométrage",
+        "trimLevel": "Finition",
+        "budgetRange": "Budget",
+        "otherPreferences": "Autres préférences"
+      },
+      "notesSection": "Notes internes",
+      "notesDescription": "Visibles uniquement par l’équipe Dakar Auto — jamais envoyées au client.",
+      "notesPlaceholder": "Ajouter une note interne...",
+      "notesSave": "Enregistrer",
+      "notesSaving": "Enregistrement...",
+      "notesSaved": "Notes enregistrées.",
+      "notesError": "Échec de l’enregistrement des notes.",
+      "statusUpdateSection": "Changer le statut",
+      "statusUpdateSubmit": "Mettre à jour le statut",
+      "statusUpdateSubmitting": "Mise à jour...",
+      "statusUpdateSuccess": "Statut mis à jour.",
+      "statusUpdateError": "Échec de la mise à jour du statut.",
+      "historyNotTracked": "L’historique des changements de statut n’est pas encore suivi pour les demandes de véhicules."
+    }
+  },
+  "vehicleRequestWizard": {
+    "steps": {
+      "vehicle": "Véhicule",
+      "budget": "Budget",
+      "contact": "Contact",
+      "review": "Vérification"
+    },
+    "vehicleStep": {
+      "title": "Le véhicule que vous recherchez",
+      "description": "Donnez-nous le plus de détails possible sur le véhicule souhaité.",
+      "makeLabel": "Marque",
+      "makePlaceholder": "ex. Toyota",
+      "modelLabel": "Modèle",
+      "modelPlaceholder": "ex. Hilux",
+      "yearFromLabel": "Année (à partir de)",
+      "yearToLabel": "Année (jusqu’à)",
+      "colorLabel": "Couleur",
+      "colorPlaceholder": "ex. Blanc",
+      "engineLabel": "Moteur",
+      "enginePlaceholder": "ex. 2.4L Diesel",
+      "transmissionLabel": "Transmission",
+      "transmissionPlaceholder": "ex. Automatique",
+      "mileageMinLabel": "Kilométrage min",
+      "mileageMaxLabel": "Kilométrage max",
+      "trimLevelLabel": "Finition",
+      "trimLevelPlaceholder": "ex. SR5",
+      "continue": "Continuer"
+    },
+    "budgetStep": {
+      "title": "Budget et préférences",
+      "description": "Aidez-nous à cibler les bons véhicules pour vous.",
+      "budgetMinLabel": "Budget min",
+      "budgetMaxLabel": "Budget max",
+      "currencyLabel": "Devise",
+      "otherPreferencesLabel": "Autres préférences",
+      "otherPreferencesPlaceholder": "Options, historique, préférences particulières...",
+      "continue": "Continuer"
+    },
+    "review": {
+      "title": "Vérifier et envoyer",
+      "vehicleSection": "Véhicule recherché",
+      "budgetSection": "Budget et préférences",
+      "contactSection": "Contact",
+      "preferredSection": "Contact préféré",
+      "edit": "Modifier",
+      "submit": "Envoyer la demande",
+      "submitting": "Envoi en cours...",
+      "errorGeneric": "Une erreur est survenue lors de l’envoi. Veuillez réessayer.",
+      "notSpecified": "Non précisé"
+    },
+    "success": {
+      "title": "Demande de véhicule envoyée",
+      "description": "Notre équipe va examiner votre demande et vous recontacter rapidement.",
+      "requestNumberLabel": "Numéro de demande",
+      "whatsappCta": "Discuter sur WhatsApp",
+      "emailCta": "Envoyer un email",
+      "backHome": "Retour à l’accueil"
+    }
+  },
   "sourceVehiclePage": {
-    "title": "Demander un véhicule",
-    "description": "La demande de véhicule complet arrive bientôt. En attendant, contactez-nous directement pour nous indiquer le véhicule recherché."
+    "title": "Trouver un véhicule",
+    "description": "Dites-nous quel véhicule vous recherchez et notre équipe vous aidera à le trouver."
   },
   "legal": {
     "privacyTitle": "Politique de confidentialité",

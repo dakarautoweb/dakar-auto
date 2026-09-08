@@ -6,6 +6,12 @@ export type WizardStep = 'vehicle' | 'parts' | 'contact' | 'review'
 
 export type ConfirmedVehicle = {
   source: 'vin' | 'manual'
+  // Which VIN provider actually produced this data ('auto_dev' | 'mock'),
+  // null for manual entries. Kept separate from `source` (which only
+  // distinguishes the wizard path, not the specific provider) so it can
+  // be stored accurately in vehicles.vin_api_data.provider instead of
+  // assuming a fixed value.
+  identificationSource: string | null
   vin: string | null
   year: number | null
   make: string
@@ -22,6 +28,7 @@ export type ConfirmedVehicle = {
 export function vehicleResultToConfirmed(vehicle: VehicleResult): ConfirmedVehicle {
   return {
     source: 'vin',
+    identificationSource: vehicle.source,
     vin: vehicle.vin,
     year: vehicle.year,
     make: vehicle.make,
