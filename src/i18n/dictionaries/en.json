@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Dakar Auto — Genuine Auto Parts On Request",
+    "description": "Request auto parts by description or VIN. No account needed — we'll get back to you with the right part."
+  },
+  "header": {
+    "siteName": "Dakar Auto",
+    "nav": {
+      "home": "Home"
+    },
+    "languageSwitcher": "Language",
+    "themeToggle": {
+      "light": "Switch to light mode",
+      "dark": "Switch to dark mode"
+    }
+  },
+  "home": {
+    "heroTitle": "Find the part your car needs",
+    "heroSubtitle": "Send us your request — no account required. We'll get back to you with the right part, sourced and ready.",
+    "cta": "Request a Part"
+  },
+  "footer": {
+    "tagline": "Genuine auto parts, delivered on request.",
+    "rights": "All rights reserved."
+  }
+}

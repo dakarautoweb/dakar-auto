@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Dakar Auto — Pièces Auto Authentiques Sur Demande",
+    "description": "Demandez des pièces auto par description ou VIN. Sans compte — nous vous recontactons avec la bonne pièce."
+  },
+  "header": {
+    "siteName": "Dakar Auto",
+    "nav": {
+      "home": "Accueil"
+    },
+    "languageSwitcher": "Langue",
+    "themeToggle": {
+      "light": "Passer en mode clair",
+      "dark": "Passer en mode sombre"
+    }
+  },
+  "home": {
+    "heroTitle": "Trouvez la pièce dont votre voiture a besoin",
+    "heroSubtitle": "Envoyez-nous votre demande — sans compte requis. Nous vous recontactons avec la bonne pièce, sourcée et prête.",
+    "cta": "Demander une pièce"
+  },
+  "footer": {
+    "tagline": "Pièces auto authentiques, livrées sur demande.",
+    "rights": "Tous droits réservés."
+  }
+}
