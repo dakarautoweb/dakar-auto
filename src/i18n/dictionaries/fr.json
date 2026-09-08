@@ -114,10 +114,124 @@
     "badge": "Bientôt disponible",
     "backHome": "Retour à l’accueil"
   },
-  "vehicleIdentifyPage": {
-    "title": "Identification du véhicule",
-    "description": "L’identification automatique par VIN arrive bientôt. En attendant, contactez-nous directement avec les informations de votre véhicule.",
-    "vinReceivedLabel": "VIN renseigné :"
+  "wizard": {
+    "steps": {
+      "vehicle": "Véhicule",
+      "parts": "Pièce",
+      "contact": "Contact",
+      "review": "Vérification"
+    },
+    "vin": {
+      "title": "Identifier votre véhicule",
+      "description": "Entrez votre VIN pour identifier automatiquement votre véhicule.",
+      "submit": "Identifier le véhicule",
+      "manualCta": "Sélectionner manuellement",
+      "loading": "Recherche du véhicule...",
+      "errorLength": "Le VIN doit contenir exactement 17 caractères.",
+      "errorCharacters": "Le VIN ne peut pas contenir les lettres I, O ou Q.",
+      "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+      "notFoundTitle": "Véhicule introuvable",
+      "notFoundDescription": "Nous n’avons pas pu identifier ce VIN. Vous pouvez réessayer ou sélectionner votre véhicule manuellement.",
+      "demoHint": "Mode démo : essayez un de ces VIN d’exemple.",
+      "demoVinsLabel": "VIN d’exemple"
+    },
+    "result": {
+      "title": "Véhicule identifié",
+      "confirmQuestion": "Est-ce bien votre véhicule ?",
+      "vinLabel": "VIN",
+      "trimLabel": "Finition",
+      "engineLabel": "Moteur",
+      "transmissionLabel": "Transmission",
+      "bodyStyleLabel": "Carrosserie",
+      "drivetrainLabel": "Transmission intégrale",
+      "fuelTypeLabel": "Carburant",
+      "confirm": "Oui, continuer",
+      "editVin": "Modifier le VIN",
+      "notMine": "Ce n’est pas mon véhicule"
+    },
+    "manual": {
+      "title": "Sélectionner votre véhicule",
+      "description": "Renseignez les informations de votre véhicule.",
+      "yearLabel": "Année",
+      "makeLabel": "Marque",
+      "modelLabel": "Modèle",
+      "engineLabel": "Moteur",
+      "yearPlaceholder": "Sélectionner l’année",
+      "makePlaceholder": "Sélectionner la marque",
+      "modelPlaceholder": "Sélectionner le modèle",
+      "enginePlaceholder": "Sélectionner le moteur",
+      "confirm": "Confirmer le véhicule",
+      "backToVin": "Revenir au VIN"
+    },
+    "scanModal": {
+      "title": "Scanner le VIN",
+      "description": "La numérisation du VIN par appareil photo arrive bientôt. En attendant, saisissez votre VIN manuellement.",
+      "manualCta": "Saisir le VIN manuellement",
+      "close": "Fermer"
+    },
+    "parts": {
+      "title": "Choisissez une catégorie",
+      "description": "Sélectionnez la catégorie qui correspond à votre besoin."
+    },
+    "partDetails": {
+      "title": "Détails de la pièce",
+      "description": "Donnez-nous le plus de détails possible.",
+      "partNameLabel": "Nom de la pièce",
+      "partNamePlaceholder": "ex. Phare avant, plaquette de frein...",
+      "sideLabel": "Côté",
+      "sideLeft": "Gauche",
+      "sideRight": "Droit",
+      "sideBoth": "Les deux",
+      "conditionLabel": "État préféré",
+      "conditionOem": "Origine (OEM)",
+      "conditionAftermarket": "Aftermarket",
+      "conditionUsed": "Occasion",
+      "conditionNoPreference": "Peu importe",
+      "quantityLabel": "Quantité",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Ajoutez tout détail utile sur la pièce recherchée.",
+      "photoLabel": "Photo de la pièce",
+      "photoComingSoon": "L’envoi de photos sera bientôt disponible. Décrivez la pièce en détail pour le moment.",
+      "continue": "Continuer"
+    },
+    "contact": {
+      "title": "Vos coordonnées",
+      "description": "Comment pouvons-nous vous recontacter ?",
+      "nameLabel": "Nom complet",
+      "namePlaceholder": "Votre nom",
+      "emailLabel": "Email",
+      "emailPlaceholder": "vous@exemple.com",
+      "phoneLabel": "Téléphone",
+      "phonePlaceholder": "+221 00 000 00 00",
+      "whatsappSameLabel": "WhatsApp identique au téléphone",
+      "whatsappLabel": "Numéro WhatsApp",
+      "whatsappPlaceholder": "+221 00 000 00 00",
+      "preferredLabel": "Moyen de contact préféré",
+      "continue": "Continuer"
+    },
+    "review": {
+      "title": "Vérifier et envoyer",
+      "vehicleSection": "Véhicule",
+      "partSection": "Pièce",
+      "contactSection": "Contact",
+      "preferredSection": "Contact préféré",
+      "edit": "Modifier",
+      "submit": "Envoyer la demande",
+      "submitting": "Envoi en cours...",
+      "errorGeneric": "Une erreur est survenue lors de l’envoi. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Demande envoyée avec succès",
+      "description": "Notre équipe va examiner votre demande et vous recontacter rapidement.",
+      "requestNumberLabel": "Numéro de demande",
+      "whatsappCta": "Discuter sur WhatsApp",
+      "emailCta": "Envoyer un email",
+      "backHome": "Retour à l’accueil"
+    },
+    "common": {
+      "back": "Retour",
+      "requiredField": "Ce champ est requis."
+    }
   },
   "sourceVehiclePage": {
     "title": "Demander un véhicule",

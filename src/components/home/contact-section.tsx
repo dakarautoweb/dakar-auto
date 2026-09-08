@@ -1,12 +1,7 @@
 import type { Dictionary } from '@/src/i18n/dictionaries'
+import { WHATSAPP_LINK, EMAIL_ADDRESS, PHONE_NUMBER } from '@/src/lib/contact-info'
 import { SectionHeading } from './section-heading'
 import { MailIcon, PhoneIcon, WhatsAppIcon } from './icons'
-
-// Placeholder contact details — replace with Dakar Auto's real WhatsApp
-// number, email, and phone line before launch.
-const WHATSAPP_LINK = 'https://wa.me/221000000000'
-const EMAIL_ADDRESS = 'contact@dakarauto.com'
-const PHONE_NUMBER = '+22100000000'
 
 export function ContactSection({ dict }: { dict: Dictionary }) {
   return (

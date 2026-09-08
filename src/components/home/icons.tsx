@@ -230,3 +230,40 @@ export function WhatsAppIcon({ className = 'h-6 w-6' }: IconProps) {
     </svg>
   )
 }
+
+export function OtherIcon({ className = 'h-6 w-6' }: IconProps) {
+  return (
+    <svg {...shared} className={className}>
+      <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function CameraIcon({ className = 'h-6 w-6' }: IconProps) {
+  return (
+    <svg {...shared} className={className}>
+      <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+      <circle cx="12" cy="12.5" r="3.2" />
+    </svg>
+  )
+}
+
+export function UploadIcon({ className = 'h-6 w-6' }: IconProps) {
+  return (
+    <svg {...shared} className={className}>
+      <path d="M12 15V4M12 4 8 8M12 4l4 4" />
+      <path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" />
+    </svg>
+  )
+}
+
+export function CheckCircleIcon({ className = 'h-6 w-6' }: IconProps) {
+  return (
+    <svg {...shared} className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 12.5l2.5 2.5L16 9.5" />
+    </svg>
+  )
+}

@@ -114,10 +114,124 @@
     "badge": "Coming soon",
     "backHome": "Back to home"
   },
-  "vehicleIdentifyPage": {
-    "title": "Vehicle Identification",
-    "description": "Automatic VIN identification is coming soon. In the meantime, contact us directly with your vehicle details.",
-    "vinReceivedLabel": "VIN provided:"
+  "wizard": {
+    "steps": {
+      "vehicle": "Vehicle",
+      "parts": "Part",
+      "contact": "Contact",
+      "review": "Review"
+    },
+    "vin": {
+      "title": "Identify Your Vehicle",
+      "description": "Enter your VIN to automatically identify your vehicle.",
+      "submit": "Identify Vehicle",
+      "manualCta": "Select Manually",
+      "loading": "Looking up your vehicle...",
+      "errorLength": "The VIN must be exactly 17 characters.",
+      "errorCharacters": "The VIN cannot contain the letters I, O, or Q.",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "notFoundTitle": "Vehicle Not Found",
+      "notFoundDescription": "We couldn't identify this VIN. You can try again or select your vehicle manually.",
+      "demoHint": "Demo mode: try one of these sample VINs.",
+      "demoVinsLabel": "Sample VINs"
+    },
+    "result": {
+      "title": "Vehicle Identified",
+      "confirmQuestion": "Is this your vehicle?",
+      "vinLabel": "VIN",
+      "trimLabel": "Trim",
+      "engineLabel": "Engine",
+      "transmissionLabel": "Transmission",
+      "bodyStyleLabel": "Body Style",
+      "drivetrainLabel": "Drivetrain",
+      "fuelTypeLabel": "Fuel Type",
+      "confirm": "Yes, Continue",
+      "editVin": "Edit VIN",
+      "notMine": "This Isn't My Vehicle"
+    },
+    "manual": {
+      "title": "Select Your Vehicle",
+      "description": "Tell us about your vehicle.",
+      "yearLabel": "Year",
+      "makeLabel": "Make",
+      "modelLabel": "Model",
+      "engineLabel": "Engine",
+      "yearPlaceholder": "Select year",
+      "makePlaceholder": "Select make",
+      "modelPlaceholder": "Select model",
+      "enginePlaceholder": "Select engine",
+      "confirm": "Confirm Vehicle",
+      "backToVin": "Back to VIN"
+    },
+    "scanModal": {
+      "title": "Scan VIN",
+      "description": "Camera-based VIN scanning is coming soon. In the meantime, enter your VIN manually.",
+      "manualCta": "Enter VIN Manually",
+      "close": "Close"
+    },
+    "parts": {
+      "title": "Choose a Category",
+      "description": "Select the category that matches what you need."
+    },
+    "partDetails": {
+      "title": "Part Details",
+      "description": "Give us as much detail as you can.",
+      "partNameLabel": "Part Name",
+      "partNamePlaceholder": "e.g. Front headlight, brake pad...",
+      "sideLabel": "Side",
+      "sideLeft": "Left",
+      "sideRight": "Right",
+      "sideBoth": "Both",
+      "conditionLabel": "Condition Preference",
+      "conditionOem": "OEM",
+      "conditionAftermarket": "Aftermarket",
+      "conditionUsed": "Used",
+      "conditionNoPreference": "No Preference",
+      "quantityLabel": "Quantity",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Add any useful detail about the part you need.",
+      "photoLabel": "Part Photo",
+      "photoComingSoon": "Photo upload will be available soon. For now, please describe the part in detail.",
+      "continue": "Continue"
+    },
+    "contact": {
+      "title": "Your Contact Details",
+      "description": "How can we reach you?",
+      "nameLabel": "Full Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "+221 00 000 00 00",
+      "whatsappSameLabel": "WhatsApp same as phone",
+      "whatsappLabel": "WhatsApp Number",
+      "whatsappPlaceholder": "+221 00 000 00 00",
+      "preferredLabel": "Preferred Contact Method",
+      "continue": "Continue"
+    },
+    "review": {
+      "title": "Review & Submit",
+      "vehicleSection": "Vehicle",
+      "partSection": "Part",
+      "contactSection": "Contact",
+      "preferredSection": "Preferred Contact",
+      "edit": "Edit",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "errorGeneric": "Something went wrong while sending your request. Please try again."
+    },
+    "success": {
+      "title": "Request Sent Successfully",
+      "description": "Our team will review your request and get back to you shortly.",
+      "requestNumberLabel": "Request Number",
+      "whatsappCta": "Chat on WhatsApp",
+      "emailCta": "Send an Email",
+      "backHome": "Back to Home"
+    },
+    "common": {
+      "back": "Back",
+      "requiredField": "This field is required."
+    }
   },
   "sourceVehiclePage": {
     "title": "Request a Vehicle",
