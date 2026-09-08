@@ -1,26 +1,17 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { locales, defaultLocale, localeCookieName, type Locale } from '@/src/i18n/config'
+import { defaultLocale, localeCookieName } from '@/src/i18n/config'
 
-function detectLocale(request: NextRequest): Locale {
-  const acceptLanguage = request.headers.get('accept-language')
-  if (!acceptLanguage) return defaultLocale
-
-  const preferred = acceptLanguage
-    .split(',')
-    .map((part) => part.split(';')[0].trim().split('-')[0].toLowerCase())
-
-  const match = preferred.find((lang) => locales.includes(lang as Locale))
-  return (match as Locale | undefined) ?? defaultLocale
-}
-
+// French is the default locale for every visitor. We only ever set the
+// cookie once, on first visit; after that the user's own choice (via the
+// language switcher) or this default sticks until they change it again.
 export function proxy(request: NextRequest) {
   if (request.cookies.has(localeCookieName)) {
     return NextResponse.next()
   }
 
   const response = NextResponse.next()
-  response.cookies.set(localeCookieName, detectLocale(request), {
+  response.cookies.set(localeCookieName, defaultLocale, {
     path: '/',
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',

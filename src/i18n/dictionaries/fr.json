@@ -1,26 +1,132 @@
 {
   "meta": {
     "title": "Dakar Auto — Pièces Auto Authentiques Sur Demande",
-    "description": "Demandez des pièces auto par description ou VIN. Sans compte — nous vous recontactons avec la bonne pièce."
+    "description": "Entrez votre VIN, identifiez votre véhicule et envoyez votre demande de pièces auto. Sans compte, réponse rapide."
   },
   "header": {
     "siteName": "Dakar Auto",
     "nav": {
-      "home": "Accueil"
+      "home": "Accueil",
+      "parts": "Pièces",
+      "sourceVehicle": "Trouver un véhicule",
+      "about": "À propos",
+      "contact": "Contact"
     },
+    "quoteCta": "Demander un devis",
     "languageSwitcher": "Langue",
     "themeToggle": {
       "light": "Passer en mode clair",
       "dark": "Passer en mode sombre"
+    },
+    "menuOpen": "Ouvrir le menu",
+    "menuClose": "Fermer le menu"
+  },
+  "hero": {
+    "label": "PIÈCES FIABLES. PORTÉE MONDIALE.",
+    "headlineStart": "Trouvez ",
+    "headlineHighlight": "les bonnes pièces",
+    "headlineEnd": " pour votre véhicule",
+    "description": "Entrez votre VIN, identifiez votre véhicule et envoyez votre demande de pièces. Notre équipe s’occupe du reste.",
+    "vinLabel": "Numéro d'identification du véhicule (VIN)",
+    "vinPlaceholder": "Entrez votre VIN à 17 caractères",
+    "primaryCta": "Identifier mon véhicule",
+    "secondaryCta": "Scanner le VIN",
+    "helpLink": "Où trouver mon VIN ?",
+    "helpText": "Le VIN se trouve généralement sur le tableau de bord côté conducteur (visible à travers le pare-brise), sur le montant de la portière conducteur, ou sur votre carte grise."
+  },
+  "trust": {
+    "items": [
+      {
+        "title": "Pièces OEM et de qualité",
+        "description": "Sélectionnées pour leur fiabilité et leur compatibilité."
+      },
+      {
+        "title": "Recherche mondiale",
+        "description": "Nous sourçons auprès d’un réseau international de fournisseurs."
+      },
+      {
+        "title": "Service rapide",
+        "description": "Des réponses rapides pour vous remettre sur la route."
+      },
+      {
+        "title": "Assistance personnalisée",
+        "description": "Une équipe dédiée pour vous accompagner à chaque étape."
+      }
+    ]
+  },
+  "brands": {
+    "title": "Marques prises en charge",
+    "description": "Et bien d’autres constructeurs sur demande."
+  },
+  "categories": {
+    "title": "Pièces par catégorie",
+    "description": "Parcourez nos catégories pour démarrer votre demande.",
+    "items": [
+      { "key": "lighting", "title": "Éclairage", "description": "Phares, feux arrière et clignotants." },
+      { "key": "braking", "title": "Freinage", "description": "Plaquettes, disques et étriers de frein." },
+      { "key": "engine", "title": "Moteur", "description": "Pièces moteur et composants de performance." },
+      { "key": "suspension", "title": "Suspension", "description": "Amortisseurs, ressorts et bras de suspension." },
+      { "key": "body", "title": "Carrosserie", "description": "Pare-chocs, rétroviseurs et panneaux de carrosserie." },
+      { "key": "electrical", "title": "Électricité", "description": "Batteries, alternateurs et faisceaux électriques." },
+      { "key": "cooling", "title": "Refroidissement", "description": "Radiateurs, pompes à eau et ventilateurs." },
+      { "key": "interior", "title": "Intérieur", "description": "Sièges, garnitures et accessoires d’habitacle." },
+      { "key": "transmission", "title": "Transmission", "description": "Embrayages, boîtes de vitesses et composants associés." },
+      { "key": "filters", "title": "Filtres", "description": "Filtres à huile, à air et à carburant." }
+    ],
+    "cantFind": {
+      "title": "Vous ne trouvez pas votre pièce ?",
+      "description": "Décrivez-la dans votre demande.",
+      "cta": "Faire une demande"
     }
   },
-  "home": {
-    "heroTitle": "Trouvez la pièce dont votre voiture a besoin",
-    "heroSubtitle": "Envoyez-nous votre demande — sans compte requis. Nous vous recontactons avec la bonne pièce, sourcée et prête.",
-    "cta": "Demander une pièce"
+  "sourceVehicle": {
+    "title": "Vous recherchez un véhicule complet ?",
+    "description": "Nous pouvons vous aider à trouver et importer le véhicule que vous recherchez.",
+    "cta": "Demander un véhicule"
+  },
+  "howItWorks": {
+    "title": "Comment ça marche",
+    "description": "Un processus simple, sans création de compte.",
+    "steps": [
+      { "title": "VIN ou sélection manuelle", "description": "Renseignez votre VIN ou sélectionnez votre véhicule manuellement." },
+      { "title": "Choisissez votre pièce", "description": "Parcourez les catégories ou décrivez la pièce recherchée." },
+      { "title": "Envoyez votre demande", "description": "Aucune création de compte nécessaire." },
+      { "title": "Nous vous contactons", "description": "Notre équipe revient vers vous avec la bonne pièce." }
+    ]
+  },
+  "contact": {
+    "title": "Une question ? Contactez-nous",
+    "description": "Notre équipe est disponible pour vous accompagner.",
+    "whatsapp": { "label": "WhatsApp", "value": "Discuter sur WhatsApp" },
+    "email": { "label": "Email", "value": "contact@dakarauto.com" },
+    "phone": { "label": "Téléphone", "value": "+221 00 000 00 00" }
   },
   "footer": {
     "tagline": "Pièces auto authentiques, livrées sur demande.",
+    "navTitle": "Navigation",
+    "contactTitle": "Contact",
+    "legalTitle": "Légal",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d’utilisation",
     "rights": "Tous droits réservés."
+  },
+  "placeholder": {
+    "badge": "Bientôt disponible",
+    "backHome": "Retour à l’accueil"
+  },
+  "vehicleIdentifyPage": {
+    "title": "Identification du véhicule",
+    "description": "L’identification automatique par VIN arrive bientôt. En attendant, contactez-nous directement avec les informations de votre véhicule.",
+    "vinReceivedLabel": "VIN renseigné :"
+  },
+  "sourceVehiclePage": {
+    "title": "Demander un véhicule",
+    "description": "La demande de véhicule complet arrive bientôt. En attendant, contactez-nous directement pour nous indiquer le véhicule recherché."
+  },
+  "legal": {
+    "privacyTitle": "Politique de confidentialité",
+    "privacyBody": "Cette page sera bientôt disponible avec notre politique de confidentialité complète.",
+    "termsTitle": "Conditions d’utilisation",
+    "termsBody": "Cette page sera bientôt disponible avec nos conditions d’utilisation complètes."
   }
 }

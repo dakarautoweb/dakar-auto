@@ -1,26 +1,132 @@
 {
   "meta": {
     "title": "Dakar Auto — Genuine Auto Parts On Request",
-    "description": "Request auto parts by description or VIN. No account needed — we'll get back to you with the right part."
+    "description": "Enter your VIN, identify your vehicle, and send your auto parts request. No account needed, fast response."
   },
   "header": {
     "siteName": "Dakar Auto",
     "nav": {
-      "home": "Home"
+      "home": "Home",
+      "parts": "Parts",
+      "sourceVehicle": "Source a Vehicle",
+      "about": "About",
+      "contact": "Contact"
     },
+    "quoteCta": "Get a Quote",
     "languageSwitcher": "Language",
     "themeToggle": {
       "light": "Switch to light mode",
       "dark": "Switch to dark mode"
+    },
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "hero": {
+    "label": "RELIABLE PARTS. GLOBAL REACH.",
+    "headlineStart": "Find the ",
+    "headlineHighlight": "right parts",
+    "headlineEnd": " for your vehicle",
+    "description": "Enter your VIN, identify your vehicle, and send your parts request. Our team takes care of the rest.",
+    "vinLabel": "Vehicle Identification Number (VIN)",
+    "vinPlaceholder": "Enter your 17-character VIN",
+    "primaryCta": "Identify My Vehicle",
+    "secondaryCta": "Scan VIN",
+    "helpLink": "Where do I find my VIN?",
+    "helpText": "Your VIN is usually on the dashboard on the driver's side (visible through the windshield), on the driver-side door jamb, or on your vehicle registration document."
+  },
+  "trust": {
+    "items": [
+      {
+        "title": "OEM & Quality Parts",
+        "description": "Selected for reliability and fit."
+      },
+      {
+        "title": "Global Sourcing",
+        "description": "We source from a trusted international supplier network."
+      },
+      {
+        "title": "Fast Service",
+        "description": "Quick turnaround to get you back on the road."
+      },
+      {
+        "title": "Personal Assistance",
+        "description": "A dedicated team guiding you every step of the way."
+      }
+    ]
+  },
+  "brands": {
+    "title": "Brands We Support",
+    "description": "And many more manufacturers on request."
+  },
+  "categories": {
+    "title": "Parts by Category",
+    "description": "Browse our categories to start your request.",
+    "items": [
+      { "key": "lighting", "title": "Lighting", "description": "Headlights, taillights, and turn signals." },
+      { "key": "braking", "title": "Braking", "description": "Pads, rotors, and calipers." },
+      { "key": "engine", "title": "Engine", "description": "Engine parts and performance components." },
+      { "key": "suspension", "title": "Suspension", "description": "Shocks, springs, and control arms." },
+      { "key": "body", "title": "Body", "description": "Bumpers, mirrors, and body panels." },
+      { "key": "electrical", "title": "Electrical", "description": "Batteries, alternators, and wiring." },
+      { "key": "cooling", "title": "Cooling", "description": "Radiators, water pumps, and fans." },
+      { "key": "interior", "title": "Interior", "description": "Seats, trim, and cabin accessories." },
+      { "key": "transmission", "title": "Transmission", "description": "Clutches, gearboxes, and related components." },
+      { "key": "filters", "title": "Filters", "description": "Oil, air, and fuel filters." }
+    ],
+    "cantFind": {
+      "title": "Can't find your part?",
+      "description": "Describe it in your request.",
+      "cta": "Make a Request"
     }
   },
-  "home": {
-    "heroTitle": "Find the part your car needs",
-    "heroSubtitle": "Send us your request — no account required. We'll get back to you with the right part, sourced and ready.",
-    "cta": "Request a Part"
+  "sourceVehicle": {
+    "title": "Looking for a complete vehicle?",
+    "description": "We can help you find and import the vehicle you're looking for.",
+    "cta": "Request a Vehicle"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "description": "A simple process, no account required.",
+    "steps": [
+      { "title": "VIN or Manual Selection", "description": "Enter your VIN or select your vehicle manually." },
+      { "title": "Choose Your Part", "description": "Browse categories or describe the part you need." },
+      { "title": "Send Your Request", "description": "No account creation required." },
+      { "title": "We Contact You", "description": "Our team gets back to you with the right part." }
+    ]
+  },
+  "contact": {
+    "title": "Have a question? Contact us",
+    "description": "Our team is available to help.",
+    "whatsapp": { "label": "WhatsApp", "value": "Chat on WhatsApp" },
+    "email": { "label": "Email", "value": "contact@dakarauto.com" },
+    "phone": { "label": "Phone", "value": "+221 00 000 00 00" }
   },
   "footer": {
     "tagline": "Genuine auto parts, delivered on request.",
+    "navTitle": "Navigation",
+    "contactTitle": "Contact",
+    "legalTitle": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
     "rights": "All rights reserved."
+  },
+  "placeholder": {
+    "badge": "Coming soon",
+    "backHome": "Back to home"
+  },
+  "vehicleIdentifyPage": {
+    "title": "Vehicle Identification",
+    "description": "Automatic VIN identification is coming soon. In the meantime, contact us directly with your vehicle details.",
+    "vinReceivedLabel": "VIN provided:"
+  },
+  "sourceVehiclePage": {
+    "title": "Request a Vehicle",
+    "description": "Full vehicle requests are coming soon. In the meantime, contact us directly to tell us which vehicle you're looking for."
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "privacyBody": "This page will be available soon with our full privacy policy.",
+    "termsTitle": "Terms of Service",
+    "termsBody": "This page will be available soon with our full terms of service."
   }
 }
