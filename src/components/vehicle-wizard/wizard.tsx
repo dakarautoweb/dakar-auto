@@ -30,6 +30,7 @@ export function VehicleWizard({
   const [step, setStep] = useState<WizardStep>('vehicle')
   const [vehicleMode, setVehicleMode] = useState<'vin' | 'manual'>('vin')
   const [scanOpen, setScanOpen] = useState(Boolean(initialScanOpen))
+  const [scannedVin, setScannedVin] = useState<string | null>(null)
   const [vehicle, setVehicle] = useState<ConfirmedVehicle | null>(null)
 
   const [categoryChoice, setCategoryChoice] = useState<string | null>(null)
@@ -110,6 +111,7 @@ export function VehicleWizard({
           <VinStep
             dict={dict}
             initialVin={initialVin}
+            scannedVin={scannedVin}
             onVehicleConfirmed={handleVehicleConfirmed}
             onManual={() => setVehicleMode('manual')}
             onScan={() => setScanOpen(true)}
@@ -169,6 +171,7 @@ export function VehicleWizard({
             setScanOpen(false)
             setVehicleMode('manual')
           }}
+          onVinDetected={setScannedVin}
         />
       )}
     </div>

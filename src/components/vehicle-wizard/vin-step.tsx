@@ -12,12 +12,14 @@ import { VehicleResultCard } from './vehicle-result-card'
 export function VinStep({
   dict,
   initialVin,
+  scannedVin,
   onVehicleConfirmed,
   onManual,
   onScan,
 }: {
   dict: Dictionary
   initialVin?: string
+  scannedVin?: string | null
   onVehicleConfirmed: (vehicle: ConfirmedVehicle) => void
   onManual: () => void
   onScan: () => void
@@ -26,6 +28,18 @@ export function VinStep({
   const [result, setResult] = useState<VinLookupResult | null>(null)
   const [isPending, startTransition] = useTransition()
   const autoSubmitted = useRef(false)
+  const [appliedScannedVin, setAppliedScannedVin] = useState<string | null | undefined>(scannedVin)
+
+  // A scan populates the field for review — it never auto-submits. The
+  // user still has to press "Identify Vehicle" themselves, same as typing
+  // it by hand. Adjusting state during render (rather than in an effect)
+  // is React's own recommended pattern for "sync local state to a changed
+  // prop" — see https://react.dev/learn/you-might-not-need-an-effect.
+  if (scannedVin && scannedVin !== appliedScannedVin) {
+    setAppliedScannedVin(scannedVin)
+    setVin(normalizeVin(scannedVin))
+    setResult(null)
+  }
 
   function runLookup(value: string) {
     startTransition(async () => {
