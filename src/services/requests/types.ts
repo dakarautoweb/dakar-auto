@@ -1,5 +1,7 @@
 // Pure types only — safe to import from both server and client code.
 
+import type { FinalizedAttachmentResult } from '@/src/services/attachments/types'
+
 export type PartSide = 'left' | 'right' | 'both'
 export type PartCondition = 'oem' | 'aftermarket' | 'used' | 'no_preference'
 export type PreferredContact = 'whatsapp' | 'phone' | 'email'
@@ -48,5 +50,5 @@ export type SubmitPartsRequestInput = {
 }
 
 export type SubmitPartsRequestResult =
-  | { ok: true; requestNumber: string }
-  | { ok: false; error: 'validation' | 'server_error'; message?: string }
+  | { ok: true; requestNumber: string; trackingToken: string; attachments?: FinalizedAttachmentResult[] }
+  | { ok: false; error: 'validation' | 'server_error' | 'turnstile'; message?: string }

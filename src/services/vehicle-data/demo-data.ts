@@ -1,21 +1,11 @@
 // Small local dataset powering manual vehicle selection. Not exhaustive by
 // design — swap for a real API-backed lookup later without changing the
-// shape (make -> models) that the UI depends on.
-
-export const VEHICLE_MAKES = [
-  'Toyota',
-  'Honda',
-  'BMW',
-  'Mercedes-Benz',
-  'Audi',
-  'Ford',
-  'Nissan',
-  'Hyundai',
-  'Volkswagen',
-  'Renault',
-  'Peugeot',
-  'Citroën',
-] as const
+// shape (make -> models) that the UI depends on. The make list itself now
+// lives in src/lib/vehicle-brands.ts (every brand we have a logo for, used
+// by ManualVehicleForm's BrandSelect) — only a make -> models lookup for a
+// subset of those brands lives here; getModelsForMake() returning [] for
+// any other brand is expected and handled by the caller (free-text model
+// input instead of a dropdown with no options).
 
 export const VEHICLE_MODELS_BY_MAKE: Record<string, readonly string[]> = {
   Toyota: ['Corolla', 'Camry', 'RAV4', 'Hilux', 'Land Cruiser'],

@@ -2,13 +2,21 @@
 
 import { after } from 'next/server'
 import { sendVehicleRequestEmails } from '@/src/services/email'
+import { buildTrackingUrl } from '@/src/lib/contact-info'
+import { verifyTurnstileToken } from '@/src/services/turnstile/verify'
 import { createVehicleRequestRecord } from './create-request'
 import { validateSubmitVehicleRequestInput } from './validate'
 import type { SubmitVehicleRequestInput, SubmitVehicleRequestResult } from './types'
 
 export async function submitVehicleRequestAction(
-  input: SubmitVehicleRequestInput
+  input: SubmitVehicleRequestInput,
+  turnstileToken?: string
 ): Promise<SubmitVehicleRequestResult> {
+  const turnstileResult = await verifyTurnstileToken(turnstileToken)
+  if (!turnstileResult.ok) {
+    return { ok: false, error: 'turnstile', message: turnstileResult.reason }
+  }
+
   const validationError = validateSubmitVehicleRequestInput(input)
   if (validationError) {
     return { ok: false, error: 'validation', message: validationError }
@@ -24,6 +32,7 @@ export async function submitVehicleRequestAction(
       try {
         await sendVehicleRequestEmails({
           requestNumber: created.requestNumber,
+          trackingUrl: buildTrackingUrl(created.trackingToken),
           locale: input.locale,
           submittedAt: new Date(),
           vehicle: { ...input.vehicle },
@@ -43,7 +52,7 @@ export async function submitVehicleRequestAction(
       }
     })
 
-    return { ok: true, requestNumber: created.requestNumber }
+    return { ok: true, requestNumber: created.requestNumber, trackingToken: created.trackingToken }
   } catch {
     return { ok: false, error: 'server_error' }
   }

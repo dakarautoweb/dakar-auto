@@ -1,3 +1,4 @@
+import { Clock } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import type { StatusHistoryEntry } from '@/src/services/admin/queries'
 import { statusLabel } from './status-badge'
@@ -20,7 +21,13 @@ export function StatusHistoryList({
   const t = dict.admin.detail
 
   if (entries.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t.historyEmpty}</p>
+    return (
+      <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border py-8 text-center">
+        <Clock className="h-6 w-6 text-muted-foreground" strokeWidth={1.75} />
+        <p className="text-sm font-medium text-foreground">{t.historyEmpty}</p>
+        <p className="text-xs text-muted-foreground">{t.historyEmptyDescription}</p>
+      </div>
+    )
   }
 
   return (

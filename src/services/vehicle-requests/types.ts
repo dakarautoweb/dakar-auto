@@ -35,5 +35,5 @@ export type SubmitVehicleRequestInput = {
 }
 
 export type SubmitVehicleRequestResult =
-  | { ok: true; requestNumber: string }
-  | { ok: false; error: 'validation' | 'server_error'; message?: string }
+  | { ok: true; requestNumber: string; trackingToken: string }
+  | { ok: false; error: 'validation' | 'server_error' | 'turnstile'; message?: string }

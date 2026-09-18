@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
+import { buttonClasses, cardClasses, inputClass } from '@/src/components/ui/styles'
+import { NotesIcon, PriceTagIcon } from '@/src/components/home/icons'
+import { FieldLabel } from './field-label'
 import type { BudgetFormState } from './types'
-
-const inputClass =
-  'w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30'
 
 const CURRENCIES = ['XOF', 'EUR', 'USD', 'CAD']
 
@@ -37,16 +37,16 @@ export function BudgetStep({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-surface/60 p-6 shadow-md sm:p-8">
+    <form onSubmit={handleSubmit} className={cardClasses()}>
       <h2 className="text-xl font-bold tracking-tight">{t.title}</h2>
       <p className="mt-1.5 text-sm text-muted-foreground">{t.description}</p>
 
       <div className="mt-6 space-y-5">
         <div className="grid gap-5 sm:grid-cols-3">
           <div>
-            <label htmlFor="vr-budget-min" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={PriceTagIcon} htmlFor="vr-budget-min">
               {t.budgetMinLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-budget-min"
               type="number"
@@ -58,9 +58,9 @@ export function BudgetStep({
             />
           </div>
           <div>
-            <label htmlFor="vr-budget-max" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={PriceTagIcon} htmlFor="vr-budget-max">
               {t.budgetMaxLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-budget-max"
               type="number"
@@ -86,9 +86,9 @@ export function BudgetStep({
         </div>
 
         <div>
-          <label htmlFor="vr-other-preferences" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+          <FieldLabel icon={NotesIcon} htmlFor="vr-other-preferences">
             {t.otherPreferencesLabel}
-          </label>
+          </FieldLabel>
           <textarea
             id="vr-other-preferences"
             value={otherPreferences}
@@ -101,17 +101,10 @@ export function BudgetStep({
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          type="submit"
-          className="inline-flex items-center justify-center rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
-        >
+        <button type="submit" className={buttonClasses({ variant: 'primary' })}>
           {t.continue}
         </button>
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent"
-        >
+        <button type="button" onClick={onBack} className={buttonClasses({ variant: 'secondary-muted' })}>
           {dict.wizard.common.back}
         </button>
       </div>

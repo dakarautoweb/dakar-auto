@@ -2,9 +2,13 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check, AlertCircle, Send } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { REQUEST_STATUSES } from '@/src/services/admin/statuses'
 import { updateRequestStatusAction } from '@/src/services/admin/actions'
+import { buttonClasses, inputClass } from '@/src/components/ui/styles'
+import { STATUS_ICONS, STATUS_ICON_CHIP_CLASSES } from '@/src/components/admin/status-badge'
+import { StatusSelect } from '@/src/components/admin/status-select'
 
 export function StatusUpdater({
   dict,
@@ -38,17 +42,21 @@ export function StatusUpdater({
 
   return (
     <div className="space-y-3">
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
-      >
-        {REQUEST_STATUSES.map((s) => (
-          <option key={s} value={s}>
-            {(dict.admin.statuses as Record<string, string>)[s]}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label htmlFor="parts-status-select" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+          {t.statusUpdateNewStatusLabel}
+        </label>
+        <StatusSelect
+          id="parts-status-select"
+          value={status}
+          onChange={setStatus}
+          statuses={REQUEST_STATUSES}
+          labels={dict.admin.statuses as Record<string, string>}
+          icons={STATUS_ICONS}
+          chipClasses={STATUS_ICON_CHIP_CLASSES}
+          ariaLabel={t.statusUpdateNewStatusLabel}
+        />
+      </div>
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-muted-foreground">{t.statusUpdateNoteLabel}</label>
@@ -57,21 +65,32 @@ export function StatusUpdater({
           onChange={(e) => setNote(e.target.value)}
           placeholder={t.statusUpdateNotePlaceholder}
           rows={3}
-          className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+          className={inputClass}
         />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="space-y-2.5">
         <button
           type="button"
           onClick={handleSubmit}
           disabled={pending || status === currentStatus}
-          className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className={buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true, className: 'gap-2' })}
         >
+          <Send className="h-4 w-4" strokeWidth={2} />
           {pending ? t.statusUpdateSubmitting : t.statusUpdateSubmit}
         </button>
-        {feedback === 'success' && <span className="text-sm text-emerald-600 dark:text-emerald-400">{t.statusUpdateSuccess}</span>}
-        {feedback === 'error' && <span className="text-sm text-red-600 dark:text-red-400">{t.statusUpdateError}</span>}
+        {feedback === 'success' && (
+          <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <Check className="h-4 w-4" strokeWidth={2} />
+            {t.statusUpdateSuccess}
+          </span>
+        )}
+        {feedback === 'error' && (
+          <span className="flex items-center gap-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+            <AlertCircle className="h-4 w-4" strokeWidth={2} />
+            {t.statusUpdateError}
+          </span>
+        )}
       </div>
     </div>
   )

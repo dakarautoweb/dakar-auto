@@ -8,9 +8,12 @@ let bucketEnsured = false
 
 // Idempotent, lazy bucket provisioning: creates the private attachments
 // bucket the first time it's needed and remembers that for the life of
-// this server instance. The bucket is never made public — every read or
-// write goes through server code using the service role key, never the
-// browser directly.
+// this server instance. The bucket is never made public and carries no
+// storage RLS policies — reads always go through server code using the
+// service role key (createSignedAttachmentUrls), and writes go directly
+// from the browser to Storage using a short-lived, server-issued, path-
+// scoped signed upload URL (see request-upload-url.ts) rather than
+// proxying bytes through the Next.js server.
 export async function ensurePartsRequestAttachmentsBucket(): Promise<void> {
   if (bucketEnsured) return
 

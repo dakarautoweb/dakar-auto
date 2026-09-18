@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { buttonClasses } from '@/src/components/ui/styles'
 
 export function PlaceholderPage({
   badge,
@@ -22,10 +23,7 @@ export function PlaceholderPage({
       <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
       <p className="mt-4 text-muted-foreground">{description}</p>
       {children}
-      <Link
-        href="/"
-        className="mt-8 inline-flex items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold transition hover:border-accent hover:text-accent"
-      >
+      <Link href="/" className={buttonClasses({ variant: 'secondary', pill: true, className: 'mt-8 font-semibold' })}>
         {backLabel}
       </Link>
     </div>

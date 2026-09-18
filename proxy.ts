@@ -30,7 +30,12 @@ export async function proxy(request: NextRequest) {
     // layout, as recommended for Proxy-based auth.
     const { response, user } = await refreshSupabaseSession(request)
 
-    if (!user && pathname !== '/admin/login') {
+    // /admin/reset-password must stay reachable without a session: the
+    // Supabase recovery link lands there via /auth/callback, which sets the
+    // session cookie on its own redirect response — but an expired/invalid
+    // link must still render that page's own "invalid link" state instead
+    // of being bounced to /admin/login first.
+    if (!user && pathname !== '/admin/login' && pathname !== '/admin/reset-password') {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 

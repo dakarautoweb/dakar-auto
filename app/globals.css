@@ -3,36 +3,132 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #f8fafc;
-  --border: #e2e8f0;
-  --muted-foreground: #64748b;
-  --accent: #1d4ed8;
+  /* Warm ivory canvas, not a cool blue-gray SaaS white — elevated content
+     (--card) sits on top of it in a warm near-white, which is what
+     actually separates cards from the page without leaning on borders
+     alone. Every neutral in this theme (background/surface/card/border/
+     muted-foreground/foreground) is warm-toned on purpose, to read as the
+     same premium automotive product as the dark theme rather than a
+     generic light-mode fallback. */
+  --background: #f7f4ee;
+  --foreground: #221d16;
+  /* Sunken/banded section tone (alternating homepage sections, table
+     headers, chip backgrounds) — one step darker than --background. */
+  --surface: #efe8dc;
+  /* Elevated card surface — warm near-white, paired with --card-shadow. */
+  --card: #fffdf9;
+  --border: #e6dcc9;
+  --muted-foreground: #6b6154;
+  /* Brand accent is warm orange in both themes (premium automotive, not
+     generic SaaS blue) — light theme darkens hover slightly for contrast
+     against the off-white page instead of reusing the dark theme's pale
+     hover tint verbatim. */
+  --accent: #f97316;
+  --accent-hover: #ea580c;
   --accent-foreground: #ffffff;
-  --accent-soft: rgba(29, 78, 216, 0.08);
+  --accent-soft: rgba(249, 115, 22, 0.09);
+
+  /* Light theme leans on real, visible shadows for elevation (see task:
+     cards must visually separate from the off-white page) — warm-tinted
+     (brown, not slate) so they read as a soft cast shadow, not a cool
+     SaaS drop-shadow. */
+  --card-shadow: 0 1px 2px 0 rgba(38, 30, 15, 0.05), 0 10px 26px -6px rgba(38, 30, 15, 0.09);
+  --card-shadow-hover: 0 6px 14px -4px rgba(38, 30, 15, 0.08), 0 18px 36px -8px rgba(38, 30, 15, 0.14);
+  --glow-shadow: 0 0 0 1px rgba(249, 115, 22, 0.18), 0 0 18px rgba(249, 115, 22, 0.12);
+
+  /* Restrained warm accent — premium emphasis only (featured tiles, success
+     moments, premium CTA panels), never a default replacement for --accent. */
+  --accent-gold: #b8862c;
+  --accent-gold-foreground: #2a1c05;
+  --accent-gold-soft: rgba(184, 134, 44, 0.12);
+  /* World-map glow, "Trouver un véhicule" hero (hero-map-overlay.tsx) —
+     a sparse dot pattern reads as much fainter against this theme's pale
+     sky-blue photo than the same color would against the dark theme's
+     near-black one, so it needs its own richer, more saturated tone
+     here rather than sharing --accent-gold verbatim. */
+  --hero-map-glow: #a8560a;
+  --glow-shadow-gold: 0 0 0 1px rgba(184, 134, 44, 0.18), 0 0 18px rgba(184, 134, 44, 0.12);
+
+  /* Light theme has no fourth depth level — --card already reads as
+     "raised" against --background via shadow alone. */
+  --surface-raised: var(--card);
+
+  /* Header chrome is permanently dark graphite in both themes — a
+     deliberate exception to "only colors/surfaces change between themes".
+     The real brand logo (public/brand/dakar-auto-logo.png) is a single
+     light-on-dark lockup with no light-theme variant provided; a
+     theme-reactive light header would make it unreadable. Defined once,
+     unconditionally (not inside .dark), so it never swaps. */
+  --header-bg: #0b0b0c;
+  --header-border: #2a2a31;
+  --header-foreground: #f5f5f5;
+  --header-muted: #b8b8c2;
 }
 
 .dark {
-  --background: #05070f;
-  --foreground: #e5eaf3;
-  --surface: #0d1220;
-  --border: #1e2636;
-  --muted-foreground: #93a0b8;
-  --accent: #4f8bff;
+  /* Premium automotive showroom palette: dark graphite/black, never navy —
+     warm orange is the only accent hue, used sparingly (CTAs, active steps,
+     selected states, hover borders, icon highlights, badges). */
+  --background: #0b0b0c;
+  --surface: #141416;
+  /* A hair lighter than --surface — real content cards read as distinctly
+     "raised" even next to sunken chrome (sidebar, table headers) that
+     shares the --surface tone. */
+  --card: #1b1b1f;
+  --foreground: #f5f5f5;
+  --border: #2a2a31;
+  --muted-foreground: #b8b8c2;
+  --accent: #f97316;
+  --accent-hover: #fb923c;
   --accent-foreground: #ffffff;
-  --accent-soft: rgba(79, 139, 255, 0.14);
+  --accent-soft: rgba(249, 115, 22, 0.14);
+
+  /* Dark theme leans on border + tone-separation, not heavy shadows —
+     just enough shadow for depth, never a black smear. */
+  --card-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.55);
+  --card-shadow-hover: 0 10px 28px -8px rgba(0, 0, 0, 0.65);
+  --glow-shadow: 0 0 0 1px rgba(249, 115, 22, 0.35), 0 0 22px rgba(249, 115, 22, 0.22);
+
+  /* Secondary warm tone (bronze/gold) — kept distinct from the orange
+     accent for card variety (e.g. alternating category tiles) without
+     reintroducing blue. Restrained emphasis only, per the existing
+     convention (see styles.ts). */
+  --accent-gold: #d9a441;
+  --accent-gold-foreground: #241a04;
+  --accent-gold-soft: rgba(217, 164, 65, 0.14);
+  /* See --hero-map-glow in :root — brighter than --accent-gold here too,
+     for a punchier premium glow against this theme's near-black sky. */
+  --hero-map-glow: #ffc266;
+  --glow-shadow-gold: 0 0 0 1px rgba(217, 164, 65, 0.4), 0 0 22px rgba(217, 164, 65, 0.2);
+
+  /* Fourth depth level, a hair lighter than --card — for hero/CTA panels
+     that should read as "raised chrome" rather than a literal content card. */
+  --surface-raised: #1f1f23;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-card: var(--card);
   --color-border: var(--border);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-foreground: var(--accent-gold-foreground);
+  --color-accent-gold-soft: var(--accent-gold-soft);
+  --color-surface-raised: var(--surface-raised);
+  --color-header-bg: var(--header-bg);
+  --color-header-border: var(--header-border);
+  --color-header-foreground: var(--header-foreground);
+  --color-header-muted: var(--header-muted);
+  --shadow-card: var(--card-shadow);
+  --shadow-card-hover: var(--card-shadow-hover);
+  --shadow-glow: var(--glow-shadow);
+  --shadow-glow-gold: var(--glow-shadow-gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -41,13 +137,128 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Restrained reveal for content that swaps in place (VIN result panel,
+   subcategory grid) — respects prefers-reduced-motion via the global rule
+   below, which zeroes every animation-duration. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slow, restrained "in progress" ring for the active step badge (vehicle
+   request wizard) — a partial arc that continuously rotates around the
+   step number, distinct from a loading spinner via the slow 3.2s duration
+   and low opacity (see progress-steps.tsx). */
+@keyframes step-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Per-continent glow, "Trouver un véhicule" hero (see hero-map-overlay.tsx)
+   — a sliding window of 3 continents always visible, not a single one at
+   a time. Every continent's <g> uses this same keyframe, offset only via
+   a negative animation-delay one STEP (1/5 of the cycle) apart, on a
+   deliberately long 24s cycle (see CYCLE_SECONDS there) — a 15%-of-cycle
+   fade is 3.6s, slow enough to read as a soft, continuous breathing glow
+   rather than a switch. The "on" portion (15%–45% hold, fading in/out on
+   either side) spans 60% of the cycle — three step-intervals — so at any
+   instant exactly three consecutive continents are mid-hold: as the
+   oldest of the three starts fading out (past the 45% hold mark), the
+   next new one is already rising (past its own 0% mark), never a moment
+   with fewer than three lit, never a hard on/off switch. Opacity only —
+   the shape itself comes from each continent's own mask, so there's no
+   transform to fight a centering translate over. */
+@keyframes map-region-glow {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15%,
+  45% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+}
+
+/* Contact card border tracer (see contact-section.tsx BorderTracer) — an
+   actual traced SVG rect path, not a conic-gradient mask (which visibly
+   skews on a non-square box and can appear to detach from the shape). A
+   short dash decreases its stroke-dashoffset to travel forward along the
+   path — clockwise, since an SVG rect's implicit path direction always
+   runs top→right→bottom→left. */
+@keyframes contact-border-tracer {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  /* Fallback for browsers without the View Transitions API (see
+     src/lib/view-transition.ts) — still a soft crossfade instead of an
+     instant snap when the theme class toggles. */
+  transition: background-color 450ms ease, color 450ms ease;
 }
 
 ::selection {
   background: var(--accent);
   color: var(--accent-foreground);
+}
+
+/* Theme toggle and language switch both wrap their update in
+   document.startViewTransition() (src/lib/view-transition.ts). Overriding
+   the browser's default opacity-only crossfade with an explicit
+   fade+soft-blur on the outgoing snapshot and a fade+unblur on the
+   incoming one — closer to "old text softly blurs away, new text reveals
+   in" than a flat cut. Skipped entirely (see the JS feature/preference
+   check) rather than relied on for reduced-motion, since these
+   pseudo-elements live outside the normal DOM tree and aren't reached by
+   the `*` rule below. */
+@keyframes vt-old-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+@keyframes vt-new-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+::view-transition-old(root) {
+  animation: 420ms ease both vt-old-out;
+}
+::view-transition-new(root) {
+  animation: 420ms ease both vt-new-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

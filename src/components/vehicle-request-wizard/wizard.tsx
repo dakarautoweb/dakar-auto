@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { submitVehicleRequestAction } from '@/src/services/vehicle-requests/actions'
 import { ContactStep } from '@/src/components/vehicle-wizard/contact-step'
 import type { ContactFormState } from '@/src/components/vehicle-wizard/types'
+import { TurnstileWidget, type TurnstileWidgetHandle } from '@/src/components/turnstile-widget'
 import { ProgressSteps } from './progress-steps'
 import { VehicleStep } from './vehicle-step'
 import { BudgetStep } from './budget-step'
@@ -42,6 +43,9 @@ export function VehicleRequestWizard({ dict, locale }: { dict: Dictionary; local
   const [submitting, startSubmit] = useTransition()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [requestNumber, setRequestNumber] = useState<string | null>(null)
+  const [trackingToken, setTrackingToken] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
 
   function handleVehicleContinue(newVehicle: VehicleWantedFormState) {
     setVehicle(newVehicle)
@@ -63,40 +67,51 @@ export function VehicleRequestWizard({ dict, locale }: { dict: Dictionary; local
   }
 
   function handleSubmit() {
-    if (!contact) return
+    if (!contact || !turnstileToken) return
     setSubmitError(null)
     startSubmit(async () => {
-      const result = await submitVehicleRequestAction({
-        vehicle: {
-          make: vehicle.make,
-          model: vehicle.model,
-          yearFrom: parseOptionalInt(vehicle.yearFrom),
-          yearTo: parseOptionalInt(vehicle.yearTo),
-          color: vehicle.color,
-          engine: vehicle.engine,
-          transmission: vehicle.transmission,
-          mileageMin: parseOptionalInt(vehicle.mileageMin),
-          mileageMax: parseOptionalInt(vehicle.mileageMax),
-          trimLevel: vehicle.trimLevel,
-          budgetMin: parseOptionalFloat(budget.budgetMin),
-          budgetMax: parseOptionalFloat(budget.budgetMax),
-          currency: budget.currency,
-          otherPreferences: budget.otherPreferences,
+      const result = await submitVehicleRequestAction(
+        {
+          vehicle: {
+            make: vehicle.make,
+            model: vehicle.model,
+            yearFrom: parseOptionalInt(vehicle.yearFrom),
+            yearTo: parseOptionalInt(vehicle.yearTo),
+            color: vehicle.color,
+            engine: vehicle.engine,
+            transmission: vehicle.transmission,
+            mileageMin: parseOptionalInt(vehicle.mileageMin),
+            mileageMax: parseOptionalInt(vehicle.mileageMax),
+            trimLevel: vehicle.trimLevel,
+            budgetMin: parseOptionalFloat(budget.budgetMin),
+            budgetMax: parseOptionalFloat(budget.budgetMax),
+            currency: budget.currency,
+            otherPreferences: budget.otherPreferences,
+          },
+          contact,
+          locale,
         },
-        contact,
-        locale,
-      })
+        turnstileToken
+      )
 
       if (result.ok) {
         setRequestNumber(result.requestNumber)
+        setTrackingToken(result.trackingToken)
+        return
+      }
+
+      if (result.error === 'turnstile') {
+        setSubmitError(result.message === 'missing_token' ? dict.turnstile.required : dict.turnstile.failed)
       } else {
         setSubmitError(dict.vehicleRequestWizard.review.errorGeneric)
       }
+      setTurnstileToken('')
+      turnstileRef.current?.reset()
     })
   }
 
-  if (requestNumber) {
-    return <SuccessStep dict={dict} requestNumber={requestNumber} vehicle={vehicle} />
+  if (requestNumber && trackingToken) {
+    return <SuccessStep dict={dict} requestNumber={requestNumber} trackingToken={trackingToken} vehicle={vehicle} />
   }
 
   return (
@@ -127,6 +142,8 @@ export function VehicleRequestWizard({ dict, locale }: { dict: Dictionary; local
             contact={contact}
             submitting={submitting}
             submitError={submitError}
+            turnstileToken={turnstileToken}
+            turnstileWidget={<TurnstileWidget dict={dict} ref={turnstileRef} onToken={setTurnstileToken} />}
             onEdit={handleEdit}
             onSubmit={handleSubmit}
           />

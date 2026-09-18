@@ -10,7 +10,8 @@
       "parts": "Pièces",
       "sourceVehicle": "Trouver un véhicule",
       "about": "À propos",
-      "contact": "Contact"
+      "contact": "Contact",
+      "track": "Suivre une demande"
     },
     "quoteCta": "Demander un devis",
     "languageSwitcher": "Langue",
@@ -32,7 +33,19 @@
     "primaryCta": "Identifier mon véhicule",
     "secondaryCta": "Scanner le VIN",
     "helpLink": "Où trouver mon VIN ?",
-    "helpText": "Le VIN se trouve généralement sur le tableau de bord côté conducteur (visible à travers le pare-brise), sur le montant de la portière conducteur, ou sur votre carte grise."
+    "helpText": "Le VIN se trouve généralement sur le tableau de bord côté conducteur (visible à travers le pare-brise), sur le montant de la portière conducteur, ou sur votre carte grise.",
+    "features": {
+      "identify": { "title": "Identifier le véhicule", "description": "Décodez votre VIN en quelques secondes." },
+      "browse": { "title": "Parcourir les pièces", "description": "Dix catégories, tous les systèmes couverts." },
+      "submit": { "title": "Envoyer une demande", "description": "Aucun compte requis." },
+      "track": { "title": "Suivre la demande", "description": "Statut en direct sur votre propre lien." }
+    },
+    "vehiclePanel": {
+      "title": "Besoin d'un véhicule complet ?",
+      "description": "Nous sourçons et expédions des véhicules dans le monde entier.",
+      "cta": "Lancer la recherche"
+    },
+    "caption": "Pièces de qualité. Service fiable."
   },
   "trust": {
     "items": [
@@ -59,25 +72,189 @@
     "description": "Et bien d’autres constructeurs sur demande."
   },
   "categories": {
-    "title": "Pièces par catégorie",
+    "eyebrow": "Explorer",
+    "title": "Parcourir par catégorie",
     "description": "Parcourez nos catégories pour démarrer votre demande.",
     "items": [
-      { "key": "lighting", "title": "Éclairage", "description": "Phares, feux arrière et clignotants." },
-      { "key": "braking", "title": "Freinage", "description": "Plaquettes, disques et étriers de frein." },
-      { "key": "engine", "title": "Moteur", "description": "Pièces moteur et composants de performance." },
-      { "key": "suspension", "title": "Suspension", "description": "Amortisseurs, ressorts et bras de suspension." },
-      { "key": "body", "title": "Carrosserie", "description": "Pare-chocs, rétroviseurs et panneaux de carrosserie." },
-      { "key": "electrical", "title": "Électricité", "description": "Batteries, alternateurs et faisceaux électriques." },
-      { "key": "cooling", "title": "Refroidissement", "description": "Radiateurs, pompes à eau et ventilateurs." },
-      { "key": "interior", "title": "Intérieur", "description": "Sièges, garnitures et accessoires d’habitacle." },
-      { "key": "transmission", "title": "Transmission", "description": "Embrayages, boîtes de vitesses et composants associés." },
-      { "key": "filters", "title": "Filtres", "description": "Filtres à huile, à air et à carburant." }
+      {
+        "key": "lighting",
+        "title": "Éclairage",
+        "description": "Phares, feux arrière et clignotants.",
+        "subcategories": [
+          { "key": "headlights", "title": "Phares" },
+          { "key": "taillights", "title": "Feux arrière" },
+          { "key": "fog-lights", "title": "Antibrouillards" },
+          { "key": "turn-signals", "title": "Clignotants" },
+          { "key": "bulbs", "title": "Ampoules" },
+          { "key": "led-modules", "title": "Modules LED" },
+          { "key": "light-control-modules", "title": "Modules de commande d’éclairage" },
+          { "key": "license-plate-lights", "title": "Éclairage de plaque" }
+        ]
+      },
+      {
+        "key": "braking",
+        "title": "Freinage",
+        "description": "Plaquettes, disques et étriers de frein.",
+        "subcategories": [
+          { "key": "brake-pads", "title": "Plaquettes de frein" },
+          { "key": "brake-rotors", "title": "Disques de frein" },
+          { "key": "brake-calipers", "title": "Étriers de frein" },
+          { "key": "brake-hoses", "title": "Flexibles / durites de frein" },
+          { "key": "abs-sensors", "title": "Capteurs ABS" },
+          { "key": "master-cylinder", "title": "Maître-cylindre" },
+          { "key": "brake-booster", "title": "Servofrein" },
+          { "key": "parking-brake", "title": "Pièces de frein à main" },
+          { "key": "brake-fluid-hardware", "title": "Liquide de frein / accessoires" }
+        ]
+      },
+      {
+        "key": "engine",
+        "title": "Moteur",
+        "description": "Pièces moteur et composants de performance.",
+        "subcategories": [
+          { "key": "engine-assembly", "title": "Bloc moteur" },
+          { "key": "timing-parts", "title": "Pièces de distribution" },
+          { "key": "belts-tensioners", "title": "Courroies et tendeurs" },
+          { "key": "gaskets-seals", "title": "Joints" },
+          { "key": "engine-mounts", "title": "Supports moteur" },
+          { "key": "fuel-system-parts", "title": "Système d’alimentation" },
+          { "key": "ignition-parts", "title": "Pièces d’allumage" },
+          { "key": "engine-sensors", "title": "Capteurs moteur" },
+          { "key": "oil-system-parts", "title": "Circuit de lubrification" }
+        ]
+      },
+      {
+        "key": "suspension",
+        "title": "Suspension",
+        "description": "Amortisseurs, ressorts et bras de suspension.",
+        "subcategories": [
+          { "key": "shock-absorbers", "title": "Amortisseurs" },
+          { "key": "struts", "title": "Jambes de force" },
+          { "key": "springs", "title": "Ressorts" },
+          { "key": "control-arms", "title": "Bras de suspension" },
+          { "key": "ball-joints", "title": "Rotules" },
+          { "key": "bushings", "title": "Silentblocs" },
+          { "key": "tie-rods", "title": "Biellettes de direction" },
+          { "key": "stabilizer-links", "title": "Biellettes de barre stabilisatrice" },
+          { "key": "wheel-hubs-bearings", "title": "Moyeux / roulements de roue" }
+        ]
+      },
+      {
+        "key": "body",
+        "title": "Carrosserie",
+        "description": "Pare-chocs, rétroviseurs et panneaux de carrosserie.",
+        "subcategories": [
+          { "key": "front-bumper", "title": "Pare-chocs avant" },
+          { "key": "rear-bumper", "title": "Pare-chocs arrière" },
+          { "key": "fenders", "title": "Ailes" },
+          { "key": "hood", "title": "Capot" },
+          { "key": "doors", "title": "Portières" },
+          { "key": "mirrors", "title": "Rétroviseurs" },
+          { "key": "grilles", "title": "Calandres" },
+          { "key": "trunk-tailgate", "title": "Coffre / hayon" },
+          { "key": "body-trim", "title": "Garnitures de carrosserie" }
+        ]
+      },
+      {
+        "key": "electrical",
+        "title": "Électricité",
+        "description": "Batteries, alternateurs et faisceaux électriques.",
+        "subcategories": [
+          { "key": "battery", "title": "Batterie" },
+          { "key": "alternator", "title": "Alternateur" },
+          { "key": "starter", "title": "Démarreur" },
+          { "key": "wiring-harnesses", "title": "Câblage / faisceaux" },
+          { "key": "fuses-relays", "title": "Fusibles et relais" },
+          { "key": "switches", "title": "Interrupteurs" },
+          { "key": "sensors", "title": "Capteurs" },
+          { "key": "control-modules", "title": "Modules de commande" },
+          { "key": "horns", "title": "Avertisseurs sonores" }
+        ]
+      },
+      {
+        "key": "cooling",
+        "title": "Refroidissement",
+        "description": "Radiateurs, pompes à eau et ventilateurs.",
+        "subcategories": [
+          { "key": "radiator", "title": "Radiateur" },
+          { "key": "cooling-fan", "title": "Ventilateur de refroidissement" },
+          { "key": "water-pump", "title": "Pompe à eau" },
+          { "key": "thermostat", "title": "Thermostat" },
+          { "key": "coolant-hoses", "title": "Durites de refroidissement" },
+          { "key": "expansion-tank", "title": "Vase d’expansion" },
+          { "key": "radiator-cap", "title": "Bouchon de radiateur" },
+          { "key": "temperature-sensors", "title": "Capteurs de température" },
+          { "key": "oil-transmission-cooler", "title": "Radiateur d’huile / de transmission" }
+        ]
+      },
+      {
+        "key": "interior",
+        "title": "Intérieur",
+        "description": "Sièges, garnitures et accessoires d’habitacle.",
+        "subcategories": [
+          { "key": "seats", "title": "Sièges" },
+          { "key": "seat-belts", "title": "Ceintures de sécurité" },
+          { "key": "dashboard-parts", "title": "Pièces de tableau de bord" },
+          { "key": "center-console", "title": "Console centrale" },
+          { "key": "steering-wheel", "title": "Volant" },
+          { "key": "door-panels", "title": "Panneaux de porte" },
+          { "key": "interior-trim", "title": "Garnitures intérieures" },
+          { "key": "window-switches", "title": "Commandes de lève-vitre" },
+          { "key": "floor-mats-carpets", "title": "Tapis de sol / moquette" }
+        ]
+      },
+      {
+        "key": "transmission",
+        "title": "Transmission",
+        "description": "Embrayages, boîtes de vitesses et composants associés.",
+        "subcategories": [
+          { "key": "gearbox-assembly", "title": "Boîte de vitesses" },
+          { "key": "clutch", "title": "Embrayage" },
+          { "key": "torque-converter", "title": "Convertisseur de couple" },
+          { "key": "transmission-mount", "title": "Support de boîte de vitesses" },
+          { "key": "transmission-filter", "title": "Filtre de boîte de vitesses" },
+          { "key": "shift-solenoids", "title": "Électrovannes de boîte" },
+          { "key": "valve-body", "title": "Bloc hydraulique" },
+          { "key": "cv-axles", "title": "Cardans / arbres de transmission" },
+          { "key": "driveshaft", "title": "Arbre de transmission" }
+        ]
+      },
+      {
+        "key": "filters",
+        "title": "Filtres",
+        "description": "Filtres à huile, à air et à carburant.",
+        "subcategories": [
+          { "key": "engine-air-filter", "title": "Filtre à air moteur" },
+          { "key": "cabin-air-filter", "title": "Filtre d’habitacle" },
+          { "key": "oil-filter", "title": "Filtre à huile" },
+          { "key": "fuel-filter", "title": "Filtre à carburant" },
+          { "key": "transmission-filter", "title": "Filtre de boîte de vitesses" },
+          { "key": "hydraulic-filter", "title": "Filtre hydraulique" },
+          { "key": "filter-housing", "title": "Boîtier de filtre" },
+          { "key": "filter-kits", "title": "Kits de filtres" }
+        ]
+      }
     ],
     "cantFind": {
       "title": "Vous ne trouvez pas votre pièce ?",
       "description": "Décrivez-la dans votre demande.",
       "cta": "Faire une demande"
     }
+  },
+  "partsPage": {
+    "eyebrow": "Pièces auto",
+    "title": "Trouvez les bonnes pièces",
+    "titleHighlight": "pour votre véhicule",
+    "description": "Des pièces de qualité. Des fournisseurs de confiance. Nous vous aidons à trouver ce qu'il vous faut.",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbParts": "Pièces",
+    "searchPlaceholder": "Rechercher une pièce par nom, catégorie ou mot-clé...",
+    "searchCta": "Rechercher",
+    "searchEmpty": "Aucune catégorie ou pièce ne correspond à votre recherche.",
+    "sidebarTitle": "Filtrer par catégorie",
+    "allParts": "Toutes les pièces",
+    "viewParts": "Voir les pièces",
+    "backToCategories": "Toutes les catégories"
   },
   "sourceVehicle": {
     "title": "Vous recherchez un véhicule complet ?",
@@ -98,8 +275,10 @@
     "title": "Une question ? Contactez-nous",
     "description": "Notre équipe est disponible pour vous accompagner.",
     "whatsapp": { "label": "WhatsApp", "value": "Discuter sur WhatsApp" },
-    "email": { "label": "Email", "value": "contact@dakarauto.com" },
-    "phone": { "label": "Téléphone", "value": "+221 00 000 00 00" }
+    "email": { "label": "Email" },
+    "phone": { "label": "Téléphone" },
+    "instagram": { "label": "Instagram", "value": "Suivez-nous sur Instagram" },
+    "facebook": { "label": "Facebook", "value": "Suivez-nous sur Facebook" }
   },
   "footer": {
     "tagline": "Pièces auto authentiques, livrées sur demande.",
@@ -148,7 +327,10 @@
       "bodyStyleLabel": "Carrosserie",
       "drivetrainLabel": "Transmission intégrale",
       "fuelTypeLabel": "Carburant",
+      "productionYearLabel": "Période de production",
+      "trustWords": ["Confiance", "Qualité", "Performance"],
       "confirm": "Oui, continuer",
+      "confirmShort": "Continuer",
       "editVin": "Modifier le VIN",
       "notMine": "Ce n’est pas mon véhicule"
     },
@@ -161,7 +343,13 @@
       "engineLabel": "Moteur",
       "yearPlaceholder": "Sélectionner l’année",
       "makePlaceholder": "Sélectionner la marque",
+      "makeSearchPlaceholder": "Rechercher une marque...",
+      "makeNoResults": "Aucune marque trouvée",
+      "otherBrand": "Autre / Non trouvée",
+      "customMakeLabel": "Saisissez la marque",
+      "customMakePlaceholder": "ex. Great Wall",
       "modelPlaceholder": "Sélectionner le modèle",
+      "modelManualPlaceholder": "ex. Corolla",
       "enginePlaceholder": "Sélectionner le moteur",
       "confirm": "Confirmer le véhicule",
       "backToVin": "Revenir au VIN"
@@ -181,6 +369,8 @@
       "analyzing": "Analyse en cours…",
       "detectedTitle": "VIN détecté",
       "detectedDescription": "Vérifiez le numéro avant de continuer",
+      "possibleTitle": "VIN possible — veuillez vérifier",
+      "possibleDescription": "La lecture est incertaine. Vérifiez chaque caractère et corrigez si nécessaire.",
       "useVin": "Utiliser ce VIN",
       "notFoundTitle": "Impossible de lire le VIN",
       "notFoundDescription": "Nous n’avons pas pu lire le VIN sur cette photo.",
@@ -188,11 +378,23 @@
       "permissionDeniedDescription": "Autorisez l’accès à la caméra dans votre navigateur, importez une photo, ou saisissez le VIN manuellement.",
       "cameraUnavailableTitle": "Caméra non disponible",
       "cameraUnavailableDescription": "Votre appareil ne permet pas d’accéder à la caméra. Vous pouvez importer une photo ou saisir le VIN manuellement.",
-      "ocrUnavailableDescription": "Le service de lecture n’a pas pu démarrer. Vous pouvez importer une photo ou saisir le VIN manuellement."
+      "ocrUnavailableDescription": "Le service de lecture n’a pas pu démarrer. Vous pouvez importer une photo ou saisir le VIN manuellement.",
+      "tooBlurryTitle": "Photo trop floue",
+      "tooBlurryDescription": "Tenez le téléphone immobile et assurez-vous que le VIN est net, puis réessayez.",
+      "tooDarkTitle": "Photo trop sombre",
+      "tooDarkDescription": "Approchez-vous d’une meilleure lumière ou activez le flash, puis réessayez.",
+      "tooFarTitle": "Rapprochez-vous du VIN",
+      "tooFarDescription": "Le VIN est trop petit dans le cadre. Rapprochez-vous et remplissez le cadre-guide avec le numéro.",
+      "scanTips": "Remplissez le cadre avec le VIN, tenez le téléphone bien droit et évitez les reflets.",
+      "technicalDetail": "Détail technique"
     },
     "parts": {
       "title": "Choisissez une catégorie",
-      "description": "Sélectionnez la catégorie qui correspond à votre besoin."
+      "description": "Sélectionnez la catégorie qui correspond à votre besoin.",
+      "subcategoryTitle": "Sélectionnez la pièce spécifique",
+      "subcategoryDescription": "Choisissez l’option la plus proche, ou précisez à l’étape suivante.",
+      "changeCategory": "Changer de catégorie",
+      "backToVehicle": "Retour au véhicule"
     },
     "partDetails": {
       "title": "Détails de la pièce",
@@ -225,7 +427,10 @@
         "typeOther": "Autre",
         "errorTooMany": "Vous pouvez ajouter jusqu’à 5 photos.",
         "errorTooLarge": "Chaque photo doit faire moins de 8 Mo.",
-        "errorInvalidType": "Format non pris en charge. Utilisez JPG, PNG ou WEBP."
+        "errorInvalidType": "Format non pris en charge. Utilisez JPG, PNG ou WEBP.",
+        "uploading": "Envoi en cours",
+        "uploadFailed": "Échec de l’envoi",
+        "retry": "Réessayer"
       },
       "continue": "Continuer"
     },
@@ -246,25 +451,36 @@
     },
     "review": {
       "title": "Vérifier et envoyer",
+      "description": "Veuillez vérifier les informations ci-dessous avant d’envoyer votre demande.",
       "vehicleSection": "Véhicule",
       "partSection": "Pièce",
       "photosSection": "Photos",
       "contactSection": "Contact",
       "preferredSection": "Contact préféré",
+      "preferredNote": "C’est votre moyen de contact préféré pour cette demande.",
+      "securityNote": "Vos informations sont sécurisées et ne seront jamais partagées sans votre accord.",
       "edit": "Modifier",
       "submit": "Envoyer la demande",
       "submitting": "Envoi en cours...",
-      "errorGeneric": "Une erreur est survenue lors de l’envoi. Veuillez réessayer."
+      "uploadsInProgress": "Veuillez attendre la fin de l’envoi de vos photos avant de soumettre.",
+      "errorGeneric": "Une erreur est survenue lors de l’envoi. Veuillez réessayer.",
+      "identificationMethodLabel": "Méthode d’identification",
+      "identificationMethodVin": "VIN",
+      "identificationMethodManual": "Manuelle"
     },
     "success": {
       "title": "Demande envoyée avec succès",
       "description": "Notre équipe va examiner votre demande et vous recontacter rapidement.",
       "requestNumberLabel": "Numéro de demande",
+      "copyRequestNumber": "Copier le numéro",
+      "copied": "Copié",
+      "saveNumberNote": "Conservez ce numéro. Il vous permettra de suivre votre demande.",
       "photosAttachedOne": "1 photo jointe à votre demande.",
       "photosAttachedOther": "{count} photos jointes à votre demande.",
       "photosPartialWarning": "Certaines photos n’ont pas pu être envoyées, mais votre demande a bien été reçue.",
       "whatsappCta": "Discuter sur WhatsApp",
       "emailCta": "Envoyer un email",
+      "trackCta": "Suivre ma demande",
       "backHome": "Retour à l’accueil"
     },
     "common": {
@@ -281,15 +497,177 @@
       "passwordLabel": "Mot de passe",
       "submit": "Se connecter",
       "submitting": "Connexion en cours...",
+      "subtitle": "Accédez à votre espace d’administration Dakar Auto.",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
       "errorMissingFields": "Veuillez renseigner votre e-mail et votre mot de passe.",
       "errorInvalidCredentials": "E-mail ou mot de passe incorrect.",
-      "errorNotAdmin": "Ce compte n’a pas accès à l’espace administrateur."
+      "errorNotAdmin": "Ce compte n’a pas accès à l’espace administrateur.",
+      "forgotPasswordLink": "Mot de passe oublié ?",
+      "forgotPasswordTitle": "Mot de passe oublié",
+      "forgotPasswordSubtitle": "Recevez un lien par e-mail pour réinitialiser votre mot de passe.",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "sendingResetLink": "Envoi en cours...",
+      "resetLinkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail.",
+      "backToLogin": "Retour à la connexion",
+      "errorInvalidEmail": "Veuillez indiquer une adresse e-mail valide.",
+      "errorSendFailed": "L’envoi a échoué. Veuillez réessayer."
+    },
+    "resetPasswordPage": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Choisissez un nouveau mot de passe pour votre compte administrateur.",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "submit": "Mettre à jour le mot de passe",
+      "submitting": "Mise à jour...",
+      "successTitle": "Mot de passe mis à jour avec succès",
+      "successMessage": "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "backToLogin": "Retour à la connexion",
+      "invalidLinkTitle": "Lien invalide",
+      "invalidLinkMessage": "Ce lien de réinitialisation est invalide ou a expiré.",
+      "requestNewLink": "Demander un nouveau lien",
+      "errorPasswordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+      "errorPasswordMismatch": "Les mots de passe ne correspondent pas.",
+      "errorUpdateFailed": "La mise à jour a échoué. Veuillez réessayer.",
+      "errorInvalidSession": "Votre session de réinitialisation a expiré. Veuillez demander un nouveau lien."
     },
     "nav": {
       "dashboard": "Tableau de bord",
       "requests": "Demandes de pièces",
       "vehicleRequests": "Demandes de véhicules",
-      "logout": "Déconnexion"
+      "clients": "Clients",
+      "parts": "Pièces",
+      "statistics": "Statistiques",
+      "settings": "Paramètres",
+      "logout": "Déconnexion",
+      "newBadgeAria": "{count} nouvelles demandes",
+      "groupNavigation": "Navigation",
+      "groupPreferences": "Préférences",
+      "groupAccount": "Compte",
+      "theme": "Thème"
+    },
+    "topbar": {
+      "greeting": "Bonjour {name} 👋",
+      "subtitle": "Voici un aperçu rapide de votre activité.",
+      "searchPlaceholder": "Rechercher : n° de demande, client, VIN...",
+      "searchAria": "Recherche globale"
+    },
+    "kpiSecondary": {
+      "total": "Depuis le début",
+      "requestReceived": "En attente de traitement",
+      "onTreatment": "En cours de résolution",
+      "partsFound": "Prêtes à contacter le client",
+      "today": "Reçues aujourd’hui",
+      "vehicleRequests": "Recherches de véhicules"
+    },
+    "quickFilters": {
+      "all": "Toutes",
+      "new": "Nouvelles",
+      "inProgress": "En cours",
+      "found": "Pièces trouvées",
+      "direct": "Contact direct"
+    },
+    "vehicleQuickFilters": {
+      "all": "Toutes",
+      "new": "Nouvelles",
+      "inProgress": "En cours",
+      "found": "Véhicules trouvés",
+      "direct": "Contact direct"
+    },
+    "dateFilter": {
+      "label": "Période",
+      "today": "Aujourd’hui",
+      "last7": "7 jours",
+      "last30": "30 jours",
+      "custom": "Personnalisé",
+      "from": "Du",
+      "to": "Au",
+      "apply": "Appliquer",
+      "clear": "Toutes les dates"
+    },
+    "tableControls": {
+      "columns": "Colonnes",
+      "resetColumns": "Réinitialiser",
+      "rowsPerPage": "Lignes par page",
+      "page": "Page",
+      "of": "sur",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "noResults": "Aucun résultat pour ces filtres.",
+      "showingRange": "{from}–{to} sur {total}",
+      "selectAllOnPage": "Sélectionner toutes les lignes de cette page",
+      "selectRow": "Sélectionner la ligne",
+      "archiveViewLabel": "Vue",
+      "archiveViewActive": "Actives",
+      "archiveViewArchived": "Archivées",
+      "archiveViewAll": "Toutes",
+      "archiveRequestAction": "Archiver la demande",
+      "restoreRequestAction": "Restaurer la demande",
+      "archivedAtLabel": "Archivée",
+      "selectedCount": "{count} sélectionnée(s)",
+      "clearSelection": "Effacer",
+      "exportShare": "Exporter / Partager",
+      "exportGroupLabel": "Exporter",
+      "shareGroupLabel": "Partager",
+      "print": "Imprimer",
+      "pdf": "PDF",
+      "excel": "Excel",
+      "csv": "CSV",
+      "copyTable": "Copier le tableau",
+      "sendByEmail": "Envoyer par email",
+      "shareSelectedRows": "Partager les lignes sélectionnées",
+      "downloadReport": "Télécharger le rapport",
+      "copied": "Copié dans le presse-papiers",
+      "copyFailed": "Échec de la copie — réessayez",
+      "selectedCopied": "Lignes sélectionnées copiées dans le presse-papiers",
+      "generatedAt": "Généré le",
+      "activeFilters": "Filtres actifs",
+      "filterSearchLabel": "Recherche",
+      "filterStatusLabel": "Statut",
+      "filterDateRangeLabel": "Période",
+      "close": "Fermer",
+      "emailLabel": "Email",
+      "subjectLabel": "Objet",
+      "messageLabel": "Message (optionnel)",
+      "messagePlaceholder": "Ajoutez une note pour le destinataire...",
+      "emailScopeAll": "Envoyer toutes les lignes filtrées",
+      "emailScopeSelected": "Envoyer les lignes sélectionnées ({count})",
+      "cancel": "Annuler",
+      "emailSending": "Envoi en cours...",
+      "emailSend": "Envoyer",
+      "emailSuccess": "Email envoyé.",
+      "emailErrorInvalid": "Saisissez une adresse email valide.",
+      "emailErrorSubject": "L’objet est requis.",
+      "emailErrorEmpty": "Il n’y a rien à envoyer — le tableau est vide.",
+      "emailErrorNotConfigured": "L’envoi d’emails n’est pas encore configuré sur ce serveur.",
+      "emailErrorFailed": "Une erreur est survenue lors de l’envoi. Veuillez réessayer."
+    },
+    "bulkActions": {
+      "actionsButton": "Actions",
+      "changeStatus": "Changer le statut",
+      "exportSelected": "Exporter la sélection",
+      "archiveSelected": "Archiver la sélection",
+      "restoreSelected": "Restaurer la sélection",
+      "archiveUnavailable": "Archivage indisponible pour le moment — aucun support backend.",
+      "deletePermanently": "Supprimer définitivement",
+      "statusModalTitle": "Changer le statut de {count} demande(s) sélectionnée(s)",
+      "confirm": "Confirmer",
+      "updating": "Mise à jour...",
+      "deleteConfirmTitle": "Supprimer définitivement {count} demande(s) sélectionnée(s) ?",
+      "deleteConfirmBody": "Cette action est irréversible.",
+      "deleteButton": "Supprimer définitivement",
+      "deleting": "Suppression...",
+      "successStatusUpdated": "{count} demande(s) mise(s) à jour.",
+      "successArchived": "{count} demande(s) archivée(s).",
+      "successRestored": "{count} demande(s) restaurée(s).",
+      "successDeleted": "{count} demande(s) supprimée(s).",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "contactColumn": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "phone": "Téléphone",
+      "none": "—"
     },
     "accessDenied": {
       "title": "Accès refusé",
@@ -317,6 +695,7 @@
       "part": "Pièce",
       "status": "Statut",
       "preferredContact": "Contact préféré",
+      "contact": "Contact",
       "open": "Ouvrir",
       "empty": "Aucune demande pour le moment."
     },
@@ -341,6 +720,7 @@
       "localeLabel": "Langue",
       "notProvided": "Non renseigné",
       "customerSection": "Client",
+      "customerSectionDescription": "Informations du client et moyens de contact",
       "actions": {
         "whatsapp": "WhatsApp",
         "call": "Appeler",
@@ -350,6 +730,8 @@
         "copied": "Copié !"
       },
       "vehicleSection": "Véhicule",
+      "vehicleSectionDescription": "Détails du véhicule concerné",
+      "vehicleImageUnavailable": "Aucune image du véhicule disponible",
       "vehicle": {
         "vin": "VIN",
         "year": "Année",
@@ -364,6 +746,7 @@
         "identificationMethod": "Méthode d’identification"
       },
       "partsSection": "Pièces demandées",
+      "partsSectionDescription": "Pièces et quantités demandées",
       "part": {
         "category": "Catégorie",
         "subcategory": "Sous-catégorie",
@@ -374,7 +757,9 @@
         "description": "Description"
       },
       "photosSection": "Photos",
+      "photosSectionDescription": "Photos jointes à la demande",
       "photosEmpty": "Aucune photo jointe.",
+      "photosEmptyDescription": "Aucune photo n’a été fournie pour cette demande.",
       "photosUnavailable": "Photo indisponible",
       "notesSection": "Notes internes",
       "notesDescription": "Visibles uniquement par l’équipe Dakar Auto — jamais envoyées au client.",
@@ -384,19 +769,134 @@
       "notesSaved": "Notes enregistrées.",
       "notesError": "Échec de l’enregistrement des notes.",
       "statusUpdateSection": "Changer le statut",
+      "statusUpdateNewStatusLabel": "Nouveau statut",
       "statusUpdateNoteLabel": "Note (optionnelle)",
       "statusUpdateNotePlaceholder": "Ajouter un contexte sur ce changement de statut...",
       "statusUpdateSubmit": "Mettre à jour le statut",
       "statusUpdateSubmitting": "Mise à jour...",
       "statusUpdateSuccess": "Statut mis à jour.",
       "statusUpdateError": "Échec de la mise à jour du statut.",
+      "statusStepperSection": "Statuts",
+      "statusStepDescriptions": {
+        "request_received": "Demande enregistrée dans le système",
+        "on_treatment": "Recherche des pièces en cours",
+        "parts_found": "Pièces disponibles",
+        "direct_communication": "Mise en relation avec le client"
+      },
       "historySection": "Historique des statuts",
       "historyEmpty": "Aucun changement de statut pour le moment.",
+      "historyEmptyDescription": "L’historique apparaîtra ici dès qu’un statut sera modifié.",
       "historyChangedBy": "Par",
       "historyUnknownAdmin": "Administrateur",
       "historyNoNote": "—",
       "historyFrom": "de",
       "historyTo": "à"
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "Reconstitué à partir des demandes existantes (pièces et véhicules).",
+      "searchPlaceholder": "Rechercher un client par nom, téléphone ou e-mail...",
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "whatsapp": "WhatsApp",
+      "requestsCount": "Nombre de demandes",
+      "lastRequest": "Dernière demande",
+      "view": "Voir",
+      "empty": "Aucun client pour le moment.",
+      "notProvided": "—"
+    },
+    "statistics": {
+      "title": "Statistiques",
+      "subtitle": "Basées uniquement sur les demandes réellement enregistrées.",
+      "today": "Aujourd’hui",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "partsLabel": "Demandes de pièces",
+      "vehiclesLabel": "Demandes de véhicules",
+      "byStatusTitle": "Par statut",
+      "topMakesTitle": "Top marques demandées",
+      "topCategoriesTitle": "Top catégories de pièces",
+      "partsVsVehiclesTitle": "Pièces vs véhicules",
+      "avgProcessingTitle": "Délai moyen de traitement",
+      "avgProcessingValue": "{hours} h en moyenne",
+      "avgProcessingUnavailable": "Pas encore assez de données pour calculer une moyenne.",
+      "noData": "Aucune donnée pour le moment."
+    },
+    "partsPage": {
+      "title": "Pièces",
+      "description": "Catalogue public des catégories de pièces et demande réelle observée sur les demandes reçues.",
+      "catalogSection": "Catalogue public",
+      "catalogSectionDescription": "Catégories affichées sur le site public (src/lib/parts-catalog.ts).",
+      "demandSection": "Les plus demandées",
+      "demandSectionDescription": "Calculé à partir des demandes de pièces réellement reçues.",
+      "subcategoriesCount": "{count} sous-catégories",
+      "noRequestsYet": "Aucune demande pour cette catégorie pour le moment."
+    },
+    "settingsPage": {
+      "title": "Paramètres",
+      "accountSection": "Compte",
+      "nameLabel": "Nom",
+      "emailLabel": "Email",
+      "notSet": "Non renseigné",
+      "saveName": "Enregistrer le nom",
+      "savingName": "Enregistrement...",
+      "nameSaved": "Nom mis à jour.",
+      "saveEmail": "Mettre à jour l’e-mail",
+      "savingEmail": "Envoi en cours...",
+      "emailPending": "Un e-mail de confirmation a été envoyé à la nouvelle adresse. Le changement prendra effet une fois le lien confirmé.",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "savePassword": "Changer le mot de passe",
+      "savingPassword": "Mise à jour...",
+      "passwordSaved": "Mot de passe mis à jour.",
+      "forgotPasswordTitle": "Mot de passe oublié ?",
+      "forgotPasswordDescription": "Recevez un lien par e-mail pour réinitialiser votre mot de passe.",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "sendingResetLink": "Envoi en cours...",
+      "resetLinkSent": "Un e-mail de réinitialisation a été envoyé à votre adresse.",
+      "errorMissingName": "Veuillez indiquer un nom.",
+      "errorNameTooLong": "Ce nom est trop long.",
+      "errorInvalidEmail": "Veuillez indiquer une adresse e-mail valide.",
+      "errorPasswordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+      "errorPasswordMismatch": "Les mots de passe ne correspondent pas.",
+      "errorUpdateFailed": "La mise à jour a échoué. Veuillez réessayer.",
+      "preferencesSection": "Préférences",
+      "languageLabel": "Langue",
+      "themeLabel": "Thème",
+      "themeValueLight": "Clair",
+      "themeValueDark": "Sombre",
+      "profileSection": "Profil",
+      "roleLabel": "Rôle",
+      "roleAdmin": "Admin",
+      "lastLoginLabel": "Dernière connexion",
+      "quickActionsSection": "Actions rapides",
+      "quickActionPartsHint": "Gérer les demandes de pièces",
+      "quickActionVehiclesHint": "Gérer les demandes de véhicules",
+      "quickActionOpenSite": "Voir le site public",
+      "quickActionOpenSiteHint": "S’ouvre dans un nouvel onglet",
+      "quickActionNewCount": "{count} nouvelle(s)",
+      "companySection": {
+        "title": "Informations de l’entreprise",
+        "description": "Ces coordonnées publiques sont utilisées sur le site (pied de page, section contact, boutons WhatsApp/téléphone/e-mail). Elles sont indépendantes de votre e-mail de connexion administrateur.",
+        "emailLabel": "E-mail",
+        "emailPlaceholder": "contact@dakarauto.com",
+        "phoneLabel": "Téléphone",
+        "phonePlaceholder": "+221 XX XXX XX XX",
+        "whatsappLabel": "WhatsApp",
+        "whatsappPlaceholder": "+221 XX XXX XX XX",
+        "instagramLabel": "Instagram",
+        "instagramPlaceholder": "https://instagram.com/...",
+        "facebookLabel": "Facebook",
+        "facebookPlaceholder": "https://facebook.com/...",
+        "addressLabel": "Adresse",
+        "addressPlaceholder": "Dakar, Sénégal",
+        "showOnSite": "Afficher sur le site",
+        "save": "Enregistrer les coordonnées",
+        "saving": "Enregistrement...",
+        "saved": "Coordonnées enregistrées avec succès.",
+        "errorInvalidUrl": "Veuillez indiquer une URL valide."
+      }
     },
     "vehicleRequests": {
       "title": "Demandes de véhicules",
@@ -448,11 +948,14 @@
       "notesSaved": "Notes enregistrées.",
       "notesError": "Échec de l’enregistrement des notes.",
       "statusUpdateSection": "Changer le statut",
+      "statusUpdateNewStatusLabel": "Nouveau statut",
       "statusUpdateSubmit": "Mettre à jour le statut",
       "statusUpdateSubmitting": "Mise à jour...",
       "statusUpdateSuccess": "Statut mis à jour.",
       "statusUpdateError": "Échec de la mise à jour du statut.",
-      "historyNotTracked": "L’historique des changements de statut n’est pas encore suivi pour les demandes de véhicules."
+      "historyNotTracked": "L’historique des changements de statut n’est pas encore suivi pour les demandes de véhicules.",
+      "vehicleImageUnavailable": "Aucune image du véhicule disponible",
+      "vehicleVisualHint": "Visuel de référence uniquement"
     }
   },
   "vehicleRequestWizard": {
@@ -509,19 +1012,80 @@
       "title": "Demande de véhicule envoyée",
       "description": "Notre équipe va examiner votre demande et vous recontacter rapidement.",
       "requestNumberLabel": "Numéro de demande",
+      "trackCta": "Suivre ma demande",
       "whatsappCta": "Discuter sur WhatsApp",
       "emailCta": "Envoyer un email",
       "backHome": "Retour à l’accueil"
     }
   },
   "sourceVehiclePage": {
+    "eyebrow": "SOURCING DE VÉHICULES",
     "title": "Trouver un véhicule",
-    "description": "Dites-nous quel véhicule vous recherchez et notre équipe vous aidera à le trouver."
+    "description": "Dites-nous quel véhicule vous recherchez et notre équipe vous aidera à le trouver.",
+    "imagePlaceholder": "Photo du port et de l'expédition — asset à fournir",
+    "features": {
+      "global": { "title": "Sourcing mondial", "description": "Un réseau international de fournisseurs vérifiés." },
+      "trusted": { "title": "Partenaires de confiance", "description": "Véhicules inspectés avant expédition." },
+      "shipping": { "title": "Expédition sécurisée", "description": "Fret maritime assuré et suivi." },
+      "support": { "title": "Accompagnement de bout en bout", "description": "Une seule équipe, de la demande à la livraison." }
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "steps": [
+        { "title": "Envoyez votre demande", "description": "Indiquez-nous la marque, le modèle et votre budget." },
+        { "title": "Nous sourçons des véhicules correspondants", "description": "Notre réseau recherche auprès de fournisseurs de confiance." },
+        { "title": "Validation", "description": "Vous approuvez le véhicule et le prix avant que nous avancions." },
+        { "title": "Expédition et livraison", "description": "Nous gérons le fret et vous tenons informé jusqu'à l'arrivée." }
+      ]
+    }
+  },
+  "aboutPage": {
+    "eyebrow": "À propos",
+    "title": "Une seule mission : trouver la bonne pièce pour votre véhicule",
+    "description": "Dakar Auto existe pour simplifier la recherche de pièces automobiles authentiques. Entrez votre VIN, dites-nous ce dont vous avez besoin, et notre équipe s'occupe du reste — sans compte, sans devinette, sans allers-retours avec des annonces qui ne correspondent pas.",
+    "missionTitle": "Ce que nous faisons",
+    "missionBody": "Nous mettons en relation les automobilistes avec la pièce exacte dont leur véhicule a besoin, ainsi qu'avec des véhicules complets sourcés sur des marchés étrangers de confiance. Chaque demande part des caractéristiques réelles de votre véhicule, décodées depuis son VIN, pour que les pièces et véhicules sourcés correspondent vraiment.",
+    "valuesTitle": "Ce que nous défendons",
+    "ctaTitle": "Prêt à commencer ?",
+    "ctaDescription": "Identifiez votre véhicule et envoyez votre première demande en quelques minutes.",
+    "ctaPrimary": "Identifier mon véhicule",
+    "ctaSecondary": "Trouver un véhicule"
   },
   "legal": {
     "privacyTitle": "Politique de confidentialité",
-    "privacyBody": "Cette page sera bientôt disponible avec notre politique de confidentialité complète.",
-    "termsTitle": "Conditions d’utilisation",
-    "termsBody": "Cette page sera bientôt disponible avec nos conditions d’utilisation complètes."
+    "termsTitle": "Conditions d’utilisation"
+  },
+  "turnstile": {
+    "required": "Vérification de sécurité requise.",
+    "failed": "Échec de la vérification. Veuillez réessayer.",
+    "loading": "Chargement de la vérification de sécurité…",
+    "unavailable": "Impossible de charger la vérification de sécurité. Vérifiez votre connexion et actualisez la page.",
+    "loadError": "La vérification de sécurité n’a pas pu se charger.",
+    "retry": "Réessayer"
+  },
+  "tracking": {
+    "eyebrow": "STATUT DE LA DEMANDE",
+    "title": "Suivre votre demande",
+    "subtitle": "Voici les dernières informations sur votre demande.",
+    "summaryTitle": "Résumé de la demande",
+    "currentStatusLabel": "Statut actuel",
+    "closedNotice": "Cette demande a été clôturée.",
+    "cancelledNotice": "Cette demande a été annulée.",
+    "notFoundTitle": "Demande introuvable",
+    "notFoundDescription": "Nous n’avons trouvé aucune demande correspondant à ce lien de suivi. Vérifiez le lien reçu par e-mail, ou contactez-nous si vous avez besoin d’aide.",
+    "lookup": {
+      "eyebrow": "SUIVI DE DEMANDE",
+      "title": "Suivre une demande",
+      "subtitle": "Entrez votre numéro de demande et l’email ou le téléphone utilisé pour la soumettre.",
+      "helpText": "Vous trouverez votre numéro de demande dans l'e-mail de confirmation que nous vous avons envoyé.",
+      "requestNumberLabel": "N° de demande",
+      "requestNumberPlaceholder": "DA-000123 ou VR-000123",
+      "contactLabel": "Email ou téléphone",
+      "contactPlaceholder": "vous@exemple.com ou +221 77 000 00 00",
+      "submitCta": "Suivre ma demande",
+      "submitting": "Recherche…",
+      "notFound": "Demande introuvable ou informations incorrectes.",
+      "rateLimited": "Trop de tentatives. Merci de réessayer dans quelques minutes."
+    }
   }
 }

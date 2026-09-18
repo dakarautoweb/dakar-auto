@@ -17,5 +17,8 @@ export async function getCurrentLocale(): Promise<Locale> {
 
 export async function getCurrentTheme(): Promise<Theme> {
   const store = await cookies()
-  return store.get(themeCookieName)?.value === 'dark' ? 'dark' : 'light'
+  // Premium automotive showroom brand: dark is the default first-visit
+  // experience; a visitor only sees light after explicitly toggling it
+  // (cookie set by src/components/theme-toggle.tsx).
+  return store.get(themeCookieName)?.value === 'light' ? 'light' : 'dark'
 }

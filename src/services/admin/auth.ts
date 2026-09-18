@@ -6,6 +6,13 @@ export type AuthenticatedAdmin = {
   id: string
   email: string
   fullName: string | null
+  role: string | null
+  // Real value from Supabase Auth's own getUser() response below — never
+  // fabricated. Reflects when the current session's sign-in happened (Auth
+  // updates it at that moment), so within one session this stays constant;
+  // it's the same "last login" semantics Supabase Auth itself exposes, not
+  // a separate audit log this app doesn't have.
+  lastSignInAt: string | null
 }
 
 // The DAL's single source of truth for "is this request an active admin".
@@ -38,11 +45,13 @@ export async function requireAdmin(): Promise<AuthenticatedAdmin> {
     redirect('/admin/login?error=not_admin')
   }
 
-  const { data: profile } = await supabase.from('admins').select('full_name').eq('id', user.id).maybeSingle()
+  const { data: profile } = await supabase.from('admins').select('full_name, role').eq('id', user.id).maybeSingle()
 
   return {
     id: user.id,
     email: user.email ?? '',
     fullName: (profile?.full_name as string | undefined) ?? null,
+    role: (profile?.role as string | undefined) ?? null,
+    lastSignInAt: user.last_sign_in_at ?? null,
   }
 }

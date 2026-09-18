@@ -11,6 +11,12 @@ export const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024 // 8 MB
 // non-raster/document formats are intentionally excluded.
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
 
+export const EXTENSION_BY_MIME: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+}
+
 export const ATTACHMENT_TYPES: AttachmentType[] = ['part_photo', 'vin_photo', 'vehicle_photo', 'other']
 
 export const DEFAULT_ATTACHMENT_TYPE: AttachmentType = 'part_photo'

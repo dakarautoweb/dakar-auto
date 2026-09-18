@@ -1,11 +1,8 @@
 import 'server-only'
-import { WHATSAPP_LINK, EMAIL_ADDRESS } from '@/src/lib/contact-info'
-import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml } from '../layout'
+import { WHATSAPP_LINK, EMAIL_ADDRESS, HAS_REAL_WHATSAPP } from '@/src/lib/contact-info'
+import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml, CUSTOMER_EMAIL_THEME } from '../layout'
 import type { RequestStatus } from '@/src/services/admin/statuses'
 import type { Locale } from '@/src/i18n/config'
-
-const PLACEHOLDER_WHATSAPP_LINK = 'https://wa.me/221000000000'
-const hasRealWhatsapp = WHATSAPP_LINK !== PLACEHOLDER_WHATSAPP_LINK
 
 export type StatusUpdateEmailData = {
   requestNumber: string
@@ -68,7 +65,7 @@ function buildFr(data: StatusUpdateEmailData): { subject: string; html: string }
       { label: 'Nouveau statut', value: escapeHtml(copy.label) },
     ])}
     ${renderParagraph(copy.body)}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail')}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -76,6 +73,7 @@ function buildFr(data: StatusUpdateEmailData): { subject: string; html: string }
     title: subject,
     body,
     footer: `Dakar Auto — Pièces détachées automobiles.<br />Cet e-mail concerne votre demande ${escapeHtml(data.requestNumber)}.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }
@@ -92,7 +90,7 @@ function buildEn(data: StatusUpdateEmailData): { subject: string; html: string }
       { label: 'New status', value: escapeHtml(copy.label) },
     ])}
     ${renderParagraph(copy.body)}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email')}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -100,6 +98,7 @@ function buildEn(data: StatusUpdateEmailData): { subject: string; html: string }
     title: subject,
     body,
     footer: `Dakar Auto — Automotive spare parts.<br />This email is about your request ${escapeHtml(data.requestNumber)}.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }

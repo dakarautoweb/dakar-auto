@@ -61,13 +61,24 @@ export type ContactFormState = {
   preferredContact: PreferredContact
 }
 
+export type UploadStatus = 'uploading' | 'uploaded' | 'failed'
+
 export type SelectedPhoto = {
   id: string
   file: File
   previewUrl: string
   attachmentType: AttachmentType
+  status: UploadStatus
+  // 0-100, meaningful while status === 'uploading'.
+  progress: number
+  // Set once status === 'uploaded' — the signed reference sent at submit
+  // time to finalize this exact object into a real attachment. Null while
+  // uploading/failed.
+  fileToken: string | null
 }
 
+// Display-only aggregate for the success screen, derived from the server's
+// per-attachment FinalizedAttachmentResult[] after submit.
 export type AttachmentSummary = {
   uploaded: number
   failed: number

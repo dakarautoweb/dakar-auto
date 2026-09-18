@@ -1,14 +1,12 @@
 import 'server-only'
-import { WHATSAPP_LINK, EMAIL_ADDRESS } from '@/src/lib/contact-info'
-import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml } from '../layout'
+import { WHATSAPP_LINK, EMAIL_ADDRESS, HAS_REAL_WHATSAPP } from '@/src/lib/contact-info'
+import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml, CUSTOMER_EMAIL_THEME } from '../layout'
 import type { VehicleRequestStatus } from '@/src/services/admin/vehicle-request-statuses'
 import type { Locale } from '@/src/i18n/config'
 
-const PLACEHOLDER_WHATSAPP_LINK = 'https://wa.me/221000000000'
-const hasRealWhatsapp = WHATSAPP_LINK !== PLACEHOLDER_WHATSAPP_LINK
-
 export type VehicleRequestStatusUpdateEmailData = {
   requestNumber: string
+  trackingUrl: string
   locale: Locale
   status: VehicleRequestStatus
   customerName: string
@@ -68,7 +66,8 @@ function buildFr(data: VehicleRequestStatusUpdateEmailData): { subject: string; 
       { label: 'Nouveau statut', value: escapeHtml(copy.label) },
     ])}
     ${renderParagraph(copy.body)}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail')}
+    ${renderCta(data.trackingUrl, 'Suivre ma demande', CUSTOMER_EMAIL_THEME)}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -76,6 +75,7 @@ function buildFr(data: VehicleRequestStatusUpdateEmailData): { subject: string; 
     title: subject,
     body,
     footer: `Dakar Auto — Recherche et importation de véhicules.<br />Cet e-mail concerne votre demande ${escapeHtml(data.requestNumber)}.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }
@@ -92,7 +92,8 @@ function buildEn(data: VehicleRequestStatusUpdateEmailData): { subject: string; 
       { label: 'New status', value: escapeHtml(copy.label) },
     ])}
     ${renderParagraph(copy.body)}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email')}
+    ${renderCta(data.trackingUrl, 'Track My Request', CUSTOMER_EMAIL_THEME)}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -100,6 +101,7 @@ function buildEn(data: VehicleRequestStatusUpdateEmailData): { subject: string; 
     title: subject,
     body,
     footer: `Dakar Auto — Vehicle sourcing and import.<br />This email is about your request ${escapeHtml(data.requestNumber)}.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }

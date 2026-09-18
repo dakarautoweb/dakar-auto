@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation'
-import { getCurrentLocale } from '@/src/i18n/server'
+import { getCurrentLocale, getCurrentTheme } from '@/src/i18n/server'
 import { getDictionary } from '@/src/i18n/dictionaries'
 import { createSupabaseServerClient } from '@/src/lib/supabase/auth-server'
 import { LoginForm } from './login-form'
 
 export default async function AdminLoginPage() {
   const locale = await getCurrentLocale()
+  const theme = await getCurrentTheme()
   const dict = await getDictionary(locale)
 
   // If there's already a valid admin session, skip the form entirely.
@@ -22,8 +23,25 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <LoginForm dict={dict} />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-12">
+      {/* Soft ambient glow behind the card — subtle, not a hero background. */}
+      <div className="pointer-events-none absolute top-1/4 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/15 blur-3xl" />
+
+      <div className="flex w-full max-w-sm flex-col items-center">
+        {/* Tight crop (see site-header.tsx / admin-shell.tsx) instead of
+            the padded master — same box height, visibly bigger glyph.
+            dakar-auto-logo-header.png's DAKAR/WEB wordmark is near-white —
+            illegible on this page's light-theme bg-background, same issue
+            admin-shell.tsx already works around with the "-light" variant
+            (same crop/size, just the white elements darkened to graphite). */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={theme === 'light' ? '/brand/dakar-auto-logo-header-light.png' : '/brand/dakar-auto-logo-header.png'}
+          alt="Dakar Auto"
+          className="h-16 w-auto"
+        />
+        <LoginForm dict={dict} />
+      </div>
     </div>
   )
 }

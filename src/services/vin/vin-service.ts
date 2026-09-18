@@ -1,6 +1,7 @@
 import 'server-only'
 import { maskVin, normalizeVin, validateVin } from '@/src/lib/vin'
 import { lookupVehiclePhoto } from '@/src/services/vehicle-photos/photos-service'
+import { lookupCarImage } from '@/src/services/car-image/car-image-service'
 import { getAutoDevApiKey } from './config'
 import { AutoDevVinProvider } from './auto-dev-vin-provider'
 import { MockVinProvider } from './mock-vin-provider'
@@ -65,6 +66,33 @@ export async function lookupVehicleByVin(rawVin: string): Promise<VinLookupResul
           }
         } catch (err) {
           console.error(`[vin] Unexpected error enriching VIN ${maskVin(vin)} with a photo:`, err instanceof Error ? err.message : 'Unknown error')
+        }
+
+        // Fall back to a generic year/make/model photo (CarImages API)
+        // only when the VIN-specific photo lookup above found nothing —
+        // an actual photo of this physical car is always preferred over a
+        // stock photo of the same make/model, and this avoids spending
+        // CarImages API usage when we already have something better.
+        // bodyStyle is passed through so the lookup can prefer/verify the
+        // matching body style (e.g. a coupe, not a sedan) — it's used only
+        // for the image search, never altering the displayed vehicle data.
+        if (!result.vehicle.imageUrl && result.vehicle.year && result.vehicle.make && result.vehicle.model) {
+          try {
+            const carImageResult = await lookupCarImage({
+              year: result.vehicle.year,
+              make: result.vehicle.make,
+              model: result.vehicle.model,
+              bodyStyle: result.vehicle.bodyStyle,
+            })
+            if (carImageResult.status === 'found') {
+              result.vehicle.imageUrl = carImageResult.imageUrl
+            }
+          } catch (err) {
+            console.error(
+              `[vin] Unexpected error enriching VIN ${maskVin(vin)} with a car image:`,
+              err instanceof Error ? err.message : 'Unknown error'
+            )
+          }
         }
       }
 

@@ -3,6 +3,7 @@
 import { after } from 'next/server'
 import { createSupabaseServerClient } from '@/src/lib/supabase/auth-server'
 import { sendVehicleRequestStatusUpdateEmail } from '@/src/services/email'
+import { buildTrackingUrl } from '@/src/lib/contact-info'
 import { requireAdmin } from './auth'
 import { isVehicleRequestStatus } from './vehicle-request-statuses'
 
@@ -28,7 +29,7 @@ export async function updateVehicleRequestStatusAction(
 
   const { data: current, error: currentError } = await supabase
     .from('vehicle_requests')
-    .select('request_number, customer_name, customer_email, locale')
+    .select('request_number, customer_name, customer_email, locale, tracking_token')
     .eq('id', requestId)
     .maybeSingle()
 
@@ -49,10 +50,11 @@ export async function updateVehicleRequestStatusAction(
   const customerName = current.customer_name as string
   const requestNumber = current.request_number as string
   const locale = (current.locale as string) === 'en' ? 'en' : 'fr'
+  const trackingUrl = buildTrackingUrl(current.tracking_token as string)
 
   after(async () => {
     try {
-      await sendVehicleRequestStatusUpdateEmail({ requestNumber, locale, status: newStatus, customerName }, customerEmail)
+      await sendVehicleRequestStatusUpdateEmail({ requestNumber, trackingUrl, locale, status: newStatus, customerName }, customerEmail)
     } catch (err) {
       console.error(
         '[email] Unexpected error sending vehicle request status update email:',

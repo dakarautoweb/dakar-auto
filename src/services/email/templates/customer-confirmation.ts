@@ -1,13 +1,8 @@
 import 'server-only'
-import { WHATSAPP_LINK, EMAIL_ADDRESS } from '@/src/lib/contact-info'
-import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml } from '../layout'
+import { WHATSAPP_LINK, EMAIL_ADDRESS, HAS_REAL_WHATSAPP } from '@/src/lib/contact-info'
+import { renderCta, renderEmailShell, renderInfoCard, renderParagraph, escapeHtml, CUSTOMER_EMAIL_THEME } from '../layout'
 import { resolveCategoryLabel } from '../labels'
 import type { PartsRequestEmailData } from '../types'
-
-// contact-info.ts ships with placeholder values until Dakar Auto's real
-// WhatsApp line is configured — don't show a CTA that goes nowhere useful.
-const PLACEHOLDER_WHATSAPP_LINK = 'https://wa.me/221000000000'
-const hasRealWhatsapp = WHATSAPP_LINK !== PLACEHOLDER_WHATSAPP_LINK
 
 function vehicleLine(vehicle: PartsRequestEmailData['vehicle']): string {
   return [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(' ')
@@ -33,10 +28,12 @@ function buildFr(data: PartsRequestEmailData): { subject: string; html: string }
       { label: 'Pièce demandée', value: escapeHtml(partLabel) },
       { label: 'Statut actuel', value: 'Demande reçue' },
     ])}
+    ${renderParagraph('Suivez l’avancement de votre demande à tout moment, sans créer de compte :')}
+    ${renderCta(data.trackingUrl, 'Suivre ma demande', CUSTOMER_EMAIL_THEME)}
     ${renderParagraph(
       `Une question en attendant ? Contactez-nous directement, en indiquant votre numéro de demande.`
     )}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail')}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Discuter sur WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Nous contacter par e-mail', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -44,6 +41,7 @@ function buildFr(data: PartsRequestEmailData): { subject: string; html: string }
     title: subject,
     body,
     footer: `Dakar Auto — Pièces détachées automobiles.<br />Cet e-mail confirme la réception de votre demande ${escapeHtml(data.requestNumber)}. Vous n'avez rien à faire pour le moment.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }
@@ -65,8 +63,10 @@ function buildEn(data: PartsRequestEmailData): { subject: string; html: string }
       { label: 'Requested part', value: escapeHtml(partLabel) },
       { label: 'Current status', value: 'Request received' },
     ])}
+    ${renderParagraph('Track the progress of your request any time, no account needed:')}
+    ${renderCta(data.trackingUrl, 'Track My Request', CUSTOMER_EMAIL_THEME)}
     ${renderParagraph(`Have a question in the meantime? Reach out directly and mention your request number.`)}
-    ${hasRealWhatsapp ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp') : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email')}
+    ${HAS_REAL_WHATSAPP ? renderCta(WHATSAPP_LINK, 'Chat on WhatsApp', CUSTOMER_EMAIL_THEME) : renderCta(`mailto:${EMAIL_ADDRESS}`, 'Contact us by email', CUSTOMER_EMAIL_THEME)}
   `
 
   const html = renderEmailShell({
@@ -74,6 +74,7 @@ function buildEn(data: PartsRequestEmailData): { subject: string; html: string }
     title: subject,
     body,
     footer: `Dakar Auto — Automotive spare parts.<br />This email confirms receipt of your request ${escapeHtml(data.requestNumber)}. No action is needed from you right now.`,
+    theme: CUSTOMER_EMAIL_THEME,
   })
 
   return { subject, html }

@@ -3,6 +3,9 @@ import type { PartCondition, PartSide, PreferredContact } from '@/src/services/r
 
 export type PartsRequestEmailData = {
   requestNumber: string
+  // Absolute /track/[token] URL (see src/lib/contact-info.ts) — built from
+  // the random tracking_token, never from requestNumber.
+  trackingUrl: string
   locale: Locale
   submittedAt: Date
   // Number of photos successfully uploaded and attached to the request.

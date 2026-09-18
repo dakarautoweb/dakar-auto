@@ -6,13 +6,18 @@ import { identifyVinAction } from '@/src/services/vin/actions'
 import { normalizeVin, validateVin } from '@/src/lib/vin'
 import { DEMO_VINS } from '@/src/services/vin/demo-vins'
 import type { VinLookupResult } from '@/src/services/vin/types'
+import { buttonClasses, cardClasses } from '@/src/components/ui/styles'
+import { CarSideIcon, ScanIcon, SearchIcon, SlidersIcon } from '@/src/components/home/icons'
 import { vehicleResultToConfirmed, type ConfirmedVehicle } from './types'
 import { VehicleResultCard } from './vehicle-result-card'
+import { VehicleResultCardParts } from './vehicle-result-card-parts'
+import type { WizardEntrySource } from './wizard-context'
 
 export function VinStep({
   dict,
   initialVin,
   scannedVin,
+  entrySource,
   onVehicleConfirmed,
   onManual,
   onScan,
@@ -20,6 +25,9 @@ export function VinStep({
   dict: Dictionary
   initialVin?: string
   scannedVin?: string | null
+  // Only 'parts' (Pièces entry) gets the dedicated dark result card below —
+  // every other case (homepage, direct visit) keeps the existing card.
+  entrySource?: WizardEntrySource | null
   onVehicleConfirmed: (vehicle: ConfirmedVehicle) => void
   onManual: () => void
   onScan: () => void
@@ -69,8 +77,15 @@ export function VinStep({
 
   if (result?.status === 'found') {
     const confirmed = vehicleResultToConfirmed(result.vehicle)
+    // 'homepage' is the only case that keeps the split-panel default card
+    // (it's reached here only via a later "Modifier le VIN" on a vehicle
+    // that was originally confirmed from the homepage hero). Every other
+    // way of landing on this step without a homepage-confirmed vehicle —
+    // the Pièces subcategory flow, a bare category-tile click, or a
+    // direct/fresh visit — gets the Pièces-entry card.
+    const CardComponent = entrySource === 'homepage' ? VehicleResultCard : VehicleResultCardParts
     return (
-      <VehicleResultCard
+      <CardComponent
         vehicle={confirmed}
         dict={dict}
         onConfirm={() => onVehicleConfirmed(confirmed)}
@@ -81,9 +96,14 @@ export function VinStep({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-surface/60 p-6 shadow-md sm:p-8">
-      <h2 className="text-xl font-bold tracking-tight">{dict.wizard.vin.title}</h2>
-      <p className="mt-1.5 text-sm text-muted-foreground">{dict.wizard.vin.description}</p>
+    <div className={cardClasses()}>
+      <div className="flex items-center gap-4">
+        <CarSideIcon className="h-11 w-11 shrink-0 text-accent" />
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">{dict.wizard.vin.title}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{dict.wizard.vin.description}</p>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-6">
         <label htmlFor="wizard-vin" className="mb-2 block text-sm font-medium text-muted-foreground">
@@ -101,7 +121,7 @@ export function VinStep({
           autoCapitalize="characters"
           spellCheck={false}
           placeholder={dict.hero.vinPlaceholder}
-          className="w-full rounded-xl border border-border bg-background px-4 py-4 font-mono text-foreground uppercase tracking-widest shadow-sm placeholder:font-sans placeholder:text-sm placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+          className="w-full rounded-xl border border-border bg-surface px-4 py-4 font-mono text-foreground uppercase tracking-widest shadow-sm transition duration-200 placeholder:font-sans placeholder:text-sm placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/20"
         />
 
         {validationError && (
@@ -111,7 +131,7 @@ export function VinStep({
         )}
 
         {(result?.status === 'not_found' || result?.status === 'unavailable') && (
-          <div className="mt-4 rounded-xl border border-border bg-background p-4">
+          <div className="mt-4 rounded-xl border border-border bg-surface p-4">
             <p className="font-medium">
               {result.status === 'not_found' ? dict.wizard.vin.notFoundTitle : dict.wizard.vin.unavailableTitle}
             </p>
@@ -123,15 +143,11 @@ export function VinStep({
                 type="button"
                 onClick={() => canSubmit && runLookup(vin)}
                 disabled={!canSubmit}
-                className="inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-medium transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+                className={buttonClasses({ variant: 'secondary', size: 'sm' })}
               >
                 {dict.wizard.vin.retry}
               </button>
-              <button
-                type="button"
-                onClick={onManual}
-                className="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:opacity-90"
-              >
+              <button type="button" onClick={onManual} className={buttonClasses({ variant: 'primary', size: 'sm' })}>
                 {dict.wizard.vin.manualCta}
               </button>
             </div>
@@ -143,27 +159,30 @@ export function VinStep({
           </p>
         )}
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 grid grid-cols-1 divide-y divide-border overflow-hidden rounded-xl border border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           <button
             type="submit"
             disabled={!canSubmit}
-            className="inline-flex items-center justify-center rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-14 min-w-0 items-center justify-center gap-1.5 bg-accent px-1.5 text-[13px] font-semibold text-accent-foreground transition duration-200 hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50"
           >
-            {isPending ? dict.wizard.vin.loading : dict.wizard.vin.submit}
+            <SearchIcon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{isPending ? dict.wizard.vin.loading : dict.wizard.vin.submit}</span>
           </button>
           <button
             type="button"
             onClick={onScan}
-            className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium transition hover:border-accent hover:text-accent"
+            className="flex h-14 min-w-0 items-center justify-center gap-1.5 bg-transparent px-1.5 text-[13px] font-medium text-foreground transition duration-200 hover:bg-accent-soft/50 hover:text-accent-hover"
           >
-            {dict.hero.secondaryCta}
+            <ScanIcon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{dict.hero.secondaryCta}</span>
           </button>
           <button
             type="button"
             onClick={onManual}
-            className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent"
+            className="flex h-14 min-w-0 items-center justify-center gap-1.5 bg-transparent px-1.5 text-[13px] font-medium text-muted-foreground transition duration-200 hover:bg-accent-soft/50 hover:text-accent-hover"
           >
-            {dict.wizard.vin.manualCta}
+            <SlidersIcon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{dict.wizard.vin.manualCta}</span>
           </button>
         </div>
       </form>
@@ -181,7 +200,7 @@ export function VinStep({
                 setVin(demoVin)
                 setResult(null)
               }}
-              className="rounded-lg border border-border bg-background px-3 py-1.5 font-mono text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
+              className="rounded-lg border border-border bg-surface px-3 py-1.5 font-mono text-xs text-muted-foreground transition duration-200 hover:border-accent hover:text-accent"
             >
               {demoVin}
             </button>

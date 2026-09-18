@@ -2,9 +2,13 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check, AlertCircle, Send, Info } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { VEHICLE_REQUEST_STATUSES } from '@/src/services/admin/vehicle-request-statuses'
 import { updateVehicleRequestStatusAction } from '@/src/services/admin/vehicle-request-actions'
+import { buttonClasses } from '@/src/components/ui/styles'
+import { STATUS_ICONS, STATUS_ICON_CHIP_CLASSES } from '@/src/components/admin/status-badge'
+import { StatusSelect } from '@/src/components/admin/status-select'
 
 export function VehicleStatusUpdater({
   dict,
@@ -20,6 +24,7 @@ export function VehicleStatusUpdater({
   const [feedback, setFeedback] = useState<'success' | 'error' | null>(null)
   const [pending, startTransition] = useTransition()
   const t = dict.admin.vehicleRequestDetail
+  const statusLabels = dict.admin.vehicleStatuses as Record<string, string>
 
   function handleSubmit() {
     setFeedback(null)
@@ -36,32 +41,50 @@ export function VehicleStatusUpdater({
 
   return (
     <div className="space-y-3">
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
-      >
-        {VEHICLE_REQUEST_STATUSES.map((s) => (
-          <option key={s} value={s}>
-            {dict.admin.vehicleStatuses[s]}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label htmlFor="vehicle-status-select" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+          {t.statusUpdateNewStatusLabel}
+        </label>
+        <StatusSelect
+          id="vehicle-status-select"
+          value={status}
+          onChange={setStatus}
+          statuses={VEHICLE_REQUEST_STATUSES}
+          labels={statusLabels}
+          icons={STATUS_ICONS}
+          chipClasses={STATUS_ICON_CHIP_CLASSES}
+          ariaLabel={t.statusUpdateNewStatusLabel}
+        />
+      </div>
 
-      <div className="flex items-center gap-3">
+      <div className="space-y-2.5">
         <button
           type="button"
           onClick={handleSubmit}
           disabled={pending || status === currentStatus}
-          className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className={buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true, className: 'gap-2' })}
         >
+          <Send className="h-4 w-4" strokeWidth={2} />
           {pending ? t.statusUpdateSubmitting : t.statusUpdateSubmit}
         </button>
-        {feedback === 'success' && <span className="text-sm text-emerald-600 dark:text-emerald-400">{t.statusUpdateSuccess}</span>}
-        {feedback === 'error' && <span className="text-sm text-red-600 dark:text-red-400">{t.statusUpdateError}</span>}
+        {feedback === 'success' && (
+          <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <Check className="h-4 w-4" strokeWidth={2} />
+            {t.statusUpdateSuccess}
+          </span>
+        )}
+        {feedback === 'error' && (
+          <span className="flex items-center gap-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+            <AlertCircle className="h-4 w-4" strokeWidth={2} />
+            {t.statusUpdateError}
+          </span>
+        )}
       </div>
 
-      <p className="text-xs text-muted-foreground">{t.historyNotTracked}</p>
+      <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+        {t.historyNotTracked}
+      </p>
     </div>
   )
 }

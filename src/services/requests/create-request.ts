@@ -1,5 +1,6 @@
 import 'server-only'
 import { supabaseAdmin } from '@/src/lib/supabase/server'
+import { isExpiringImageUrl } from '@/src/services/car-image/image-url-expiry'
 import { generateRequestNumber } from './request-number'
 import type { SubmitPartsRequestInput } from './types'
 
@@ -49,7 +50,15 @@ async function findOrCreateVehicleId(vehicle: SubmitPartsRequestInput['vehicle']
       body_style: vehicle.bodyStyle,
       fuel_type: vehicle.fuelType,
       drivetrain: vehicle.drivetrain,
-      image_url: vehicle.imageUrl,
+      // CarImages API's signed `/image` URLs expire (carry an `expires=`
+      // timestamp) — this row is only ever created once per VIN and never
+      // revisited, so persisting an expiring URL here would leave it
+      // pointing at a broken image forever once the signature lapses.
+      // Only a durable URL (e.g. Auto.dev's VIN-specific photo, which
+      // isn't signed/time-limited) gets written; an expiring one is
+      // dropped here and re-derived live on demand instead (see the admin
+      // detail page, which calls lookupCarImage again when this is null).
+      image_url: vehicle.imageUrl && !isExpiringImageUrl(vehicle.imageUrl) ? vehicle.imageUrl : null,
       identification_method: vehicle.source,
       // Normalized fields only — never API keys/headers/raw HTTP debug info.
       vin_api_data:
@@ -80,6 +89,11 @@ export type CreatedPartsRequest = {
   id: string
   itemId: string
   requestNumber: string
+  // Random, unguessable UUID the DB generates by default on insert (see
+  // parts_requests.tracking_token) — the sole key the public /track/[token]
+  // page accepts. Never derived from request_number, which is sequential
+  // and guessable.
+  trackingToken: string
   whatsappPhone: string | null
 }
 
@@ -105,7 +119,7 @@ export async function createPartsRequestRecord(input: SubmitPartsRequestInput): 
       preferred_contact_method: input.contact.preferredContact,
       locale: input.locale,
     })
-    .select('id, request_number')
+    .select('id, request_number, tracking_token')
     .single()
 
   if (requestError) throw requestError
@@ -129,6 +143,7 @@ export async function createPartsRequestRecord(input: SubmitPartsRequestInput): 
     id: requestRow.id,
     itemId: itemRow.id as string,
     requestNumber: requestRow.request_number,
+    trackingToken: requestRow.tracking_token as string,
     whatsappPhone: whatsappPhone?.trim() || null,
   }
 }

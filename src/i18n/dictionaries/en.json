@@ -10,7 +10,8 @@
       "parts": "Parts",
       "sourceVehicle": "Source a Vehicle",
       "about": "About",
-      "contact": "Contact"
+      "contact": "Contact",
+      "track": "Track a request"
     },
     "quoteCta": "Get a Quote",
     "languageSwitcher": "Language",
@@ -32,7 +33,19 @@
     "primaryCta": "Identify My Vehicle",
     "secondaryCta": "Scan VIN",
     "helpLink": "Where do I find my VIN?",
-    "helpText": "Your VIN is usually on the dashboard on the driver's side (visible through the windshield), on the driver-side door jamb, or on your vehicle registration document."
+    "helpText": "Your VIN is usually on the dashboard on the driver's side (visible through the windshield), on the driver-side door jamb, or on your vehicle registration document.",
+    "features": {
+      "identify": { "title": "Identify vehicle", "description": "Decode your VIN in seconds." },
+      "browse": { "title": "Browse parts", "description": "Ten categories, every system covered." },
+      "submit": { "title": "Submit request", "description": "No account needed." },
+      "track": { "title": "Track request", "description": "Live status on your own link." }
+    },
+    "vehiclePanel": {
+      "title": "Need a complete vehicle?",
+      "description": "We source and ship vehicles worldwide.",
+      "cta": "Start sourcing"
+    },
+    "caption": "Quality Parts. Reliable Service."
   },
   "trust": {
     "items": [
@@ -59,25 +72,189 @@
     "description": "And many more manufacturers on request."
   },
   "categories": {
-    "title": "Parts by Category",
+    "eyebrow": "Explore",
+    "title": "Browse by Category",
     "description": "Browse our categories to start your request.",
     "items": [
-      { "key": "lighting", "title": "Lighting", "description": "Headlights, taillights, and turn signals." },
-      { "key": "braking", "title": "Braking", "description": "Pads, rotors, and calipers." },
-      { "key": "engine", "title": "Engine", "description": "Engine parts and performance components." },
-      { "key": "suspension", "title": "Suspension", "description": "Shocks, springs, and control arms." },
-      { "key": "body", "title": "Body", "description": "Bumpers, mirrors, and body panels." },
-      { "key": "electrical", "title": "Electrical", "description": "Batteries, alternators, and wiring." },
-      { "key": "cooling", "title": "Cooling", "description": "Radiators, water pumps, and fans." },
-      { "key": "interior", "title": "Interior", "description": "Seats, trim, and cabin accessories." },
-      { "key": "transmission", "title": "Transmission", "description": "Clutches, gearboxes, and related components." },
-      { "key": "filters", "title": "Filters", "description": "Oil, air, and fuel filters." }
+      {
+        "key": "lighting",
+        "title": "Lighting",
+        "description": "Headlights, taillights, and turn signals.",
+        "subcategories": [
+          { "key": "headlights", "title": "Headlights" },
+          { "key": "taillights", "title": "Taillights" },
+          { "key": "fog-lights", "title": "Fog Lights" },
+          { "key": "turn-signals", "title": "Turn Signals" },
+          { "key": "bulbs", "title": "Bulbs" },
+          { "key": "led-modules", "title": "LED Modules" },
+          { "key": "light-control-modules", "title": "Light Control Modules" },
+          { "key": "license-plate-lights", "title": "License Plate Lights" }
+        ]
+      },
+      {
+        "key": "braking",
+        "title": "Braking",
+        "description": "Pads, rotors, and calipers.",
+        "subcategories": [
+          { "key": "brake-pads", "title": "Brake Pads" },
+          { "key": "brake-rotors", "title": "Brake Rotors / Discs" },
+          { "key": "brake-calipers", "title": "Brake Calipers" },
+          { "key": "brake-hoses", "title": "Brake Hoses / Lines" },
+          { "key": "abs-sensors", "title": "ABS Sensors" },
+          { "key": "master-cylinder", "title": "Master Cylinder" },
+          { "key": "brake-booster", "title": "Brake Booster" },
+          { "key": "parking-brake", "title": "Parking Brake Parts" },
+          { "key": "brake-fluid-hardware", "title": "Brake Fluid / Hardware" }
+        ]
+      },
+      {
+        "key": "engine",
+        "title": "Engine",
+        "description": "Engine parts and performance components.",
+        "subcategories": [
+          { "key": "engine-assembly", "title": "Engine Assembly" },
+          { "key": "timing-parts", "title": "Timing Parts" },
+          { "key": "belts-tensioners", "title": "Belts & Tensioners" },
+          { "key": "gaskets-seals", "title": "Gaskets & Seals" },
+          { "key": "engine-mounts", "title": "Engine Mounts" },
+          { "key": "fuel-system-parts", "title": "Fuel System Parts" },
+          { "key": "ignition-parts", "title": "Ignition Parts" },
+          { "key": "engine-sensors", "title": "Engine Sensors" },
+          { "key": "oil-system-parts", "title": "Oil System Parts" }
+        ]
+      },
+      {
+        "key": "suspension",
+        "title": "Suspension",
+        "description": "Shocks, springs, and control arms.",
+        "subcategories": [
+          { "key": "shock-absorbers", "title": "Shock Absorbers" },
+          { "key": "struts", "title": "Struts" },
+          { "key": "springs", "title": "Springs" },
+          { "key": "control-arms", "title": "Control Arms" },
+          { "key": "ball-joints", "title": "Ball Joints" },
+          { "key": "bushings", "title": "Bushings" },
+          { "key": "tie-rods", "title": "Tie Rods" },
+          { "key": "stabilizer-links", "title": "Stabilizer Links" },
+          { "key": "wheel-hubs-bearings", "title": "Wheel Hubs / Bearings" }
+        ]
+      },
+      {
+        "key": "body",
+        "title": "Body",
+        "description": "Bumpers, mirrors, and body panels.",
+        "subcategories": [
+          { "key": "front-bumper", "title": "Front Bumper" },
+          { "key": "rear-bumper", "title": "Rear Bumper" },
+          { "key": "fenders", "title": "Fenders" },
+          { "key": "hood", "title": "Hood" },
+          { "key": "doors", "title": "Doors" },
+          { "key": "mirrors", "title": "Mirrors" },
+          { "key": "grilles", "title": "Grilles" },
+          { "key": "trunk-tailgate", "title": "Trunk / Tailgate" },
+          { "key": "body-trim", "title": "Body Trim" }
+        ]
+      },
+      {
+        "key": "electrical",
+        "title": "Electrical",
+        "description": "Batteries, alternators, and wiring.",
+        "subcategories": [
+          { "key": "battery", "title": "Battery" },
+          { "key": "alternator", "title": "Alternator" },
+          { "key": "starter", "title": "Starter" },
+          { "key": "wiring-harnesses", "title": "Wiring / Harnesses" },
+          { "key": "fuses-relays", "title": "Fuses & Relays" },
+          { "key": "switches", "title": "Switches" },
+          { "key": "sensors", "title": "Sensors" },
+          { "key": "control-modules", "title": "Control Modules" },
+          { "key": "horns", "title": "Horns" }
+        ]
+      },
+      {
+        "key": "cooling",
+        "title": "Cooling",
+        "description": "Radiators, water pumps, and fans.",
+        "subcategories": [
+          { "key": "radiator", "title": "Radiator" },
+          { "key": "cooling-fan", "title": "Cooling Fan" },
+          { "key": "water-pump", "title": "Water Pump" },
+          { "key": "thermostat", "title": "Thermostat" },
+          { "key": "coolant-hoses", "title": "Coolant Hoses" },
+          { "key": "expansion-tank", "title": "Expansion Tank" },
+          { "key": "radiator-cap", "title": "Radiator Cap" },
+          { "key": "temperature-sensors", "title": "Temperature Sensors" },
+          { "key": "oil-transmission-cooler", "title": "Oil / Transmission Cooler" }
+        ]
+      },
+      {
+        "key": "interior",
+        "title": "Interior",
+        "description": "Seats, trim, and cabin accessories.",
+        "subcategories": [
+          { "key": "seats", "title": "Seats" },
+          { "key": "seat-belts", "title": "Seat Belts" },
+          { "key": "dashboard-parts", "title": "Dashboard Parts" },
+          { "key": "center-console", "title": "Center Console" },
+          { "key": "steering-wheel", "title": "Steering Wheel" },
+          { "key": "door-panels", "title": "Door Panels" },
+          { "key": "interior-trim", "title": "Interior Trim" },
+          { "key": "window-switches", "title": "Window Switches" },
+          { "key": "floor-mats-carpets", "title": "Floor Mats / Carpets" }
+        ]
+      },
+      {
+        "key": "transmission",
+        "title": "Transmission",
+        "description": "Clutches, gearboxes, and related components.",
+        "subcategories": [
+          { "key": "gearbox-assembly", "title": "Transmission / Gearbox Assembly" },
+          { "key": "clutch", "title": "Clutch" },
+          { "key": "torque-converter", "title": "Torque Converter" },
+          { "key": "transmission-mount", "title": "Transmission Mount" },
+          { "key": "transmission-filter", "title": "Transmission Filter" },
+          { "key": "shift-solenoids", "title": "Shift Solenoids" },
+          { "key": "valve-body", "title": "Valve Body" },
+          { "key": "cv-axles", "title": "CV Axles" },
+          { "key": "driveshaft", "title": "Driveshaft" }
+        ]
+      },
+      {
+        "key": "filters",
+        "title": "Filters",
+        "description": "Oil, air, and fuel filters.",
+        "subcategories": [
+          { "key": "engine-air-filter", "title": "Engine Air Filter" },
+          { "key": "cabin-air-filter", "title": "Cabin Air Filter" },
+          { "key": "oil-filter", "title": "Oil Filter" },
+          { "key": "fuel-filter", "title": "Fuel Filter" },
+          { "key": "transmission-filter", "title": "Transmission Filter" },
+          { "key": "hydraulic-filter", "title": "Hydraulic Filter" },
+          { "key": "filter-housing", "title": "Filter Housing" },
+          { "key": "filter-kits", "title": "Filter Kits" }
+        ]
+      }
     ],
     "cantFind": {
       "title": "Can't find your part?",
       "description": "Describe it in your request.",
       "cta": "Make a Request"
     }
+  },
+  "partsPage": {
+    "eyebrow": "Auto Parts",
+    "title": "Find the Right Parts",
+    "titleHighlight": "for Your Vehicle",
+    "description": "Quality parts. Trusted suppliers. We help you find what you need.",
+    "breadcrumbHome": "Home",
+    "breadcrumbParts": "Parts",
+    "searchPlaceholder": "Search parts by name, category or keyword...",
+    "searchCta": "Search",
+    "searchEmpty": "No categories or parts match your search.",
+    "sidebarTitle": "Filter by Category",
+    "allParts": "All Parts",
+    "viewParts": "View Parts",
+    "backToCategories": "All categories"
   },
   "sourceVehicle": {
     "title": "Looking for a complete vehicle?",
@@ -98,8 +275,10 @@
     "title": "Have a question? Contact us",
     "description": "Our team is available to help.",
     "whatsapp": { "label": "WhatsApp", "value": "Chat on WhatsApp" },
-    "email": { "label": "Email", "value": "contact@dakarauto.com" },
-    "phone": { "label": "Phone", "value": "+221 00 000 00 00" }
+    "email": { "label": "Email" },
+    "phone": { "label": "Phone" },
+    "instagram": { "label": "Instagram", "value": "Follow us on Instagram" },
+    "facebook": { "label": "Facebook", "value": "Follow us on Facebook" }
   },
   "footer": {
     "tagline": "Genuine auto parts, delivered on request.",
@@ -148,7 +327,10 @@
       "bodyStyleLabel": "Body Style",
       "drivetrainLabel": "Drivetrain",
       "fuelTypeLabel": "Fuel Type",
+      "productionYearLabel": "Production Year",
+      "trustWords": ["Trust", "Quality", "Performance"],
       "confirm": "Yes, Continue",
+      "confirmShort": "Continue",
       "editVin": "Edit VIN",
       "notMine": "This Isn't My Vehicle"
     },
@@ -161,7 +343,13 @@
       "engineLabel": "Engine",
       "yearPlaceholder": "Select year",
       "makePlaceholder": "Select make",
+      "makeSearchPlaceholder": "Search brand...",
+      "makeNoResults": "No brands found",
+      "otherBrand": "Other / Not listed",
+      "customMakeLabel": "Enter brand manually",
+      "customMakePlaceholder": "e.g. Great Wall",
       "modelPlaceholder": "Select model",
+      "modelManualPlaceholder": "e.g. Corolla",
       "enginePlaceholder": "Select engine",
       "confirm": "Confirm Vehicle",
       "backToVin": "Back to VIN"
@@ -181,6 +369,8 @@
       "analyzing": "Analyzing…",
       "detectedTitle": "VIN Detected",
       "detectedDescription": "Check the number before continuing",
+      "possibleTitle": "Possible VIN — please verify",
+      "possibleDescription": "The reading is uncertain. Check every character and correct it if needed.",
       "useVin": "Use This VIN",
       "notFoundTitle": "Couldn't Read the VIN",
       "notFoundDescription": "We couldn't read a VIN in that photo.",
@@ -188,11 +378,23 @@
       "permissionDeniedDescription": "Allow camera access in your browser, upload a photo, or enter the VIN manually.",
       "cameraUnavailableTitle": "Camera Unavailable",
       "cameraUnavailableDescription": "Your device doesn't support camera access. You can upload a photo or enter the VIN manually.",
-      "ocrUnavailableDescription": "The recognition service couldn't start. You can upload a photo or enter the VIN manually."
+      "ocrUnavailableDescription": "The recognition service couldn't start. You can upload a photo or enter the VIN manually.",
+      "tooBlurryTitle": "Photo Too Blurry",
+      "tooBlurryDescription": "Hold the phone steady and make sure the VIN is in focus, then try again.",
+      "tooDarkTitle": "Photo Too Dark",
+      "tooDarkDescription": "Move to better lighting or turn on the flash, then try again.",
+      "tooFarTitle": "Move Closer to the VIN",
+      "tooFarDescription": "The VIN is too small in the frame. Get closer and fill the guide frame with it.",
+      "scanTips": "Fill the frame with the VIN, hold the phone level, and avoid glare.",
+      "technicalDetail": "Technical detail"
     },
     "parts": {
       "title": "Choose a Category",
-      "description": "Select the category that matches what you need."
+      "description": "Select the category that matches what you need.",
+      "subcategoryTitle": "Select the Specific Part",
+      "subcategoryDescription": "Choose the closest match, or tell us more in the next step.",
+      "changeCategory": "Change Category",
+      "backToVehicle": "Back to Vehicle"
     },
     "partDetails": {
       "title": "Part Details",
@@ -225,7 +427,10 @@
         "typeOther": "Other",
         "errorTooMany": "You can add up to 5 photos.",
         "errorTooLarge": "Each photo must be under 8MB.",
-        "errorInvalidType": "Unsupported format. Use JPG, PNG, or WEBP."
+        "errorInvalidType": "Unsupported format. Use JPG, PNG, or WEBP.",
+        "uploading": "Uploading",
+        "uploadFailed": "Upload failed",
+        "retry": "Retry"
       },
       "continue": "Continue"
     },
@@ -246,25 +451,36 @@
     },
     "review": {
       "title": "Review & Submit",
+      "description": "Please review the information below before sending your request.",
       "vehicleSection": "Vehicle",
       "partSection": "Part",
       "photosSection": "Photos",
       "contactSection": "Contact",
       "preferredSection": "Preferred Contact",
+      "preferredNote": "This is your preferred contact method for this request.",
+      "securityNote": "Your information is secure and will never be shared without your consent.",
       "edit": "Edit",
       "submit": "Submit Request",
       "submitting": "Submitting...",
-      "errorGeneric": "Something went wrong while sending your request. Please try again."
+      "uploadsInProgress": "Please wait for your photos to finish uploading before submitting.",
+      "errorGeneric": "Something went wrong while sending your request. Please try again.",
+      "identificationMethodLabel": "Identification Method",
+      "identificationMethodVin": "VIN",
+      "identificationMethodManual": "Manual"
     },
     "success": {
       "title": "Request Sent Successfully",
       "description": "Our team will review your request and get back to you shortly.",
       "requestNumberLabel": "Request Number",
+      "copyRequestNumber": "Copy request number",
+      "copied": "Copied",
+      "saveNumberNote": "Save this number. It will let you track your request.",
       "photosAttachedOne": "1 photo attached to your request.",
       "photosAttachedOther": "{count} photos attached to your request.",
       "photosPartialWarning": "Some photos couldn't be uploaded, but your request was received successfully.",
       "whatsappCta": "Chat on WhatsApp",
       "emailCta": "Send an Email",
+      "trackCta": "Track My Request",
       "backHome": "Back to Home"
     },
     "common": {
@@ -281,15 +497,177 @@
       "passwordLabel": "Password",
       "submit": "Log in",
       "submitting": "Signing in...",
+      "subtitle": "Access your Dakar Auto administration space.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
       "errorMissingFields": "Please enter your email and password.",
       "errorInvalidCredentials": "Incorrect email or password.",
-      "errorNotAdmin": "This account doesn't have access to the admin area."
+      "errorNotAdmin": "This account doesn't have access to the admin area.",
+      "forgotPasswordLink": "Forgot your password?",
+      "forgotPasswordTitle": "Forgot password",
+      "forgotPasswordSubtitle": "Get an email link to reset your password.",
+      "sendResetLink": "Send reset link",
+      "sendingResetLink": "Sending...",
+      "resetLinkSent": "A reset link has been sent to your email address.",
+      "backToLogin": "Back to login",
+      "errorInvalidEmail": "Please enter a valid email address.",
+      "errorSendFailed": "The send failed. Please try again."
+    },
+    "resetPasswordPage": {
+      "title": "New password",
+      "subtitle": "Choose a new password for your administrator account.",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Update password",
+      "submitting": "Updating...",
+      "successTitle": "Password updated successfully",
+      "successMessage": "Your password has been changed. You can now log in with your new password.",
+      "backToLogin": "Back to login",
+      "invalidLinkTitle": "Invalid link",
+      "invalidLinkMessage": "This reset link is invalid or has expired.",
+      "requestNewLink": "Request a new link",
+      "errorPasswordTooShort": "Password must be at least 8 characters.",
+      "errorPasswordMismatch": "Passwords don't match.",
+      "errorUpdateFailed": "The update failed. Please try again.",
+      "errorInvalidSession": "Your reset session has expired. Please request a new link."
     },
     "nav": {
       "dashboard": "Dashboard",
       "requests": "Parts Requests",
       "vehicleRequests": "Vehicle Requests",
-      "logout": "Log out"
+      "clients": "Clients",
+      "parts": "Parts",
+      "statistics": "Statistics",
+      "settings": "Settings",
+      "logout": "Log out",
+      "newBadgeAria": "{count} new requests",
+      "groupNavigation": "Navigation",
+      "groupPreferences": "Preferences",
+      "groupAccount": "Account",
+      "theme": "Theme"
+    },
+    "topbar": {
+      "greeting": "Hello {name} 👋",
+      "subtitle": "Here's a quick look at your activity.",
+      "searchPlaceholder": "Search: request #, customer, VIN...",
+      "searchAria": "Global search"
+    },
+    "kpiSecondary": {
+      "total": "Since the start",
+      "requestReceived": "Awaiting processing",
+      "onTreatment": "Being resolved",
+      "partsFound": "Ready to contact customer",
+      "today": "Received today",
+      "vehicleRequests": "Vehicle searches"
+    },
+    "quickFilters": {
+      "all": "All",
+      "new": "New",
+      "inProgress": "In progress",
+      "found": "Parts found",
+      "direct": "Direct contact"
+    },
+    "vehicleQuickFilters": {
+      "all": "All",
+      "new": "New",
+      "inProgress": "In progress",
+      "found": "Vehicles found",
+      "direct": "Direct contact"
+    },
+    "dateFilter": {
+      "label": "Period",
+      "today": "Today",
+      "last7": "7 days",
+      "last30": "30 days",
+      "custom": "Custom",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "clear": "All dates"
+    },
+    "tableControls": {
+      "columns": "Columns",
+      "resetColumns": "Reset",
+      "rowsPerPage": "Rows per page",
+      "page": "Page",
+      "of": "of",
+      "previous": "Previous",
+      "next": "Next",
+      "noResults": "No results for these filters.",
+      "showingRange": "{from}–{to} of {total}",
+      "selectAllOnPage": "Select all rows on this page",
+      "selectRow": "Select row",
+      "archiveViewLabel": "View",
+      "archiveViewActive": "Active",
+      "archiveViewArchived": "Archived",
+      "archiveViewAll": "All",
+      "archiveRequestAction": "Archive request",
+      "restoreRequestAction": "Restore request",
+      "archivedAtLabel": "Archived",
+      "selectedCount": "{count} selected",
+      "clearSelection": "Clear",
+      "exportShare": "Export / Share",
+      "exportGroupLabel": "Export",
+      "shareGroupLabel": "Share",
+      "print": "Print",
+      "pdf": "PDF",
+      "excel": "Excel",
+      "csv": "CSV",
+      "copyTable": "Copy table",
+      "sendByEmail": "Send by email",
+      "shareSelectedRows": "Share selected rows",
+      "downloadReport": "Download report",
+      "copied": "Copied to clipboard",
+      "copyFailed": "Couldn’t copy — try again",
+      "selectedCopied": "Selected rows copied to clipboard",
+      "generatedAt": "Generated",
+      "activeFilters": "Active filters",
+      "filterSearchLabel": "Search",
+      "filterStatusLabel": "Status",
+      "filterDateRangeLabel": "Date range",
+      "close": "Close",
+      "emailLabel": "Email",
+      "subjectLabel": "Subject",
+      "messageLabel": "Message (optional)",
+      "messagePlaceholder": "Add a note for the recipient...",
+      "emailScopeAll": "Send all filtered rows",
+      "emailScopeSelected": "Send selected rows ({count})",
+      "cancel": "Cancel",
+      "emailSending": "Sending...",
+      "emailSend": "Send",
+      "emailSuccess": "Email sent.",
+      "emailErrorInvalid": "Enter a valid email address.",
+      "emailErrorSubject": "Subject is required.",
+      "emailErrorEmpty": "There’s nothing to send — the table is empty.",
+      "emailErrorNotConfigured": "Email sending isn’t configured on this server yet.",
+      "emailErrorFailed": "Something went wrong while sending. Please try again."
+    },
+    "bulkActions": {
+      "actionsButton": "Actions",
+      "changeStatus": "Change status",
+      "exportSelected": "Export selected",
+      "archiveSelected": "Archive selected",
+      "restoreSelected": "Restore selected",
+      "archiveUnavailable": "Archive isn’t available yet — no backend support for it.",
+      "deletePermanently": "Delete permanently",
+      "statusModalTitle": "Change status for {count} selected",
+      "confirm": "Confirm",
+      "updating": "Updating...",
+      "deleteConfirmTitle": "Delete {count} selected requests permanently?",
+      "deleteConfirmBody": "This action cannot be undone.",
+      "deleteButton": "Delete permanently",
+      "deleting": "Deleting...",
+      "successStatusUpdated": "{count} requests updated.",
+      "successArchived": "{count} requests archived.",
+      "successRestored": "{count} requests restored.",
+      "successDeleted": "{count} requests deleted.",
+      "error": "Something went wrong. Please try again."
+    },
+    "contactColumn": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "phone": "Phone",
+      "none": "—"
     },
     "accessDenied": {
       "title": "Access denied",
@@ -317,6 +695,7 @@
       "part": "Part",
       "status": "Status",
       "preferredContact": "Preferred Contact",
+      "contact": "Contact",
       "open": "Open",
       "empty": "No requests yet."
     },
@@ -341,6 +720,7 @@
       "localeLabel": "Language",
       "notProvided": "Not provided",
       "customerSection": "Customer",
+      "customerSectionDescription": "Customer information and contact methods",
       "actions": {
         "whatsapp": "WhatsApp",
         "call": "Call",
@@ -350,6 +730,8 @@
         "copied": "Copied!"
       },
       "vehicleSection": "Vehicle",
+      "vehicleSectionDescription": "Details of the vehicle in question",
+      "vehicleImageUnavailable": "No vehicle image available",
       "vehicle": {
         "vin": "VIN",
         "year": "Year",
@@ -364,6 +746,7 @@
         "identificationMethod": "Identification Method"
       },
       "partsSection": "Requested Parts",
+      "partsSectionDescription": "Requested parts and quantities",
       "part": {
         "category": "Category",
         "subcategory": "Subcategory",
@@ -374,7 +757,9 @@
         "description": "Description"
       },
       "photosSection": "Photos",
+      "photosSectionDescription": "Photos attached to the request",
       "photosEmpty": "No photos attached.",
+      "photosEmptyDescription": "No photos were provided for this request.",
       "photosUnavailable": "Photo unavailable",
       "notesSection": "Internal Notes",
       "notesDescription": "Visible only to the Dakar Auto team — never sent to the customer.",
@@ -384,19 +769,134 @@
       "notesSaved": "Notes saved.",
       "notesError": "Failed to save notes.",
       "statusUpdateSection": "Change status",
+      "statusUpdateNewStatusLabel": "New status",
       "statusUpdateNoteLabel": "Note (optional)",
       "statusUpdateNotePlaceholder": "Add context about this status change...",
       "statusUpdateSubmit": "Update status",
       "statusUpdateSubmitting": "Updating...",
       "statusUpdateSuccess": "Status updated.",
       "statusUpdateError": "Failed to update status.",
+      "statusStepperSection": "Statuses",
+      "statusStepDescriptions": {
+        "request_received": "Request registered in the system",
+        "on_treatment": "Parts search in progress",
+        "parts_found": "Parts available",
+        "direct_communication": "Getting in touch with the customer"
+      },
       "historySection": "Status History",
       "historyEmpty": "No status changes yet.",
+      "historyEmptyDescription": "The history will appear here once a status is changed.",
       "historyChangedBy": "By",
       "historyUnknownAdmin": "Admin",
       "historyNoNote": "—",
       "historyFrom": "from",
       "historyTo": "to"
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "Reconstructed from existing requests (parts and vehicles).",
+      "searchPlaceholder": "Search a client by name, phone or email...",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "requestsCount": "Requests",
+      "lastRequest": "Last request",
+      "view": "View",
+      "empty": "No clients yet.",
+      "notProvided": "—"
+    },
+    "statistics": {
+      "title": "Statistics",
+      "subtitle": "Based only on requests actually recorded.",
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "partsLabel": "Parts requests",
+      "vehiclesLabel": "Vehicle requests",
+      "byStatusTitle": "By status",
+      "topMakesTitle": "Top requested makes",
+      "topCategoriesTitle": "Top part categories",
+      "partsVsVehiclesTitle": "Parts vs vehicles",
+      "avgProcessingTitle": "Average processing time",
+      "avgProcessingValue": "{hours} h on average",
+      "avgProcessingUnavailable": "Not enough data yet to compute an average.",
+      "noData": "No data yet."
+    },
+    "partsPage": {
+      "title": "Parts",
+      "description": "Public catalog of part categories and real demand observed on received requests.",
+      "catalogSection": "Public catalog",
+      "catalogSectionDescription": "Categories shown on the public site (src/lib/parts-catalog.ts).",
+      "demandSection": "Most requested",
+      "demandSectionDescription": "Computed from parts requests actually received.",
+      "subcategoriesCount": "{count} subcategories",
+      "noRequestsYet": "No requests for this category yet."
+    },
+    "settingsPage": {
+      "title": "Settings",
+      "accountSection": "Account",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "notSet": "Not set",
+      "saveName": "Save name",
+      "savingName": "Saving...",
+      "nameSaved": "Name updated.",
+      "saveEmail": "Update email",
+      "savingEmail": "Sending...",
+      "emailPending": "A confirmation email was sent to the new address. The change takes effect once the link is confirmed.",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm password",
+      "savePassword": "Change password",
+      "savingPassword": "Updating...",
+      "passwordSaved": "Password updated.",
+      "forgotPasswordTitle": "Forgot your password?",
+      "forgotPasswordDescription": "Get an email link to reset your password.",
+      "sendResetLink": "Send reset link",
+      "sendingResetLink": "Sending...",
+      "resetLinkSent": "A reset email was sent to your address.",
+      "errorMissingName": "Please enter a name.",
+      "errorNameTooLong": "This name is too long.",
+      "errorInvalidEmail": "Please enter a valid email address.",
+      "errorPasswordTooShort": "Password must be at least 8 characters.",
+      "errorPasswordMismatch": "Passwords don't match.",
+      "errorUpdateFailed": "The update failed. Please try again.",
+      "preferencesSection": "Preferences",
+      "languageLabel": "Language",
+      "themeLabel": "Theme",
+      "themeValueLight": "Light",
+      "themeValueDark": "Dark",
+      "profileSection": "Profile",
+      "roleLabel": "Role",
+      "roleAdmin": "Admin",
+      "lastLoginLabel": "Last login",
+      "quickActionsSection": "Quick actions",
+      "quickActionPartsHint": "Manage part requests",
+      "quickActionVehiclesHint": "Manage vehicle requests",
+      "quickActionOpenSite": "Open public site",
+      "quickActionOpenSiteHint": "Opens in a new tab",
+      "quickActionNewCount": "{count} new",
+      "companySection": {
+        "title": "Company information",
+        "description": "This public contact info is used across the site (footer, contact section, WhatsApp/phone/email buttons). It is independent of your own admin login email.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "contact@dakarauto.com",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "+221 XX XXX XX XX",
+        "whatsappLabel": "WhatsApp",
+        "whatsappPlaceholder": "+221 XX XXX XX XX",
+        "instagramLabel": "Instagram",
+        "instagramPlaceholder": "https://instagram.com/...",
+        "facebookLabel": "Facebook",
+        "facebookPlaceholder": "https://facebook.com/...",
+        "addressLabel": "Address",
+        "addressPlaceholder": "Dakar, Senegal",
+        "showOnSite": "Show on site",
+        "save": "Save contact info",
+        "saving": "Saving...",
+        "saved": "Contact info saved successfully.",
+        "errorInvalidUrl": "Please enter a valid URL."
+      }
     },
     "vehicleRequests": {
       "title": "Vehicle Requests",
@@ -448,11 +948,14 @@
       "notesSaved": "Notes saved.",
       "notesError": "Failed to save notes.",
       "statusUpdateSection": "Change status",
+      "statusUpdateNewStatusLabel": "New status",
       "statusUpdateSubmit": "Update status",
       "statusUpdateSubmitting": "Updating...",
       "statusUpdateSuccess": "Status updated.",
       "statusUpdateError": "Failed to update status.",
-      "historyNotTracked": "Status change history isn't tracked yet for vehicle requests."
+      "historyNotTracked": "Status change history isn't tracked yet for vehicle requests.",
+      "vehicleImageUnavailable": "No vehicle image available",
+      "vehicleVisualHint": "Reference visual only"
     }
   },
   "vehicleRequestWizard": {
@@ -509,19 +1012,80 @@
       "title": "Vehicle Request Sent",
       "description": "Our team will review your request and get back to you shortly.",
       "requestNumberLabel": "Request Number",
+      "trackCta": "Track My Request",
       "whatsappCta": "Chat on WhatsApp",
       "emailCta": "Send an Email",
       "backHome": "Back to Home"
     }
   },
   "sourceVehiclePage": {
+    "eyebrow": "VEHICLE SOURCING",
     "title": "Source a Vehicle",
-    "description": "Tell us which vehicle you're looking for and our team will help you find it."
+    "description": "Tell us which vehicle you're looking for and our team will help you find it.",
+    "imagePlaceholder": "Port & shipping photography — asset needed",
+    "features": {
+      "global": { "title": "Global sourcing", "description": "A worldwide network of vetted suppliers." },
+      "trusted": { "title": "Trusted partners", "description": "Vehicles checked before they ship." },
+      "shipping": { "title": "Safe shipping", "description": "Insured, tracked ocean freight." },
+      "support": { "title": "End-to-end support", "description": "One team, from request to delivery." }
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "steps": [
+        { "title": "Submit your request", "description": "Tell us the make, model, and budget you have in mind." },
+        { "title": "We source matching vehicles", "description": "Our network searches trusted suppliers worldwide." },
+        { "title": "Review & confirm", "description": "You approve the vehicle and the price before we move." },
+        { "title": "Shipping & delivery", "description": "We handle freight and keep you updated until it arrives." }
+      ]
+    }
+  },
+  "aboutPage": {
+    "eyebrow": "About Us",
+    "title": "Built around one job: finding the right part for your car",
+    "description": "Dakar Auto exists to make sourcing genuine auto parts simple. Enter your VIN, tell us what you need, and our team takes it from there — no account, no guesswork, no back-and-forth with mismatched listings.",
+    "missionTitle": "What we do",
+    "missionBody": "We connect drivers with the exact part their vehicle needs, and with complete vehicles sourced from trusted markets abroad. Every request starts with your vehicle's real specs, decoded from its VIN, so the parts and vehicles we source actually fit.",
+    "valuesTitle": "What we stand for",
+    "ctaTitle": "Ready to get started?",
+    "ctaDescription": "Identify your vehicle and send your first request in minutes.",
+    "ctaPrimary": "Identify My Vehicle",
+    "ctaSecondary": "Source a Vehicle"
   },
   "legal": {
     "privacyTitle": "Privacy Policy",
-    "privacyBody": "This page will be available soon with our full privacy policy.",
-    "termsTitle": "Terms of Service",
-    "termsBody": "This page will be available soon with our full terms of service."
+    "termsTitle": "Terms of Service"
+  },
+  "turnstile": {
+    "required": "Security verification required.",
+    "failed": "Verification failed. Please try again.",
+    "loading": "Loading security check…",
+    "unavailable": "Security check couldn't load. Check your connection and refresh the page.",
+    "loadError": "Security check could not load.",
+    "retry": "Retry"
+  },
+  "tracking": {
+    "eyebrow": "REQUEST STATUS",
+    "title": "Track Your Request",
+    "subtitle": "Here's the latest update on your request.",
+    "summaryTitle": "Request summary",
+    "currentStatusLabel": "Current status",
+    "closedNotice": "This request has been closed.",
+    "cancelledNotice": "This request has been cancelled.",
+    "notFoundTitle": "Request Not Found",
+    "notFoundDescription": "We couldn't find a request matching this tracking link. Please check the link from your confirmation email, or contact us if you need help.",
+    "lookup": {
+      "eyebrow": "TRACK A REQUEST",
+      "title": "Track a request",
+      "subtitle": "Enter your request number and the email or phone used to submit it.",
+      "helpText": "You'll find your request number in the confirmation email we sent you.",
+      "requestNumberLabel": "Request number",
+      "requestNumberPlaceholder": "DA-000123 or VR-000123",
+      "contactLabel": "Email or phone",
+      "contactPlaceholder": "you@example.com or +221 77 000 00 00",
+      "submitCta": "Track my request",
+      "submitting": "Looking up…",
+      "notFound": "Request not found or the information doesn't match.",
+      "rateLimited": "Too many attempts. Please try again in a few minutes."
+    }
   }
 }

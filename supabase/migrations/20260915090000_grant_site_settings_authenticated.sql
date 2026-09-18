@@ -1,0 +1,20 @@
+-- Root-cause fix for "The update failed. Please try again." on
+-- Admin -> Paramètres -> "Informations de l'entreprise".
+--
+-- Real error reproduced under an authenticated admin session:
+--   code: 42501
+--   message: permission denied for table site_settings
+--   hint: Grant the required privileges to the current role with:
+--         GRANT SELECT, UPDATE ON public.site_settings TO authenticated;
+--
+-- This is NOT an RLS/policy bug and NOT a public.is_admin() bug — verified
+-- separately that is_admin() correctly returns true for a real admin under
+-- their own session, and the "Admins can read/update site settings"
+-- policies (from the previous migration) are semantically correct. The
+-- actual cause: RLS policies only ever *restrict* access that the
+-- underlying Postgres GRANT already allows — they never grant access by
+-- themselves. The previous migration created the table and its policies
+-- but never ran the base-level GRANT, so the `authenticated` role had zero
+-- privileges on this table at the Postgres level, and every query failed
+-- before RLS was even evaluated.
+grant select, update on public.site_settings to authenticated;

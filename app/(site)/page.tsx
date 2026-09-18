@@ -7,20 +7,37 @@ import { PartsCategories } from "@/src/components/home/parts-categories";
 import { SourceVehicle } from "@/src/components/home/source-vehicle";
 import { HowItWorks } from "@/src/components/home/how-it-works";
 import { ContactSection } from "@/src/components/home/contact-section";
+import { Reveal } from "@/src/components/reveal";
+import { getPublicSiteSettings } from "@/src/services/site-settings/queries";
 
 export default async function Home() {
   const locale = await getCurrentLocale();
   const dict = await getDictionary(locale);
+  // Same cache()-wrapped call the root layout already made for the footer
+  // this request — this is a shared-cache hit, not a second DB round trip.
+  const siteSettings = await getPublicSiteSettings();
 
   return (
     <>
       <Hero dict={dict} />
-      <TrustFeatures dict={dict} />
-      <Brands dict={dict} />
-      <PartsCategories dict={dict} />
-      <SourceVehicle dict={dict} />
-      <HowItWorks dict={dict} />
-      <ContactSection dict={dict} />
+      <Reveal>
+        <TrustFeatures dict={dict} />
+      </Reveal>
+      <Reveal>
+        <PartsCategories dict={dict} />
+      </Reveal>
+      <Reveal>
+        <Brands dict={dict} />
+      </Reveal>
+      <Reveal>
+        <SourceVehicle dict={dict} />
+      </Reveal>
+      <Reveal>
+        <HowItWorks dict={dict} />
+      </Reveal>
+      <Reveal>
+        <ContactSection dict={dict} settings={siteSettings} />
+      </Reveal>
     </>
   );
 }

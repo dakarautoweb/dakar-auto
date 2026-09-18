@@ -3,6 +3,7 @@ import { requireAdmin } from '@/src/services/admin/auth'
 import { getCurrentLocale, getCurrentTheme } from '@/src/i18n/server'
 import { getDictionary } from '@/src/i18n/dictionaries'
 import { AdminShell } from '@/src/components/admin/admin-shell'
+import { getNewRequestsBadgeCounts } from '@/src/services/admin/queries'
 
 // requireAdmin() is the authoritative access check for the whole dashboard
 // — it redirects unauthenticated visitors to /admin/login and signs out /
@@ -14,9 +15,10 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   const locale = await getCurrentLocale()
   const theme = await getCurrentTheme()
   const dict = await getDictionary(locale)
+  const badges = await getNewRequestsBadgeCounts()
 
   return (
-    <AdminShell admin={admin} locale={locale} theme={theme} dict={dict}>
+    <AdminShell admin={admin} locale={locale} theme={theme} dict={dict} badges={badges}>
       {children}
     </AdminShell>
   )

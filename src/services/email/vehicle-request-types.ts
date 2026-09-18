@@ -3,6 +3,7 @@ import type { PreferredContact } from '@/src/services/requests/types'
 
 export type VehicleRequestEmailData = {
   requestNumber: string
+  trackingUrl: string
   locale: Locale
   submittedAt: Date
   vehicle: {

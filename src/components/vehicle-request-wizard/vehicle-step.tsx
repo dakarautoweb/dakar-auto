@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
+import { buttonClasses, cardClasses, inputClass } from '@/src/components/ui/styles'
+import { CalendarIcon, CarSideIcon, EngineIcon, GaugeIcon, LayersIcon, PaletteIcon, TransmissionIcon } from '@/src/components/home/icons'
+import { FieldLabel } from './field-label'
 import type { VehicleWantedFormState } from './types'
-
-const inputClass =
-  'w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30'
 
 export function VehicleStep({
   dict,
@@ -49,22 +49,22 @@ export function VehicleStep({
   const currentYear = new Date().getFullYear()
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-surface/60 p-6 shadow-md sm:p-8">
+    <form onSubmit={handleSubmit} className={cardClasses()}>
       <h2 className="text-xl font-bold tracking-tight">{t.title}</h2>
       <p className="mt-1.5 text-sm text-muted-foreground">{t.description}</p>
 
       <div className="mt-6 space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="vr-make" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={CarSideIcon} htmlFor="vr-make">
               {t.makeLabel}
-            </label>
+            </FieldLabel>
             <input id="vr-make" value={make} onChange={(e) => setMake(e.target.value)} placeholder={t.makePlaceholder} className={inputClass} />
           </div>
           <div>
-            <label htmlFor="vr-model" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={CarSideIcon} htmlFor="vr-model">
               {t.modelLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-model"
               value={model}
@@ -77,9 +77,9 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="vr-year-from" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={CalendarIcon} htmlFor="vr-year-from">
               {t.yearFromLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-year-from"
               type="number"
@@ -92,9 +92,9 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <label htmlFor="vr-year-to" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={CalendarIcon} htmlFor="vr-year-to">
               {t.yearToLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-year-to"
               type="number"
@@ -110,9 +110,9 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="vr-color" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={PaletteIcon} htmlFor="vr-color">
               {t.colorLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-color"
               value={color}
@@ -122,9 +122,9 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <label htmlFor="vr-trim" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={LayersIcon} htmlFor="vr-trim">
               {t.trimLevelLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-trim"
               value={trimLevel}
@@ -137,9 +137,9 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="vr-engine" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={EngineIcon} htmlFor="vr-engine">
               {t.engineLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-engine"
               value={engine}
@@ -149,9 +149,9 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <label htmlFor="vr-transmission" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={TransmissionIcon} htmlFor="vr-transmission">
               {t.transmissionLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-transmission"
               value={transmission}
@@ -164,9 +164,9 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="vr-mileage-min" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={GaugeIcon} htmlFor="vr-mileage-min">
               {t.mileageMinLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-mileage-min"
               type="number"
@@ -178,9 +178,9 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <label htmlFor="vr-mileage-max" className="mb-1.5 block text-sm font-medium text-muted-foreground">
+            <FieldLabel icon={GaugeIcon} htmlFor="vr-mileage-max">
               {t.mileageMaxLabel}
-            </label>
+            </FieldLabel>
             <input
               id="vr-mileage-max"
               type="number"
@@ -195,18 +195,11 @@ export function VehicleStep({
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          type="submit"
-          className="inline-flex items-center justify-center rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90"
-        >
+        <button type="submit" className={buttonClasses({ variant: 'primary' })}>
           {t.continue}
         </button>
         {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent"
-          >
+          <button type="button" onClick={onBack} className={buttonClasses({ variant: 'secondary-muted' })}>
             {dict.wizard.common.back}
           </button>
         )}

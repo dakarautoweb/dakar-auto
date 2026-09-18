@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Check, AlertCircle } from 'lucide-react'
+import { buttonClasses, inputClass } from '@/src/components/ui/styles'
 
 export type NotesEditorTexts = {
   description: string
@@ -45,19 +47,24 @@ export function NotesEditor({
         }}
         placeholder={texts.placeholder}
         rows={5}
-        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+        className={inputClass}
       />
-      <div className="mt-3 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={pending}
-          className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button type="button" onClick={handleSave} disabled={pending} className={buttonClasses({ variant: 'primary', size: 'sm' })}>
           {pending ? texts.saving : texts.save}
         </button>
-        {feedback === 'saved' && <span className="text-sm text-emerald-600 dark:text-emerald-400">{texts.saved}</span>}
-        {feedback === 'error' && <span className="text-sm text-red-600 dark:text-red-400">{texts.error}</span>}
+        {feedback === 'saved' && (
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <Check className="h-4 w-4" strokeWidth={2} />
+            {texts.saved}
+          </span>
+        )}
+        {feedback === 'error' && (
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+            <AlertCircle className="h-4 w-4" strokeWidth={2} />
+            {texts.error}
+          </span>
+        )}
       </div>
     </div>
   )

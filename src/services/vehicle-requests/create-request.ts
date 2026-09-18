@@ -6,6 +6,7 @@ import type { SubmitVehicleRequestInput } from './types'
 export type CreatedVehicleRequest = {
   id: string
   requestNumber: string
+  trackingToken: string
   whatsappPhone: string | null
 }
 
@@ -41,7 +42,7 @@ export async function createVehicleRequestRecord(input: SubmitVehicleRequestInpu
       preferred_contact_method: contact.preferredContact,
       locale: input.locale,
     })
-    .select('id, request_number')
+    .select('id, request_number, tracking_token')
     .single()
 
   if (error) throw error
@@ -49,6 +50,7 @@ export async function createVehicleRequestRecord(input: SubmitVehicleRequestInpu
   return {
     id: row.id,
     requestNumber: row.request_number,
+    trackingToken: row.tracking_token,
     whatsappPhone: whatsappPhone?.trim() || null,
   }
 }

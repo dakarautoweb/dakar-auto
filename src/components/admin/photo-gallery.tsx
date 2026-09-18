@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { Image as ImageIcon } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { XIcon } from '@/src/components/home/icons'
+import { iconButtonClasses } from '@/src/components/ui/styles'
 
 export type GalleryPhoto = {
   id: string
@@ -30,7 +32,13 @@ export function PhotoGallery({ dict, photos }: { dict: Dictionary; photos: Galle
   const t = dict.admin.detail
 
   if (photos.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t.photosEmpty}</p>
+    return (
+      <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border py-10 text-center">
+        <ImageIcon className="h-7 w-7 text-muted-foreground" strokeWidth={1.5} />
+        <p className="text-sm font-medium text-foreground">{t.photosEmpty}</p>
+        <p className="text-xs text-muted-foreground">{t.photosEmptyDescription}</p>
+      </div>
+    )
   }
 
   const active = openIndex !== null ? photos[openIndex] : null
@@ -39,7 +47,7 @@ export function PhotoGallery({ dict, photos }: { dict: Dictionary; photos: Galle
     <>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {photos.map((photo, index) => (
-          <div key={photo.id} className="overflow-hidden rounded-xl border border-border bg-surface/60">
+          <div key={photo.id} className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
             <button
               type="button"
               onClick={() => photo.url && setOpenIndex(index)}
@@ -48,7 +56,7 @@ export function PhotoGallery({ dict, photos }: { dict: Dictionary; photos: Galle
             >
               {photo.url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={photo.url} alt="" className="h-full w-full object-cover transition group-hover:scale-105" />
+                <img src={photo.url} alt="" className="h-full w-full object-cover transition duration-200 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs text-muted-foreground">
                   {t.photosUnavailable}
@@ -71,7 +79,7 @@ export function PhotoGallery({ dict, photos }: { dict: Dictionary; photos: Galle
             type="button"
             onClick={() => setOpenIndex(null)}
             aria-label={t.photosSection}
-            className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+            className={iconButtonClasses({ variant: 'overlay', className: 'absolute top-4 right-4' })}
           >
             <XIcon className="h-5 w-5" />
           </button>
