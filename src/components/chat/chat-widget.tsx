@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { MessageCircle, X, ChevronLeft } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
@@ -15,6 +15,26 @@ import { buildQuickActions } from './quick-actions'
 // doesn't reappear on every page while the visitor browses (spec item 10 —
 // no history/database persistence, just enough state to not be annoying).
 const ATTENTION_SEEN_KEY = 'dakar-auto-chat-attention-seen'
+
+// Read through useSyncExternalStore rather than a setState-in-effect: the
+// server snapshot (and hydration) reports "seen" so the dot never renders in
+// SSR HTML, then the client snapshot takes over right after hydration.
+// Blocked storage also reports "seen" — the dot just never shows, no
+// functional loss. No subscription needed: in-tab dismissal is tracked by
+// component state, and other tabs writing the key is irrelevant here.
+function subscribeToNothing() {
+  return () => {}
+}
+function readAttentionSeen() {
+  try {
+    return Boolean(sessionStorage.getItem(ATTENTION_SEEN_KEY))
+  } catch {
+    return true
+  }
+}
+function attentionSeenOnServer() {
+  return true
+}
 
 type Stage = 'menu' | 'faq-list' | 'faq-answer' | 'contact'
 
@@ -33,7 +53,9 @@ function nextMessageId() {
 // of its own to duplicate.
 export function ChatWidget({ dict, faqItems, settings }: { dict: Dictionary['chatWidget']; faqItems: PublicFaqItem[]; settings: PublicSiteSettings }) {
   const [open, setOpen] = useState(false)
-  const [showAttention, setShowAttention] = useState(false)
+  const attentionSeen = useSyncExternalStore(subscribeToNothing, readAttentionSeen, attentionSeenOnServer)
+  const [attentionDismissed, setAttentionDismissed] = useState(false)
+  const showAttention = !attentionSeen && !attentionDismissed
   const [fieldFocused, setFieldFocused] = useState(false)
   const [stage, setStage] = useState<Stage>('menu')
   const [messages, setMessages] = useState<ChatMessage[]>(() => [{ id: 'welcome', role: 'assistant', content: dict.welcome }])
@@ -44,14 +66,6 @@ export function ChatWidget({ dict, faqItems, settings }: { dict: Dictionary['cha
 
   const quickActions = buildQuickActions(dict)
   const hasContact = Boolean(settings.whatsapp || settings.phone || settings.email)
-
-  useEffect(() => {
-    try {
-      if (!sessionStorage.getItem(ATTENTION_SEEN_KEY)) setShowAttention(true)
-    } catch {
-      // Private browsing / blocked storage — the dot just never shows, no functional loss.
-    }
-  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -95,7 +109,7 @@ export function ChatWidget({ dict, faqItems, settings }: { dict: Dictionary['cha
   function openWidget() {
     setOpen(true)
     if (showAttention) {
-      setShowAttention(false)
+      setAttentionDismissed(true)
       try {
         sessionStorage.setItem(ATTENTION_SEEN_KEY, '1')
       } catch {

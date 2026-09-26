@@ -1,7 +1,7 @@
 'use server'
 
 import { after } from 'next/server'
-import { sendPartsRequestEmails } from '@/src/services/email'
+import { sendPartsRequestNotifications } from '@/src/services/notifications/send-parts-request-notifications'
 import { buildTrackingUrl } from '@/src/lib/contact-info'
 import { finalizePartsRequestAttachments } from '@/src/services/attachments/finalize'
 import type { PendingAttachmentRef } from '@/src/services/attachments/types'
@@ -48,14 +48,16 @@ export async function submitPartsRequestAction(
         : undefined
     const attachmentCount = attachmentResults?.filter((r) => r.ok).length ?? 0
 
-    // Fire the confirmation/notification emails after the response is sent —
-    // the request is already durably saved, so a slow or failed email must
-    // never affect what the user sees. sendPartsRequestEmails is best-effort
-    // internally and never throws, but it's wrapped here too as a last line
-    // of defense against unexpected errors leaking into the response.
+    // Fire the admin notification and the customer confirmation (on the
+    // customer's chosen channel only — WhatsApp, email, or none for phone)
+    // after the response is sent. The request is already durably saved, so
+    // a slow or failed delivery must never affect what the user sees.
+    // sendPartsRequestNotifications is best-effort internally and never
+    // throws, but it's wrapped here too as a last line of defense against
+    // unexpected errors leaking into the response.
     after(async () => {
       try {
-        await sendPartsRequestEmails({
+        await sendPartsRequestNotifications({
           requestNumber: created.requestNumber,
           trackingUrl: buildTrackingUrl(created.trackingToken),
           locale: input.locale,
@@ -84,7 +86,7 @@ export async function submitPartsRequestAction(
           },
         })
       } catch (err) {
-        console.error('[email] Unexpected error sending parts request emails:', err instanceof Error ? err.message : 'Unknown error')
+        console.error('[notifications] Unexpected error sending parts request notifications:', err instanceof Error ? err.message : 'Unknown error')
       }
     })
 

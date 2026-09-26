@@ -9,6 +9,7 @@ import type { Dictionary } from '@/src/i18n/dictionaries'
 import { buttonClasses } from '@/src/components/ui/styles'
 import { LanguageSwitcher } from './language-switcher'
 import { ThemeToggle } from './theme-toggle'
+import { QUOTE_HREF, handleQuoteCtaClick } from '@/src/lib/quote-cta'
 
 export function MobileMenu({
   locale,
@@ -103,10 +104,13 @@ export function MobileMenu({
       </div>
 
       <Link
-        href="/#hero-request"
-        onClick={() => setOpen(false)}
+        href={QUOTE_HREF}
+        onClick={(event) => {
+          setOpen(false)
+          handleQuoteCtaClick(event, pathname)
+        }}
         tabIndex={open ? 0 : -1}
-        className={buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true, pill: true, className: 'mt-6' })}
+        className={buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true, pill: true, className: 'mt-6 whitespace-nowrap' })}
       >
         {dict.header.quoteCta}
       </Link>

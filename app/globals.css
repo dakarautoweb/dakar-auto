@@ -151,6 +151,19 @@ html {
   }
 }
 
+/* Floating popover entrance (quote-CTA VIN hint): drops 4px into place
+   from above, no overshoot. Zeroed by the reduced-motion rule below. */
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Slow, restrained "in progress" ring for the active step badge (vehicle
    request wizard) — a partial arc that continuously rotates around the
    step number, distinct from a loading spinner via the slow 3.2s duration

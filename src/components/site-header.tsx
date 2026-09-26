@@ -9,6 +9,7 @@ import { LanguageSwitcher } from './language-switcher'
 import { ThemeToggle } from './theme-toggle'
 import { MobileMenu } from './mobile-menu'
 import { SendIcon } from './home/icons'
+import { QUOTE_HREF, handleQuoteCtaClick } from '@/src/lib/quote-cta'
 
 export function SiteHeader({
   locale,
@@ -96,9 +97,16 @@ export function SiteHeader({
         <div className="hidden items-center gap-2.5 xl:flex">
           <LanguageSwitcher current={locale} label={dict.header.languageSwitcher} dark />
           <ThemeToggle current={theme} labels={dict.header.themeToggle} variant="overlay" />
-          <Link href="/#hero-request" className={buttonClasses({ variant: 'primary', size: 'sm', pill: true })}>
+          {/* whitespace-nowrap + shrink-0: the FR label ("Demander un devis")
+              must never wrap to two lines — the pill keeps its h-10 height
+              and simply takes the width its one-line label needs. */}
+          <Link
+            href={QUOTE_HREF}
+            onClick={(event) => handleQuoteCtaClick(event, pathname)}
+            className={buttonClasses({ variant: 'primary', size: 'sm', pill: true, className: 'shrink-0 whitespace-nowrap' })}
+          >
             {dict.header.quoteCta}
-            <SendIcon className="h-4 w-4" />
+            <SendIcon className="h-4 w-4 shrink-0" />
           </Link>
         </div>
 

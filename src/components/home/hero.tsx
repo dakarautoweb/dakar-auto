@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { Dictionary } from '@/src/i18n/dictionaries'
@@ -9,6 +9,7 @@ import { identifyVinAction } from '@/src/services/vin/actions'
 import { normalizeVin, validateVin } from '@/src/lib/vin'
 import { ScanVinModal } from '@/src/components/vehicle-wizard/scan-vin-modal'
 import { buttonClasses } from '@/src/components/ui/styles'
+import { QUOTE_FOCUS_EVENT, QUOTE_PARAM } from '@/src/lib/quote-cta'
 import { HeroVisual } from './hero-visual'
 import { HomeHeroPhoto } from './home-hero-photo'
 import { HeroVehicleResult } from './hero-vehicle-result'
@@ -16,6 +17,42 @@ import { ScanIcon, SearchIcon, LayersIcon, SendIcon, RouteIcon, CarSideIcon, Inf
 
 const FEATURE_ICONS = [SearchIcon, LayersIcon, SendIcon, RouteIcon]
 const FEATURE_HREFS = ['/vehicle/identify', '/#parts-categories', '/source-a-vehicle', '/track']
+
+// Where the quote CTA parks the VIN field: this far below the viewport top,
+// clearing the sticky header with some breathing room.
+const QUOTE_SCROLL_OFFSET = 155
+// Below this distance a same-page scroll would be imperceptible…
+const QUOTE_MIN_SCROLL = 50
+// …so the page is first offset by this much, then smooth-scrolls back.
+const QUOTE_NUDGE = 70
+// Staged reveal: focus lands once the smooth scroll has mostly settled,
+// then the hint follows a beat later.
+const QUOTE_FOCUS_DELAY = 600
+const QUOTE_HINT_DELAY = 200
+const QUOTE_HINT_DURATION = 8000
+
+// Explicit window scroll rather than scrollIntoView, so the field lands at
+// a predictable spot under the header. With `nudge`, a click that would
+// barely move the page (field already in place) still produces a short,
+// visible glide into position so the CTA feels like it did something.
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function scrollVinIntoPlace(input: HTMLInputElement, nudge: boolean) {
+  const maxY = document.documentElement.scrollHeight - window.innerHeight
+  const target = Math.min(maxY, Math.max(0, window.scrollY + input.getBoundingClientRect().top - QUOTE_SCROLL_OFFSET))
+  const reducedMotion = prefersReducedMotion()
+
+  if (nudge && !reducedMotion && Math.abs(target - window.scrollY) < QUOTE_MIN_SCROLL) {
+    // Start just above the target so the glide runs downward, toward the
+    // form; fall back to just below it when already at the top of the page.
+    const start = target - QUOTE_NUDGE >= 0 ? target - QUOTE_NUDGE : Math.min(maxY, target + QUOTE_NUDGE)
+    // 'instant' overrides the global `scroll-behavior: smooth` on <html>.
+    window.scrollTo({ top: start, behavior: 'instant' })
+  }
+  window.scrollTo({ top: target, behavior: reducedMotion ? 'auto' : 'smooth' })
+}
 
 export function Hero({ dict }: { dict: Dictionary }) {
   const features = [dict.hero.features.identify, dict.hero.features.browse, dict.hero.features.submit, dict.hero.features.track]
@@ -25,6 +62,83 @@ export function Hero({ dict }: { dict: Dictionary }) {
   const [result, setResult] = useState<VinLookupResult | null>(null)
   const [isPending, startTransition] = useTransition()
   const [scanOpen, setScanOpen] = useState(false)
+  const [showQuoteHint, setShowQuoteHint] = useState(false)
+  const vinInputRef = useRef<HTMLInputElement>(null)
+  // Pending quote-CTA timers (focus, hint reveal, hint auto-hide). Mutated
+  // in place so the effect cleanup and hideQuoteHint share one list.
+  const quoteTimersRef = useRef<number[]>([])
+
+  // Typing, pasting or a scanned VIN dismisses the hint immediately — and
+  // cancels a still-pending reveal so it can't pop up afterwards.
+  function hideQuoteHint() {
+    quoteTimersRef.current.splice(0).forEach((id) => window.clearTimeout(id))
+    setShowQuoteHint(false)
+  }
+
+  // "Demander un devis" (header / mobile menu, see src/lib/quote-cta.ts):
+  // scroll the VIN field to just under the header, then (staged) focus it
+  // with the caret at the end and show a floating hint below it for at most
+  // 8s. Triggered either by the ?quote=1 signal on arrival from another
+  // route (read once, then removed from the URL) or by the same-page window
+  // event. Focus is taken once per CTA click — never re-grabbed afterwards.
+  useEffect(() => {
+    const timers = quoteTimersRef.current
+    const clearTimers = () => timers.splice(0).forEach((id) => window.clearTimeout(id))
+
+    function focusVinForQuote({ nudge }: { nudge: boolean }) {
+      const input = vinInputRef.current
+      if (!input) {
+        // A decoded vehicle is on screen (no VIN field) — just bring the
+        // request panel into view rather than discarding the user's result.
+        document.getElementById('hero-request')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+      clearTimers()
+      setShowQuoteHint(false)
+      scrollVinIntoPlace(input, nudge)
+      // Reduced motion: the scroll is instant, so there's nothing to wait for.
+      const reducedMotion = prefersReducedMotion()
+      const focusDelay = reducedMotion ? 0 : QUOTE_FOCUS_DELAY
+      const hintDelay = reducedMotion ? 0 : QUOTE_HINT_DELAY
+      timers.push(
+        window.setTimeout(() => {
+          // preventScroll: the browser's own focus scroll would fight the
+          // explicit scroll above.
+          input.focus({ preventScroll: true })
+          input.setSelectionRange(input.value.length, input.value.length)
+          timers.push(
+            window.setTimeout(() => {
+              setShowQuoteHint(true)
+              timers.push(window.setTimeout(() => setShowQuoteHint(false), QUOTE_HINT_DURATION))
+            }, hintDelay),
+          )
+        }, focusDelay),
+      )
+    }
+
+    // Same-page click: nothing else moves the page, so always make the
+    // scroll visible. Arrival from another route already involves a page
+    // change, so no nudge there.
+    const onQuoteFocus = () => focusVinForQuote({ nudge: true })
+    window.addEventListener(QUOTE_FOCUS_EVENT, onQuoteFocus)
+
+    let frame: number | undefined
+    const params = new URLSearchParams(window.location.search)
+    if (params.get(QUOTE_PARAM) === '1') {
+      params.delete(QUOTE_PARAM)
+      const query = params.toString()
+      window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}`)
+      // Next frame: lets the router finish its own #hero-request hash
+      // scroll first, so this smooth scroll is the one that sticks.
+      frame = window.requestAnimationFrame(() => focusVinForQuote({ nudge: false }))
+    }
+
+    return () => {
+      window.removeEventListener(QUOTE_FOCUS_EVENT, onQuoteFocus)
+      if (frame !== undefined) window.cancelAnimationFrame(frame)
+      clearTimers()
+    }
+  }, [])
 
   const validationError = vin.length > 0 ? validateVin(vin) : null
   const canSubmit = vin.length === 17 && validationError === null && !isPending
@@ -81,15 +195,18 @@ export function Hero({ dict }: { dict: Dictionary }) {
                 <label htmlFor="vin" className="mb-2 block text-sm font-medium text-muted-foreground">
                   {dict.hero.vinLabel}
                 </label>
-                <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="flex flex-col sm:flex-row">
                   <div className="relative sm:flex-1">
                     <CarSideIcon className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                     <input
+                      ref={vinInputRef}
                       id="vin"
                       value={vin}
+                      aria-describedby={showQuoteHint ? 'vin-quote-hint' : undefined}
                       onChange={(event) => {
                         setVin(normalizeVin(event.target.value).slice(0, 17))
                         setResult(null)
+                        hideQuoteHint()
                       }}
                       maxLength={17}
                       autoComplete="off"
@@ -98,11 +215,39 @@ export function Hero({ dict }: { dict: Dictionary }) {
                       placeholder={dict.hero.vinPlaceholder}
                       className="w-full rounded-xl border border-border bg-surface py-4 pr-4 pl-11 font-mono text-foreground uppercase tracking-widest shadow-sm transition duration-200 placeholder:font-sans placeholder:text-sm placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/20"
                     />
+                    {/* Quote-CTA hint — a floating popover anchored to the
+                        field's wrapper: absolutely positioned 10px below the
+                        input (so it never covers it), left-aligned with the
+                        caret pointing up at it, and out of flow so nothing
+                        around it moves. Width is capped by the field's own
+                        width and the viewport, so it can't clip on mobile.
+                        Always white with dark text, in both themes. The live
+                        region stays mounted so the text is announced when it
+                        appears. */}
+                    <div role="status" aria-live="polite" className="absolute inset-x-0 top-full z-30 mt-2.5">
+                      {showQuoteHint && (
+                        <div
+                          id="vin-quote-hint"
+                          className="relative w-max max-w-[min(20rem,100%,calc(100vw_-_32px))] animate-[popover-in_220ms_ease-out_both] rounded-xl border border-neutral-200 bg-white p-3 pr-4 text-neutral-900 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.28),0_2px_6px_rgba(15,23,42,0.08)]"
+                        >
+                          <span aria-hidden="true" className="absolute -top-1.5 left-5 h-3 w-3 rotate-45 rounded-tl-[2px] border-t border-l border-neutral-200 bg-white" />
+                          <div className="flex items-start gap-2.5">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-50 text-accent">
+                              <InfoIcon className="h-3.5 w-3.5" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold text-neutral-900">{dict.hero.quoteHintTitle}</p>
+                              <p className="mt-0.5 text-xs leading-snug text-neutral-600">{dict.hero.quoteHintDescription}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <button
                     type="submit"
                     disabled={!canSubmit}
-                    className={buttonClasses({ variant: 'primary', size: 'lg', className: 'w-full sm:w-auto' })}
+                    className={buttonClasses({ variant: 'primary', size: 'lg', className: 'mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto' })}
                   >
                     {isPending ? dict.wizard.vin.loading : dict.hero.primaryCta}
                   </button>
@@ -230,6 +375,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
           onVinDetected={(detectedVin) => {
             setVin(normalizeVin(detectedVin))
             setResult(null)
+            hideQuoteHint()
             setScanOpen(false)
           }}
         />

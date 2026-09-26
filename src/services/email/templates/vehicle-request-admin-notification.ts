@@ -1,5 +1,6 @@
 import 'server-only'
 import { renderEmailShell, renderInfoCard, renderParagraph, escapeHtml } from '../layout'
+import { resolveCustomerConfirmationLabelFr } from '../labels'
 import { makeModelLine, yearRangeLine, mileageRangeLine, budgetRangeLine } from './vehicle-request-format'
 import type { VehicleRequestEmailData } from '../vehicle-request-types'
 
@@ -31,6 +32,9 @@ export function buildVehicleRequestAdminNotificationEmail(data: VehicleRequestEm
     { label: 'Téléphone', value: escapeHtml(data.contact.phone) },
     { label: 'E-mail', value: data.contact.email ? escapeHtml(data.contact.email) : 'Non renseigné' },
     { label: 'Contact préféré', value: CONTACT_METHOD_LABELS_FR[data.contact.preferredContact] ?? data.contact.preferredContact },
+    // Mirrors the routing in sendVehicleRequestNotifications — the customer
+    // gets an automatic confirmation only on their chosen channel.
+    { label: 'Confirmation client', value: escapeHtml(resolveCustomerConfirmationLabelFr(data.contact.preferredContact)) },
     ...(data.contact.whatsappPhone ? [{ label: 'WhatsApp', value: escapeHtml(data.contact.whatsappPhone) }] : []),
     { label: 'Véhicule recherché', value: escapeHtml(makeModelLine(data.vehicle)) },
     ...(years ? [{ label: 'Années', value: escapeHtml(years) }] : []),

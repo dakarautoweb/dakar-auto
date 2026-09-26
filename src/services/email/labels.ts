@@ -43,3 +43,16 @@ export function resolvePreferredContactLabel(locale: Locale, method: PreferredCo
   }
   return map[method]
 }
+
+// Admin-email only (always French): what automatic confirmation the
+// customer received. Mirrors the routing in src/services/notifications —
+// the customer is confirmed only on their chosen channel.
+const CUSTOMER_CONFIRMATION_LABELS_FR: Record<PreferredContact, string> = {
+  whatsapp: 'Automatique par WhatsApp',
+  email: 'Automatique par e-mail',
+  phone: 'Aucune — contacter le client par téléphone',
+}
+
+export function resolveCustomerConfirmationLabelFr(method: PreferredContact): string {
+  return CUSTOMER_CONFIRMATION_LABELS_FR[method] ?? method
+}

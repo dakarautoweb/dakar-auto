@@ -1,10 +1,10 @@
 import 'server-only'
 
-export { sendPartsRequestEmails } from './send-parts-request-emails'
+export { sendPartsRequestAdminEmail, sendPartsRequestCustomerEmail } from './send-parts-request-emails'
 export type { PartsRequestEmailData } from './types'
 export { sendStatusUpdateEmail } from './send-status-update-email'
 export type { StatusUpdateEmailData } from './templates/status-update'
-export { sendVehicleRequestEmails } from './send-vehicle-request-emails'
+export { sendVehicleRequestAdminEmail, sendVehicleRequestCustomerEmail } from './send-vehicle-request-emails'
 export type { VehicleRequestEmailData } from './vehicle-request-types'
 export { sendVehicleRequestStatusUpdateEmail } from './send-vehicle-request-status-update-email'
 export type { VehicleRequestStatusUpdateEmailData } from './templates/vehicle-request-status-update'

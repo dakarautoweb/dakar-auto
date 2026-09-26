@@ -1,7 +1,7 @@
 'use server'
 
 import { after } from 'next/server'
-import { sendVehicleRequestEmails } from '@/src/services/email'
+import { sendVehicleRequestNotifications } from '@/src/services/notifications/send-vehicle-request-notifications'
 import { buildTrackingUrl } from '@/src/lib/contact-info'
 import { verifyTurnstileToken } from '@/src/services/turnstile/verify'
 import { createVehicleRequestRecord } from './create-request'
@@ -25,12 +25,15 @@ export async function submitVehicleRequestAction(
   try {
     const created = await createVehicleRequestRecord(input)
 
-    // Fire the confirmation/notification emails after the response is sent
-    // — the request is already durably saved, so a slow or failed email
-    // must never affect what the user sees.
+    // Fire the admin notification and the customer confirmation (on the
+    // customer's chosen channel only — WhatsApp, email, or none for phone)
+    // after the response is sent. The request is already durably saved, so
+    // a slow or failed delivery must never affect what the user sees.
+    // sendVehicleRequestNotifications is best-effort internally and never
+    // throws, but it's wrapped here too as a last line of defense.
     after(async () => {
       try {
-        await sendVehicleRequestEmails({
+        await sendVehicleRequestNotifications({
           requestNumber: created.requestNumber,
           trackingUrl: buildTrackingUrl(created.trackingToken),
           locale: input.locale,
@@ -46,7 +49,7 @@ export async function submitVehicleRequestAction(
         })
       } catch (err) {
         console.error(
-          '[email] Unexpected error sending vehicle request emails:',
+          '[notifications] Unexpected error sending vehicle request notifications:',
           err instanceof Error ? err.message : 'Unknown error'
         )
       }

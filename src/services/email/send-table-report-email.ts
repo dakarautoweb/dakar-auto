@@ -4,7 +4,7 @@ import { buildAdminReportEmail } from './templates/admin-report'
 
 export type SendTableReportResult = { ok: true } | { ok: false; error: 'not_configured' | 'send_failed' }
 
-// Unlike sendStatusUpdateEmail/sendPartsRequestEmails (both best-effort,
+// Unlike sendStatusUpdateEmail/sendPartsRequestAdminEmail (both best-effort,
 // customer-facing, never surfaced as a failure to anyone), this is an
 // explicit admin action with its own "Sending..."/success/error UI (see
 // send-report-modal.tsx) — a real ok/error result, not a silent no-op.

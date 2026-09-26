@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation'
 import { locales, localeCookieName, type Locale } from '@/src/i18n/config'
 import { withViewTransition } from '@/src/lib/view-transition'
 
+// Module-level on purpose: writing a browser global from inside the
+// component body trips react-hooks/immutability; the cookie write itself is
+// unchanged.
+function persistLocale(locale: Locale) {
+  document.cookie = `${localeCookieName}=${locale}; path=/; max-age=31536000; samesite=lax`
+}
+
 export function LanguageSwitcher({
   current,
   label,
@@ -29,7 +36,7 @@ export function LanguageSwitcher({
 
   function switchTo(locale: Locale) {
     if (locale === current) return
-    document.cookie = `${localeCookieName}=${locale}; path=/; max-age=31536000; samesite=lax`
+    persistLocale(locale)
     withViewTransition(() => startTransition(() => router.refresh()))
   }
 

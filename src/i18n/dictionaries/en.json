@@ -36,6 +36,8 @@
     "secondaryCta": "Scan VIN",
     "helpLink": "Where do I find my VIN?",
     "helpText": "Your VIN is usually on the dashboard on the driver's side (visible through the windshield), on the driver-side door jamb, or on your vehicle registration document.",
+    "quoteHintTitle": "Enter your VIN",
+    "quoteHintDescription": "Enter the 17-character VIN to identify your vehicle automatically.",
     "features": {
       "identify": { "title": "Identify vehicle", "description": "Decode your VIN in seconds." },
       "browse": { "title": "Browse parts", "description": "Ten categories, every system covered." },
@@ -481,7 +483,14 @@
       "whatsappLabel": "WhatsApp Number",
       "whatsappPlaceholder": "+221 00 000 00 00",
       "preferredLabel": "Preferred Contact Method",
-      "continue": "Continue"
+      "continue": "Continue",
+      "whatsappConsent": "By choosing WhatsApp, you agree to receive updates about this request on WhatsApp.",
+      "errors": {
+        "emailRequired": "Enter your email address to receive your confirmation by email.",
+        "emailInvalid": "Enter a valid email address.",
+        "whatsappRequired": "Enter your WhatsApp number.",
+        "whatsappInvalid": "Enter your WhatsApp number in international format, starting with the country code (e.g. +221 77 123 45 67)."
+      }
     },
     "review": {
       "title": "Review & Submit",
@@ -1336,7 +1345,8 @@
     "failed": "Verification failed. Please try again.",
     "loading": "Loading security check…",
     "unavailable": "Security check couldn't load. Check your connection and refresh the page.",
-    "loadError": "Security check could not load.",
+    "loadError": "The security check is temporarily unavailable.",
+    "loadErrorHint": "Please try again in a few seconds.",
     "retry": "Retry"
   },
   "tracking": {
@@ -1355,7 +1365,7 @@
       "subtitle": "Enter your request number and the email or phone used to submit it.",
       "helpText": "You'll find your request number in the confirmation email we sent you.",
       "requestNumberLabel": "Request number",
-      "requestNumberPlaceholder": "DA-000123 or VR-000123",
+      "requestNumberPlaceholder": "DA-2026-000123 or VR-000123",
       "contactLabel": "Email or phone",
       "contactPlaceholder": "you@example.com or +221 77 000 00 00",
       "submitCta": "Track my request",

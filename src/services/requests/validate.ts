@@ -1,5 +1,6 @@
 import 'server-only'
 import { isValidVin } from '@/src/lib/vin'
+import { isValidWhatsAppRecipient, resolveWhatsAppInput } from '@/src/services/whatsapp/phone'
 import type { SubmitPartsRequestInput } from './types'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,9 +30,14 @@ export function validateSubmitPartsRequestInput(input: SubmitPartsRequestInput):
   if (!contact.phone.trim()) return 'missing_phone'
   if (contact.email && !EMAIL_PATTERN.test(contact.email)) return 'invalid_email'
   if (!VALID_CONTACT_METHODS.includes(contact.preferredContact)) return 'invalid_contact_method'
-  if (!contact.whatsappSameAsPhone && contact.preferredContact === 'whatsapp' && !contact.whatsappPhone?.trim()) {
-    return 'missing_whatsapp_phone'
+  // The chosen channel must actually be reachable — the customer
+  // confirmation is sent only there (see sendPartsRequestNotifications).
+  if (contact.preferredContact === 'whatsapp') {
+    const whatsapp = resolveWhatsAppInput(contact)
+    if (!whatsapp) return 'missing_whatsapp_phone'
+    if (!isValidWhatsAppRecipient(whatsapp)) return 'invalid_whatsapp_phone'
   }
+  if (contact.preferredContact === 'email' && !contact.email.trim()) return 'missing_email'
 
   if (!VALID_LOCALES.includes(locale)) return 'invalid_locale'
 

@@ -3,9 +3,24 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import type { PreferredContact } from '@/src/services/requests/types'
+import { isValidWhatsAppRecipient, resolveWhatsAppInput } from '@/src/services/whatsapp/phone'
 import { buttonClasses, cardClasses, inputClass } from '@/src/components/ui/styles'
 import { ArrowRightIcon, CheckIcon, MailIcon, PersonIcon, PhoneIcon, WhatsAppIcon } from '@/src/components/home/icons'
 import type { ContactFormState } from './types'
+
+// Same pattern the server enforces (src/services/requests/validate.ts).
+const EMAIL_PATTERN = /^[^s@]+@[^s@]+.[^s@]+$/
+
+type ContactErrors = { email?: string; whatsapp?: string }
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null
+  return (
+    <p id={id} className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+      {message}
+    </p>
+  )
+}
 
 // Icon-prefixed text input — one consistent recipe for every field on this
 // screen, instead of a bare inputClass.
@@ -49,11 +64,47 @@ export function ContactStep({
     initialValue?.preferredContact ?? 'whatsapp'
   )
 
+  // Shown once a field has been left or a submit attempted — not while the
+  // customer is still typing their first characters.
+  const [touched, setTouched] = useState<{ phone?: boolean; email?: boolean; whatsapp?: boolean }>({})
+  const [submitAttempted, setSubmitAttempted] = useState(false)
+
   const isValid = name.trim().length > 0 && phone.trim().length > 0
+
+  // The customer confirmation is only sent on the chosen channel (never
+  // falls back to another one), so that channel has to be usable: WhatsApp
+  // needs an international number (Meta can't reach a local one without a
+  // country code), email needs an address. An email typed in while another
+  // method is chosen must still be well-formed — the server rejects it.
+  const whatsappInput = resolveWhatsAppInput({ phone, whatsappSameAsPhone, whatsappPhone })
+  const errors: ContactErrors = {}
+  const trimmedEmail = email.trim()
+  if (preferredContact === 'email' && !trimmedEmail) errors.email = dict.wizard.contact.errors.emailRequired
+  else if (trimmedEmail && !EMAIL_PATTERN.test(trimmedEmail)) errors.email = dict.wizard.contact.errors.emailInvalid
+  if (preferredContact === 'whatsapp') {
+    if (!whatsappInput) errors.whatsapp = dict.wizard.contact.errors.whatsappRequired
+    else if (!isValidWhatsAppRecipient(whatsappInput)) errors.whatsapp = dict.wizard.contact.errors.whatsappInvalid
+  }
+
+  // With "same as phone" checked, a WhatsApp problem is a problem with the
+  // phone field itself, so the message is shown there.
+  const whatsappTouched = whatsappSameAsPhone ? touched.phone : touched.whatsapp
+  const visibleErrors: ContactErrors = {
+    email: submitAttempted || touched.email ? errors.email : undefined,
+    whatsapp: submitAttempted || whatsappTouched ? errors.whatsapp : undefined,
+  }
+  const phoneError = whatsappSameAsPhone ? visibleErrors.whatsapp : undefined
+  const whatsappFieldError = whatsappSameAsPhone ? undefined : visibleErrors.whatsapp
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (!isValid) return
+    if (errors.email || errors.whatsapp) {
+      setSubmitAttempted(true)
+      const target = errors.whatsapp ? (whatsappSameAsPhone ? 'contact-phone' : 'contact-whatsapp') : 'contact-email'
+      document.getElementById(target)?.focus()
+      return
+    }
     onContinue({
       name: name.trim(),
       email: email.trim(),
@@ -105,8 +156,12 @@ export function ContactStep({
               icon={<PhoneIcon className="h-[18px] w-[18px]" />}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, phone: true }))}
               placeholder={dict.wizard.contact.phonePlaceholder}
+              aria-invalid={phoneError ? true : undefined}
+              aria-describedby={phoneError ? 'contact-phone-error' : undefined}
             />
+            <FieldError id="contact-phone-error" message={phoneError} />
           </div>
           <div>
             <label htmlFor="contact-email" className="mb-1.5 block text-sm font-medium text-muted-foreground">
@@ -118,8 +173,12 @@ export function ContactStep({
               icon={<MailIcon className="h-[18px] w-[18px]" />}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, email: true }))}
               placeholder={dict.wizard.contact.emailPlaceholder}
+              aria-invalid={visibleErrors.email ? true : undefined}
+              aria-describedby={visibleErrors.email ? 'contact-email-error' : undefined}
             />
+            <FieldError id="contact-email-error" message={visibleErrors.email} />
           </div>
         </div>
 
@@ -149,8 +208,12 @@ export function ContactStep({
               icon={<WhatsAppIcon className="h-[18px] w-[18px]" />}
               value={whatsappPhone}
               onChange={(e) => setWhatsappPhone(e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, whatsapp: true }))}
               placeholder={dict.wizard.contact.whatsappPlaceholder}
+              aria-invalid={whatsappFieldError ? true : undefined}
+              aria-describedby={whatsappFieldError ? 'contact-whatsapp-error' : undefined}
             />
+            <FieldError id="contact-whatsapp-error" message={whatsappFieldError} />
           </div>
         )}
 
@@ -176,6 +239,9 @@ export function ContactStep({
               )
             })}
           </div>
+          {preferredContact === 'whatsapp' && (
+            <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">{dict.wizard.contact.whatsappConsent}</p>
+          )}
         </div>
       </div>
 

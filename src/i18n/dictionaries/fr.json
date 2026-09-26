@@ -36,6 +36,8 @@
     "secondaryCta": "Scanner le VIN",
     "helpLink": "Où trouver mon VIN ?",
     "helpText": "Le VIN se trouve généralement sur le tableau de bord côté conducteur (visible à travers le pare-brise), sur le montant de la portière conducteur, ou sur votre carte grise.",
+    "quoteHintTitle": "Entrez votre VIN",
+    "quoteHintDescription": "Saisissez les 17 caractères du VIN pour identifier automatiquement votre véhicule.",
     "features": {
       "identify": { "title": "Identifier le véhicule", "description": "Décodez votre VIN en quelques secondes." },
       "browse": { "title": "Parcourir les pièces", "description": "Dix catégories, tous les systèmes couverts." },
@@ -481,7 +483,14 @@
       "whatsappLabel": "Numéro WhatsApp",
       "whatsappPlaceholder": "+221 00 000 00 00",
       "preferredLabel": "Moyen de contact préféré",
-      "continue": "Continuer"
+      "continue": "Continuer",
+      "whatsappConsent": "En choisissant WhatsApp, vous acceptez de recevoir les mises à jour concernant cette demande sur WhatsApp.",
+      "errors": {
+        "emailRequired": "Saisissez votre adresse e-mail pour recevoir votre confirmation par e-mail.",
+        "emailInvalid": "Saisissez une adresse e-mail valide.",
+        "whatsappRequired": "Saisissez votre numéro WhatsApp.",
+        "whatsappInvalid": "Saisissez votre numéro WhatsApp au format international, avec l’indicatif du pays (ex. +221 77 123 45 67)."
+      }
     },
     "review": {
       "title": "Vérifier et envoyer",
@@ -1336,7 +1345,8 @@
     "failed": "Échec de la vérification. Veuillez réessayer.",
     "loading": "Chargement de la vérification de sécurité…",
     "unavailable": "Impossible de charger la vérification de sécurité. Vérifiez votre connexion et actualisez la page.",
-    "loadError": "La vérification de sécurité n’a pas pu se charger.",
+    "loadError": "La vérification de sécurité est temporairement indisponible.",
+    "loadErrorHint": "Veuillez réessayer dans quelques secondes.",
     "retry": "Réessayer"
   },
   "tracking": {
@@ -1355,7 +1365,7 @@
       "subtitle": "Entrez votre numéro de demande et l’email ou le téléphone utilisé pour la soumettre.",
       "helpText": "Vous trouverez votre numéro de demande dans l'e-mail de confirmation que nous vous avons envoyé.",
       "requestNumberLabel": "N° de demande",
-      "requestNumberPlaceholder": "DA-000123 ou VR-000123",
+      "requestNumberPlaceholder": "DA-2026-000123 ou VR-000123",
       "contactLabel": "Email ou téléphone",
       "contactPlaceholder": "vous@exemple.com ou +221 77 000 00 00",
       "submitCta": "Suivre ma demande",

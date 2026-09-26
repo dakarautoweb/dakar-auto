@@ -1,6 +1,12 @@
 import 'server-only'
 import { escapeHtml } from '../layout'
-import { resolveCategoryLabel, resolveConditionLabel, resolvePreferredContactLabel, resolveSideLabel } from '../labels'
+import {
+  resolveCategoryLabel,
+  resolveConditionLabel,
+  resolveCustomerConfirmationLabelFr,
+  resolvePreferredContactLabel,
+  resolveSideLabel,
+} from '../labels'
 import { SITE_URL, normalizePhoneDigits, buildWhatsAppLinkFrom } from '@/src/lib/contact-info'
 import type { PartsRequestEmailData } from '../types'
 
@@ -70,6 +76,9 @@ export function buildAdminNotificationEmail(data: PartsRequestEmailData): { subj
     renderRow('Téléphone', link(`tel:${normalizePhoneDigits(data.contact.phone)}`, data.contact.phone)),
     renderRow('E-mail', data.contact.email ? link(`mailto:${data.contact.email}`, data.contact.email) : 'Non renseigné'),
     renderRow('Contact préféré', escapeHtml(preferredContactLabel)),
+    // Mirrors the routing in sendPartsRequestNotifications — the customer
+    // gets an automatic confirmation only on their chosen channel.
+    renderRow('Confirmation client', escapeHtml(resolveCustomerConfirmationLabelFr(data.contact.preferredContact))),
     ...(data.contact.whatsappPhone
       ? [renderRow('WhatsApp', link(buildWhatsAppLinkFrom(data.contact.whatsappPhone), data.contact.whatsappPhone))]
       : []),

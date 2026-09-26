@@ -2,7 +2,7 @@ import 'server-only'
 import { resendClient, EMAIL_FROM } from './config'
 import { buildStatusUpdateEmail, type StatusUpdateEmailData } from './templates/status-update'
 
-// Best-effort only, same contract as sendPartsRequestEmails: the database
+// Best-effort only, same contract as sendPartsRequestAdminEmail: the database
 // status change is already committed before this runs, and a failure here
 // must never be treated as the status update having failed.
 export async function sendStatusUpdateEmail(data: StatusUpdateEmailData, customerEmail: string | null): Promise<void> {

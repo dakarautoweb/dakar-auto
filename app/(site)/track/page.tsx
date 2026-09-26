@@ -2,7 +2,7 @@ import { getCurrentLocale } from '@/src/i18n/server'
 import { getDictionary } from '@/src/i18n/dictionaries'
 import { TrackLookupForm } from '@/src/components/tracking/track-lookup-form'
 import { iconCircleClasses } from '@/src/components/ui/styles'
-import { RouteIcon } from '@/src/components/home/icons'
+import { RouteIcon, SearchIcon } from '@/src/components/home/icons'
 
 // Public entry point for customers who no longer have their tracking link
 // (e.g. deleted the email). Looks the request up server-side by
@@ -24,7 +24,10 @@ export default async function TrackLookupPage() {
           <span className="h-px w-6 bg-accent/60" aria-hidden="true" />
           {t.eyebrow}
         </span>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight">{t.title}</h1>
+        <h1 className="mt-3 inline-flex items-center gap-2.5 text-3xl font-bold tracking-tight">
+          <SearchIcon className="h-6 w-6 shrink-0 text-accent/80 sm:h-7 sm:w-7" />
+          {t.title}
+        </h1>
         <p className="mt-2 text-muted-foreground">{t.subtitle}</p>
       </div>
 

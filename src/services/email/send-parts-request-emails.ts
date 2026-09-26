@@ -11,42 +11,45 @@ function safeErrorMessage(err: unknown): string {
 }
 
 // Best-effort only: the database row is the source of truth for a parts
-// request. A Resend failure here must never affect the caller — every send
-// is individually caught so one failure can't suppress the other, and this
-// function itself never throws.
-export async function sendPartsRequestEmails(data: PartsRequestEmailData): Promise<void> {
+// request. Neither function throws — a Resend failure is logged and
+// swallowed. Deciding *whether* to send (the customer's preferred contact
+// method) is the notification orchestrator's job, not this module's; see
+// src/services/notifications/send-parts-request-notifications.ts.
+
+export async function sendPartsRequestCustomerEmail(data: PartsRequestEmailData): Promise<void> {
   if (!resendClient) {
-    console.error('[email] RESEND_API_KEY is not configured — skipping parts request emails')
+    console.error('[email] RESEND_API_KEY is not configured — skipping customer confirmation')
+    return
+  }
+  if (!data.contact.email) {
+    console.error('[email] No customer email address — skipping customer confirmation')
     return
   }
 
-  const sends: Promise<void>[] = []
-
-  if (data.contact.email) {
-    const { subject, html } = buildCustomerConfirmationEmail(data)
-    sends.push(
-      resendClient.emails
-        .send({ from: EMAIL_FROM, to: data.contact.email, subject, html })
-        .then(({ error }) => {
-          if (error) console.error('[email] Customer confirmation send failed:', error.message)
-        })
-        .catch((err) => console.error('[email] Customer confirmation send threw:', safeErrorMessage(err)))
-    )
+  const { subject, html } = buildCustomerConfirmationEmail(data)
+  try {
+    const { error } = await resendClient.emails.send({ from: EMAIL_FROM, to: data.contact.email, subject, html })
+    if (error) console.error('[email] Customer confirmation send failed:', error.message)
+  } catch (err) {
+    console.error('[email] Customer confirmation send threw:', safeErrorMessage(err))
   }
+}
 
-  if (ADMIN_EMAIL) {
-    const { subject, html } = buildAdminNotificationEmail(data)
-    sends.push(
-      resendClient.emails
-        .send({ from: EMAIL_FROM, to: ADMIN_EMAIL, subject, html })
-        .then(({ error }) => {
-          if (error) console.error('[email] Admin notification send failed:', error.message)
-        })
-        .catch((err) => console.error('[email] Admin notification send threw:', safeErrorMessage(err)))
-    )
-  } else {
+export async function sendPartsRequestAdminEmail(data: PartsRequestEmailData): Promise<void> {
+  if (!resendClient) {
+    console.error('[email] RESEND_API_KEY is not configured — skipping admin notification')
+    return
+  }
+  if (!ADMIN_EMAIL) {
     console.error('[email] DAKAR_ADMIN_EMAIL is not configured — skipping admin notification')
+    return
   }
 
-  await Promise.allSettled(sends)
+  const { subject, html } = buildAdminNotificationEmail(data)
+  try {
+    const { error } = await resendClient.emails.send({ from: EMAIL_FROM, to: ADMIN_EMAIL, subject, html })
+    if (error) console.error('[email] Admin notification send failed:', error.message)
+  } catch (err) {
+    console.error('[email] Admin notification send threw:', safeErrorMessage(err))
+  }
 }
