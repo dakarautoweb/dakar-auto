@@ -50,14 +50,16 @@ export function MobileMenu({
   const links = [
     { href: '/', label: dict.header.nav.home },
     { href: '/parts', label: dict.header.nav.parts },
+    { href: '/vehicles', label: dict.header.nav.inventory },
     { href: '/source-a-vehicle', label: dict.header.nav.sourceVehicle },
     { href: '/about', label: dict.header.nav.about },
     { href: '/#contact', label: dict.header.nav.contact },
+    { href: '/faq', label: dict.header.nav.faq },
     { href: '/track', label: dict.header.nav.track },
   ]
-  // Track stays reachable (hero feature strip, tracking emails) even
-  // though it's dropped from the primary nav to match the reference's
-  // 5-item header; kept last here as a lower-emphasis link.
+  // Track and FAQ stay reachable (hero feature strip, tracking emails,
+  // footer link) even though they're dropped from the primary nav to match
+  // the reference's 5-item header; kept last here as lower-emphasis links.
 
   // Portaled to document.body instead of rendered inline: <header> has
   // backdrop-blur-xl (a backdrop-filter), which per spec makes it a

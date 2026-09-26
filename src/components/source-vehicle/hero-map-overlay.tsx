@@ -12,10 +12,14 @@
 // elements sharing one geometry can't drift apart on any viewport.
 //
 // MAP_TRANSFORM places the abstract continents map (authored in its own
-// 0–468×0–239 space — see each mask's inner <g>) into a chosen box in that
-// native-pixel space: roughly x:[580,1760] y:[30,290] — the sky region
-// above the car and skyline, sized and centered by eye since there's no
-// underlying map art to calibrate against here.
+// 0–468×0–239 space — see each mask's inner <g>) into the sky region of
+// that native-pixel space with ONE uniform scale (MAP_SCALE on both axes),
+// so the continents keep their natural proportions. (It used to be scaled
+// 3.169 × 1.33 to fill a wide box, which stretched every continent ~2.4×
+// horizontally.) The continents' own extent (map x 44–416, y 6–201) lands
+// at roughly native x:[720,1316] y:[5,317] — South America ends left of
+// the car and Africa/Australia stay above its roofline, so the map never
+// covers the vehicle.
 //
 // Continent coastlines are the same traced paths from Wikimedia Commons'
 // "Continents.svg" (public domain, potrace-traced from a CIA World
@@ -24,34 +28,25 @@
 // coastline shape, not an approximate blob, revealed only where each mask
 // is white.
 //
-// --- The dot texture: an isotropic grid, not a barcode ---
-// MAP_TRANSFORM's scale is non-uniform (SCALE_X ≠ SCALE_Y, since the
-// abstract map's own aspect ratio doesn't match the sky region it's
-// placed in). A plain square dot-pattern tile, carried through that
-// scale unchanged, would stretch into a grid with very different
-// horizontal/vertical spacing — round dots packed tightly in vertical
-// rows but far apart horizontally, reading as scan-line stripes rather
-// than an even mesh (the "cartoonish" look). TILE_W/TILE_H below are the
-// inverse of that scale (PITCH / SCALE_X and PITCH / SCALE_Y), so after
-// MAP_TRANSFORM the grid pitch is equal on both axes; R_HALO/RY_HALO and
-// R_BRIGHT/RY_BRIGHT are likewise scaled per-axis so the dots stay
-// perfectly round instead of stretching into ellipses.
+// --- The dot texture ---
+// Because MAP_TRANSFORM is uniform, a plain square tile with round dots
+// stays an even, round-dot mesh after scaling. DOT_PITCH / DOT_RADIUS are
+// given in native photo pixels and divided by MAP_SCALE into map space:
+// ~6px pitch, ~0.95px radius (was 7px / 1.2px) — a finer, denser mesh
+// of small markers rather than chunky beads.
 //
-// --- Sequence: a sliding window of 3, not a single spotlight ---
-// All five groups share the one map-region-glow keyframe (globals.css):
-// fade in (0%–15%), hold at full brightness (15%–45%), fade out
-// (45%–60%), stay off (60%–100%). Each is only phase-shifted via a
-// negative animation-delay, STEP_SECONDS apart (STEP = CYCLE / 5).
-// Because the "on" portion (60% of the cycle) spans three step-intervals,
-// and consecutive continents are offset by exactly one step, there are
-// always exactly three continents mid-hold at any moment — entry order
-// North America → South America → Asia → Africa → Australia → repeat,
-// with the newest fading in at the same moment the oldest of the current
-// three starts fading out. No pause with fewer than three on screen, no
-// moment where everything goes dark before the next one lights up.
-// CYCLE_SECONDS is deliberately long (24s) and the fade portions are a
-// full 15% of that each (3.6s) — slow enough that the eye never catches
-// a "jump", only a continuous, unhurried breathing glow.
+// --- Resting layer + glow sweep ---
+// Every continent (North/South America, Europe, Africa, Asia, Australia)
+// is always drawn once at low opacity, so all six are visible at the same
+// time and the map reads as a whole world. On top, each continent's glow
+// group shares the one map-region-glow keyframe (globals.css): fade in
+// (0%–12%), hold (12%–55%), fade out (55%–70%), off (70%–100%), phase-
+// shifted STEP_SECONDS apart (STEP = CYCLE / 6) via a negative
+// animation-delay. The 70% "on" window spans ~4 of the 6 steps, so about
+// four continents are glowing at any moment, entering west → east
+// (CONTINENTS order), with the newest fading in as the oldest fades out.
+// CYCLE_SECONDS stays long (24s) so the sweep is a slow, continuous
+// breathing glow rather than a visible jump.
 //
 // Each continent's dotted texture is defined once in <defs> (a mask-cut
 // rect filled with the dot pattern) and drawn three times via <use>: a
@@ -64,10 +59,23 @@
 // fill — always the dot pattern, at any of the three intensities.
 import { HERO_BOX_CLASSNAME, HERO_BOX_STYLE, PHOTO_VIEWBOX } from './vehicle-search-hero-image'
 
-const MAP_TRANSFORM = 'translate(440.9,22.7) scale(3.169,1.33)'
+const MAP_SCALE = 1.6
+const MAP_TRANSFORM = `translate(650,-5) scale(${MAP_SCALE})`
+const DOT_PITCH = 6 / MAP_SCALE
+const DOT_RADIUS = 0.95 / MAP_SCALE
+
+// Mask ids above, in glow-entry order (west → east).
+const CONTINENTS = [
+  { id: 4, name: 'north-america' },
+  { id: 3, name: 'south-america' },
+  { id: 5, name: 'europe' },
+  { id: 1, name: 'africa' },
+  { id: 2, name: 'asia' },
+  { id: 0, name: 'australia' },
+]
 
 const CYCLE_SECONDS = 24
-const STEP_SECONDS = CYCLE_SECONDS / 5
+const STEP_SECONDS = CYCLE_SECONDS / CONTINENTS.length
 
 export function HeroMapOverlay() {
   return (
@@ -75,13 +83,12 @@ export function HeroMapOverlay() {
       <svg viewBox={PHOTO_VIEWBOX} className={HERO_BOX_CLASSNAME} style={HERO_BOX_STYLE}>
         <defs>
           {/* Shared dot texture — a sparse, evenly-spaced grid of small
-              round dots (see the isotropic-grid note above for why tile
-              size and radius are each compensated per-axis). Only one
+              round dots (see the dot-texture note above). Only one
               pattern now (an unused dimmer variant was here before) —
               the halo/crisp intensity difference lives entirely on each
               <use>'s own opacity/blur below. */}
-          <pattern id="dot-grid-bright" width="2.5244556642473968" height="6.015037593984962" patternUnits="userSpaceOnUse">
-            <ellipse cx="1.2622278321236984" cy="3.007518796992481" rx="0.6942253076680341" ry="1.6541353383458648" fill="var(--hero-map-glow)" />
+          <pattern id="dot-grid-bright" width={DOT_PITCH} height={DOT_PITCH} patternUnits="userSpaceOnUse">
+            <circle cx={DOT_PITCH / 2} cy={DOT_PITCH / 2} r={DOT_RADIUS} fill="var(--hero-map-glow)" />
           </pattern>
         <mask id="continent-mask-0" maskUnits="userSpaceOnUse" x="0" y="0" width="468" height="239">
           <g transform="translate(0,239) scale(0.016963,-0.016963)" fill="#fff">
@@ -137,6 +144,22 @@ export function HeroMapOverlay() {
             <path d="M7552 8740 c-33 -16 -34 -30 0 -30 13 0 18 -8 18 -28 0 -15 5 -33 12 -40 19 -19 -18 -26 -79 -15 -48 9 -55 8 -63 -8 -8 -14 -4 -21 22 -33 34 -17 52 -21 44 -8 -2 4 22 8 55 7 55 0 63 -3 81 -28 l20 -28 25 35 c24 36 38 44 45 26 2 -6 14 -4 31 5 29 15 90 12 95 -5 2 -5 11 -10 20 -10 8 0 12 3 9 7 -4 3 1 12 11 19 16 12 14 16 -20 49 -20 19 -46 35 -57 35 -12 0 -21 6 -21 14 0 20 -82 40 -136 31 -33 -5 -50 -3 -62 8 -15 12 -22 11 -50 -3z" />
           </g>
         </mask>
+        {/* Europe — absent from the Continents.svg source groups above
+            (its Eurasia group only carries Asia), so it is hand-traced
+            directly in the 468×239 map space from real lon/lat coastline
+            points, calibrated against the Africa/Asia coastlines it meets
+            (Gibraltar, Bosporus, Sicily–Tunisia). Simplified, but it only
+            ever shows through the dot mesh, where that reads as coastline. */}
+        <mask id="continent-mask-5" maskUnits="userSpaceOnUse" x="0" y="0" width="468" height="239">
+          <g fill="#fff">
+            <path d="M214.5 67.7 L210.2 66.4 L209.5 64.1 L209.8 58.3 L217.9 57.7 L220.2 54.8 L215.9 50.9 L219.7 49.1 L224 47.3 L227.5 44.7 L232.1 41.2 L235.3 38.2 L237.7 41.2 L237.1 43 L245.5 42.7 L252.4 39.2 L253.3 35.9 L260 35.1 L249.9 34.5 L249.3 31 L254.2 28.3 L249.9 27.2 L247.7 29.9 L243.8 31.8 L245.8 36 L238.3 41.3 L236.9 38.2 L235.4 35.2 L230.7 37.8 L228.1 34.5 L231.9 30.3 L240.1 25.2 L246 21.9 L254.7 20 L263.9 22.8 L274.2 25.6 L273.5 29 L277.4 23.5 L284.5 23.5 L285 40 L284 50 L281.9 54.1 L272.9 56.8 L268 54.5 L265.2 56.3 L261 53.4 L258.4 56.6 L258.8 60.7 L255 61 L251.1 61.5 L252.4 65 L250.5 67 L246.7 62.3 L244.7 58.8 L239.2 54.7 L239 57.4 L242.2 59.7 L245.4 62.2 L243.7 61.7 L241.7 65 L239.9 61.2 L237.3 59.8 L233.1 56.3 L231 57.3 L228.6 57.8 L225.5 58.9 L224.5 60.4 L221.3 63.1 L218.9 66.8 Z" />
+            <path d="M214.4 48.3 L223.5 47.2 L223.9 45 L221.7 43.8 L218.5 40.5 L217.7 37 L215.3 37 L214 40.1 L217.9 44.1 L215 46.2 Z" />
+            <path d="M214 41.6 L214 45.6 L208.9 46.5 L208.9 43 Z" />
+            <path d="M191 27.6 L204.4 27.9 L198.7 30.5 L192.9 29.9 Z" />
+            <path d="M237.6 65 L241.7 64.7 L241 66.8 Z" />
+            <path d="M234 58.2 L234.2 63.6 L232.5 63.6 L232.5 60.9 Z" />
+          </g>
+        </mask>
         <g id="continent-0" mask="url(#continent-mask-0)" fill="url(#dot-grid-bright)">
           <rect x="0" y="0" width="468" height="239" />
         </g>
@@ -152,63 +175,32 @@ export function HeroMapOverlay() {
         <g id="continent-4" mask="url(#continent-mask-4)" fill="url(#dot-grid-bright)">
           <rect x="0" y="0" width="468" height="239" />
         </g>
+        <g id="continent-5" mask="url(#continent-mask-5)" fill="url(#dot-grid-bright)">
+          <rect x="0" y="0" width="468" height="239" />
+        </g>
         </defs>
         <g transform={MAP_TRANSFORM}>
-        {/* Australia — dotted texture, revealed only where the mask (its real coastline) is white */}
-        <g
-          style={{
-            animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
-            animationDelay: `-${0 * STEP_SECONDS}s`,
-          }}
-        >
-          <use href="#continent-0" opacity={0.8} style={{ filter: 'blur(5px)' }} />
-          <use href="#continent-0" opacity={0.55} style={{ filter: 'blur(2px)' }} />
-          <use href="#continent-0" style={{ filter: 'blur(0.35px)' }} />
-        </g>
-        {/* Africa — dotted texture, revealed only where the mask (its real coastline) is white */}
-        <g
-          style={{
-            animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
-            animationDelay: `-${1 * STEP_SECONDS}s`,
-          }}
-        >
-          <use href="#continent-1" opacity={0.8} style={{ filter: 'blur(5px)' }} />
-          <use href="#continent-1" opacity={0.55} style={{ filter: 'blur(2px)' }} />
-          <use href="#continent-1" style={{ filter: 'blur(0.35px)' }} />
-        </g>
-        {/* Asia — dotted texture, revealed only where the mask (its real coastline) is white */}
-        <g
-          style={{
-            animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
-            animationDelay: `-${2 * STEP_SECONDS}s`,
-          }}
-        >
-          <use href="#continent-2" opacity={0.8} style={{ filter: 'blur(5px)' }} />
-          <use href="#continent-2" opacity={0.55} style={{ filter: 'blur(2px)' }} />
-          <use href="#continent-2" style={{ filter: 'blur(0.35px)' }} />
-        </g>
-        {/* South America — dotted texture, revealed only where the mask (its real coastline) is white */}
-        <g
-          style={{
-            animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
-            animationDelay: `-${3 * STEP_SECONDS}s`,
-          }}
-        >
-          <use href="#continent-3" opacity={0.8} style={{ filter: 'blur(5px)' }} />
-          <use href="#continent-3" opacity={0.55} style={{ filter: 'blur(2px)' }} />
-          <use href="#continent-3" style={{ filter: 'blur(0.35px)' }} />
-        </g>
-        {/* North America — dotted texture, revealed only where the mask (its real coastline) is white */}
-        <g
-          style={{
-            animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
-            animationDelay: `-${4 * STEP_SECONDS}s`,
-          }}
-        >
-          <use href="#continent-4" opacity={0.8} style={{ filter: 'blur(5px)' }} />
-          <use href="#continent-4" opacity={0.55} style={{ filter: 'blur(2px)' }} />
-          <use href="#continent-4" style={{ filter: 'blur(0.35px)' }} />
-        </g>
+          {/* Resting layer — every continent always faintly lit, so the
+              whole world map reads at once and Europe is never missing. */}
+          <g opacity={0.32}>
+            {CONTINENTS.map(({ id }) => (
+              <use key={id} href={`#continent-${id}`} />
+            ))}
+          </g>
+          {/* Glow sweep on top — see the sequence note above. */}
+          {CONTINENTS.map(({ id, name }, order) => (
+            <g
+              key={name}
+              style={{
+                animation: `map-region-glow ${CYCLE_SECONDS}s ease-in-out infinite`,
+                animationDelay: `-${(CONTINENTS.length - 1 - order) * STEP_SECONDS}s`,
+              }}
+            >
+              <use href={`#continent-${id}`} opacity={0.45} style={{ filter: 'blur(3px)' }} />
+              <use href={`#continent-${id}`} opacity={0.4} style={{ filter: 'blur(1.2px)' }} />
+              <use href={`#continent-${id}`} style={{ filter: 'blur(0.2px)' }} />
+            </g>
+          ))}
         </g>
       </svg>
     </div>

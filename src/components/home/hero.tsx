@@ -112,6 +112,32 @@ export function Hero({ dict }: { dict: Dictionary }) {
                   <p className="mt-2 text-sm text-red-500">{validationError === 'length' ? dict.wizard.vin.errorLength : dict.wizard.vin.errorCharacters}</p>
                 )}
 
+                {result?.status === 'partial' && (
+                  // Informational, not an error — the VIN was read, it just
+                  // didn't yield every detail. The wizard re-runs this
+                  // (cached) lookup from ?vin= and opens manual selection
+                  // with the make already filled in.
+                  <div role="status" className="mt-4 flex items-start gap-3 rounded-xl border border-accent/25 bg-accent-soft/40 p-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                      <InfoIcon className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-medium">{dict.wizard.vin.partialTitle}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{dict.wizard.vin.partialDescription}</p>
+                      <p className="mt-2 text-sm">
+                        <span className="text-muted-foreground">{dict.wizard.manual.makeLabel} : </span>
+                        <span className="font-semibold text-foreground">{result.vehicle.make}</span>
+                      </p>
+                      <Link
+                        href={`/vehicle/identify?vin=${encodeURIComponent(result.vehicle.vin)}`}
+                        className={buttonClasses({ variant: 'primary', size: 'md', className: 'mt-3' })}
+                      >
+                        {dict.wizard.vin.partialCta}
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
                 {(result?.status === 'not_found' || result?.status === 'unavailable') && (
                   <div className="mt-4 rounded-xl border border-border bg-surface p-4">
                     <p className="font-medium">{result.status === 'not_found' ? dict.wizard.vin.notFoundTitle : dict.wizard.vin.unavailableTitle}</p>
@@ -179,32 +205,18 @@ export function Hero({ dict }: { dict: Dictionary }) {
         </div>
 
         {!found && (
-          <div className="flex flex-col gap-5">
-            {/* Idle-state placeholder (imageUrl is always null here — it's
-                only ever filled once a VIN resolves, which swaps this
-                whole branch for <HeroVehicleResult> instead) exists to
-                balance desktop's 2-column grid. Below lg the layout is a
-                single stacked column, so this decorative block just left
-                a large empty gap between the feature cards and the CTA
-                nudge below — hidden there, unchanged at lg+. */}
-            <div className="hidden lg:block">
-              <HeroVisual imageUrl={null} caption={dict.hero.caption} />
-            </div>
-
-            {/* Secondary premium nudge — distinct from the full SourceVehicle
-                homepage section further down; a compact reminder, not a duplicate. */}
-            <Link
-              href="/source-a-vehicle"
-              className="group flex flex-col items-stretch gap-3 rounded-2xl border border-accent-gold/25 bg-accent-gold-soft px-5 py-4 transition duration-200 hover:border-accent-gold/50 hover:shadow-glow-gold sm:flex-row sm:items-center sm:justify-between sm:gap-4"
-            >
-              <span>
-                <span className="block text-sm font-semibold text-accent-gold-foreground dark:text-accent-gold">{dict.hero.vehiclePanel.title}</span>
-                <span className="block text-xs text-muted-foreground">{dict.hero.vehiclePanel.description}</span>
-              </span>
-              <span className={buttonClasses({ variant: 'gold', size: 'sm', pill: true, fullWidth: true, className: 'shrink-0 sm:w-auto' })}>
-                {dict.hero.vehiclePanel.cta}
-              </span>
-            </Link>
+          // Idle-state placeholder (imageUrl is always null here — it's
+          // only ever filled once a VIN resolves, which swaps this whole
+          // branch for <HeroVehicleResult> instead) exists to balance
+          // desktop's 2-column grid. Below lg the layout is a single
+          // stacked column, so this decorative block is hidden there
+          // entirely (no wrapper div left behind to create an empty
+          // grid-gap gap) rather than shown. The former secondary "Need a
+          // complete vehicle?" nudge that lived alongside it was removed —
+          // it duplicated the full SourceVehicle homepage section further
+          // down the page, most visible on mobile where both used to stack.
+          <div className="hidden lg:block">
+            <HeroVisual imageUrl={null} caption={dict.hero.caption} />
           </div>
         )}
         </div>

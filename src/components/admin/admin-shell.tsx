@@ -16,10 +16,13 @@ import { AdminTopHeader } from './admin-top-header'
 import {
   ClientsFilledIcon,
   DashboardFilledIcon,
+  FaqFilledIcon,
+  InventoryFilledIcon,
   PartsFilledIcon,
   RequestsFilledIcon,
   SettingsFilledIcon,
   StatisticsFilledIcon,
+  SuppliersFilledIcon,
   VehicleFilledIcon,
 } from './nav-icons'
 
@@ -72,7 +75,10 @@ function NavLinks({
     { href: '/admin/vehicle-requests', label: dict.admin.nav.vehicleRequests, exact: false, icon: VehicleFilledIcon, badge: badges.vehicles },
     { href: '/admin/clients', label: dict.admin.nav.clients, exact: false, icon: ClientsFilledIcon, badge: 0 },
     { href: '/admin/parts', label: dict.admin.nav.parts, exact: false, icon: PartsFilledIcon, badge: 0 },
+    { href: '/admin/suppliers', label: dict.admin.nav.suppliers, exact: false, icon: SuppliersFilledIcon, badge: 0 },
+    { href: '/admin/vehicles', label: dict.admin.nav.inventory, exact: false, icon: InventoryFilledIcon, badge: 0 },
     { href: '/admin/statistics', label: dict.admin.nav.statistics, exact: false, icon: StatisticsFilledIcon, badge: 0 },
+    { href: '/admin/faq', label: dict.admin.nav.faq, exact: false, icon: FaqFilledIcon, badge: 0 },
     { href: '/admin/settings', label: dict.admin.nav.settings, exact: false, icon: SettingsFilledIcon, badge: 0 },
   ]
 

@@ -3,8 +3,13 @@ import { getDictionary } from "@/src/i18n/dictionaries";
 import { VehicleRequestWizard } from "@/src/components/vehicle-request-wizard/wizard";
 import { VehicleSearchHeroImage } from "@/src/components/source-vehicle/vehicle-search-hero-image";
 import { HeroMapOverlay } from "@/src/components/source-vehicle/hero-map-overlay";
-import { cardClasses, iconCircleClasses } from "@/src/components/ui/styles";
+import { buttonClasses, cardClasses, iconCircleClasses } from "@/src/components/ui/styles";
 import { GlobalIcon, QualityIcon, ShippingIcon, SupportIcon } from "@/src/components/home/icons";
+
+// Target of the hero CTA. The form card is focusable (tabIndex -1), so
+// following the link both scrolls (smoothly, via the global
+// scroll-behavior) to the form and moves focus onto it.
+const FORM_ANCHOR_ID = "vehicle-request-form";
 
 export default async function SourceAVehiclePage() {
   const locale = await getCurrentLocale();
@@ -35,39 +40,52 @@ export default async function SourceAVehiclePage() {
               column would paint on top by default, regardless of which
               one comes first in the markup. */}
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
-            <div className="relative z-10">
+            <div className="relative z-10 lg:col-start-1 lg:row-start-1">
               <span className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">{t.eyebrow}</span>
               <h1 className="mt-3 text-4xl font-bold tracking-tight text-balance sm:text-5xl">{t.title}</h1>
               <p className="mt-4 max-w-lg text-lg text-muted-foreground">{t.description}</p>
-
-              <ul className="mt-8 grid grid-cols-2 gap-3">
-                {features.map((feature) => (
-                  <li
-                    key={feature.title}
-                    className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card/60 p-4 text-center shadow-card transition duration-200 hover:-translate-y-1 hover:border-accent-gold/50 hover:shadow-glow-gold sm:items-start sm:text-left"
-                  >
-                    <span
-                      className={iconCircleClasses({
-                        size: "xl",
-                        tone: "gold",
-                        className: "transition duration-200 group-hover:scale-110",
-                      })}
-                    >
-                      <feature.icon className="h-9 w-9" />
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold">{feature.title}</span>
-                      <span className="block text-xs text-muted-foreground">{feature.description}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <a
+                href={`#${FORM_ANCHOR_ID}`}
+                className={buttonClasses({ variant: "primary", size: "lg", className: "mt-6 w-full shadow-glow sm:w-auto" })}
+              >
+                {t.cta}
+                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                  <path d="M4 10h12m-5-5 5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
             </div>
+
+            {/* Benefits: same DOM spot as before (text → benefits → photo),
+                so the stacked mobile order and 2×2 grid are unchanged.
+                From lg up it moves to its own full-width row under the
+                hero as 4 compact, equal-width cards. */}
+            <ul className="relative z-10 -mt-2 grid grid-cols-2 gap-3 lg:col-span-2 lg:row-start-2 lg:mt-0 lg:grid-cols-4 lg:gap-4">
+              {features.map((feature) => (
+                <li
+                  key={feature.title}
+                  className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card/60 p-4 text-center shadow-card transition duration-200 hover:-translate-y-1 hover:border-accent-gold/50 hover:shadow-glow-gold sm:items-start sm:text-left lg:flex-row lg:items-center"
+                >
+                  <span
+                    className={iconCircleClasses({
+                      size: "xl",
+                      tone: "gold",
+                      className: "shrink-0 transition duration-200 group-hover:scale-110 lg:h-12 lg:w-12",
+                    })}
+                  >
+                    <feature.icon className="h-9 w-9 lg:h-6 lg:w-6" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold">{feature.title}</span>
+                    <span className="block text-xs text-muted-foreground">{feature.description}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
 
             {/* Anchor for the hero photo + map overlay — see
                 VehicleSearchHeroImage for why they live here (inside the
                 right grid column) rather than at the section level. */}
-            <div className="relative aspect-[4/3] w-full max-w-lg lg:aspect-auto lg:h-full lg:max-w-none" aria-hidden="true">
+            <div className="relative aspect-[4/3] w-full max-w-lg lg:col-start-2 lg:row-start-1 lg:aspect-auto lg:h-full lg:min-h-[540px] lg:max-w-none" aria-hidden="true">
               <VehicleSearchHeroImage />
               <HeroMapOverlay />
             </div>
@@ -109,7 +127,11 @@ export default async function SourceAVehiclePage() {
             )}
           </div>
 
-          <div className={cardClasses({ tone: "raised", padding: "md" })}>
+          <div
+            id={FORM_ANCHOR_ID}
+            tabIndex={-1}
+            className={cardClasses({ tone: "raised", padding: "md", className: "scroll-mt-24 focus:outline-none" })}
+          >
             <VehicleRequestWizard dict={dict} locale={locale} />
           </div>
         </div>

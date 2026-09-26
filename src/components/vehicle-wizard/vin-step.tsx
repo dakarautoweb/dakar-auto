@@ -8,7 +8,7 @@ import { DEMO_VINS } from '@/src/services/vin/demo-vins'
 import type { VinLookupResult } from '@/src/services/vin/types'
 import { buttonClasses, cardClasses } from '@/src/components/ui/styles'
 import { CarSideIcon, ScanIcon, SearchIcon, SlidersIcon } from '@/src/components/home/icons'
-import { vehicleResultToConfirmed, type ConfirmedVehicle } from './types'
+import { partialResultToMatch, vehicleResultToConfirmed, type ConfirmedVehicle, type PartialVinMatch } from './types'
 import { VehicleResultCard } from './vehicle-result-card'
 import { VehicleResultCardParts } from './vehicle-result-card-parts'
 import type { WizardEntrySource } from './wizard-context'
@@ -16,19 +16,28 @@ import type { WizardEntrySource } from './wizard-context'
 export function VinStep({
   dict,
   initialVin,
+  autoLookup = true,
   scannedVin,
   entrySource,
   onVehicleConfirmed,
+  onPartialMatch,
   onManual,
   onScan,
 }: {
   dict: Dictionary
   initialVin?: string
+  // False when initialVin is only there to re-populate the field (coming
+  // back from a partial match's manual form) — re-running the lookup would
+  // just bounce the customer straight back to that form.
+  autoLookup?: boolean
   scannedVin?: string | null
   // Only 'parts' (Pièces entry) gets the dedicated dark result card below —
   // every other case (homepage, direct visit) keeps the existing card.
   entrySource?: WizardEntrySource | null
   onVehicleConfirmed: (vehicle: ConfirmedVehicle) => void
+  // A decode that only identified the make: the wizard moves on to manual
+  // selection with that make pre-filled instead of showing a result here.
+  onPartialMatch: (match: PartialVinMatch) => void
   onManual: () => void
   onScan: () => void
 }) {
@@ -52,12 +61,16 @@ export function VinStep({
   function runLookup(value: string) {
     startTransition(async () => {
       const lookup = await identifyVinAction(value)
+      if (lookup.status === 'partial') {
+        onPartialMatch(partialResultToMatch(lookup.vehicle))
+        return
+      }
       setResult(lookup)
     })
   }
 
   useEffect(() => {
-    if (!initialVin || autoSubmitted.current) return
+    if (!initialVin || !autoLookup || autoSubmitted.current) return
     autoSubmitted.current = true
     const normalized = normalizeVin(initialVin)
     if (validateVin(normalized) === null) {

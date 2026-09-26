@@ -4,7 +4,7 @@
 // anywhere they're used. Centralizing these is what keeps radius/shadow/
 // spacing/height consistent across the whole app; edit here, not per file.
 
-export type ButtonVariant = 'primary' | 'gold' | 'secondary' | 'secondary-muted' | 'ghost' | 'danger'
+export type ButtonVariant = 'primary' | 'gold' | 'secondary' | 'secondary-muted' | 'ghost' | 'danger' | 'danger-muted'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const BUTTON_BASE =
@@ -30,6 +30,14 @@ const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
   // the accent color outright rather than tinting on top of it.
   danger:
     'bg-red-600 font-semibold text-white shadow-sm hover:-translate-y-px hover:bg-red-700 active:translate-y-0 active:scale-[0.98] active:bg-red-600',
+  // A calmer destructive tone (FAQ row/modal delete) — a dedicated variant
+  // rather than a className override on top of `danger`, for the same
+  // reason `pill` is a flag on cardClasses/buttonClasses instead of a class
+  // string: two conflicting bg-color utilities of equal specificity don't
+  // reliably resolve by className order, only by Tailwind's own internal
+  // generation order.
+  'danger-muted':
+    'border border-[#8F2A19] bg-[#B93822] font-semibold text-white shadow-sm hover:-translate-y-px hover:bg-[#D14A2F] active:translate-y-0 active:scale-[0.98] active:bg-[#B93822]',
 }
 
 export function buttonClasses({
@@ -109,12 +117,17 @@ export function cardClasses({
   // className string order (see the same note on buttonClasses' `pill`).
   // 'raised' is the public-site "premium panel" look (hero/CTA wrappers) —
   // a fourth depth level in dark mode, a faint tinted gradient in light.
+  // 'solid-accent' is a fully opaque, higher-emphasis CTA surface (vehicle
+  // detail contact panel) — unlike `accent`'s translucent accent-soft wash
+  // (meant as a subtle highlight over other content, ~5% effective alpha),
+  // this reads as a solid card in its own right with a warm accent-gold
+  // border and a stronger shadow.
   tone = 'default',
   className = '',
 }: {
   padding?: 'none' | 'sm' | 'md' | 'lg'
   hoverable?: boolean
-  tone?: 'default' | 'accent' | 'raised'
+  tone?: 'default' | 'accent' | 'raised' | 'solid-accent'
   className?: string
 } = {}): string {
   const paddings: Record<typeof padding, string> = {
@@ -123,13 +136,19 @@ export function cardClasses({
     md: 'p-6 sm:p-8',
     lg: 'p-8 sm:p-12',
   }
+  // Each tone owns its shadow class outright (rather than a single shared
+  // `shadow-card` in the base string) so `solid-accent` can use a stronger
+  // shadow without stacking a second, conflicting shadow utility on the
+  // same element — the same equal-specificity footgun documented on
+  // buttonClasses' `pill` option above.
   const tones: Record<typeof tone, string> = {
-    default: 'border-border bg-card',
-    accent: 'border-accent/25 bg-accent-soft/40',
-    raised: 'border-border bg-surface-raised bg-gradient-to-br from-accent-soft/60 via-surface-raised to-surface-raised dark:from-accent-soft/30',
+    default: 'border-border bg-card shadow-card',
+    accent: 'border-accent/25 bg-accent-soft/40 shadow-card',
+    raised: 'border-border bg-surface-raised bg-gradient-to-br from-accent-soft/60 via-surface-raised to-surface-raised dark:from-accent-soft/30 shadow-card',
+    'solid-accent': 'border-accent-gold/35 bg-gradient-to-br from-accent-gold-soft via-surface-raised to-surface-raised shadow-card-hover',
   }
   return [
-    'rounded-2xl border shadow-card transition duration-200',
+    'rounded-2xl border transition duration-200',
     tones[tone],
     paddings[padding],
     hoverable ? 'hover:-translate-y-1 hover:border-accent-hover/40 hover:shadow-card-hover' : '',

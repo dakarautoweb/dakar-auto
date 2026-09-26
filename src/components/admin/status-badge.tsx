@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { FileText, Wrench, PackageCheck, Car, CheckCircle2, MessageCircle, XCircle } from 'lucide-react'
+import { FileText, Wrench, PackageCheck, Car, CheckCircle2, MessageCircle, XCircle, Clock, Tag, EyeOff } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 
 // The one status → color system for both parts-request and vehicle-request
@@ -15,6 +15,12 @@ export const STATUS_DOT_CLASSES: Record<string, string> = {
   direct_communication: 'bg-purple-500',
   closed: 'bg-gray-400',
   cancelled: 'bg-red-500',
+  // Inventory vehicle statuses (public.inventory_vehicles.status) — distinct
+  // key set from the ones above, so they safely share this same map.
+  available: 'bg-emerald-500',
+  reserved: 'bg-amber-500',
+  sold: 'bg-gray-400',
+  hidden: 'bg-red-500',
 }
 
 // Same palette as STATUS_DOT_CLASSES, as a text-color utility for icons.
@@ -41,6 +47,12 @@ export const STATUS_ICONS: Record<string, ComponentType<{ className?: string; st
   direct_communication: MessageCircle,
   closed: CheckCircle2,
   cancelled: XCircle,
+  // Inventory vehicle statuses — distinct key set from the ones above (see
+  // STATUS_DOT_CLASSES), so they safely share this same map.
+  available: CheckCircle2,
+  reserved: Clock,
+  sold: Tag,
+  hidden: EyeOff,
 }
 
 // Same palette as STATUS_DOT_CLASSES/STATUS_TEXT_CLASSES, as a soft tinted
@@ -54,6 +66,10 @@ export const STATUS_ICON_CHIP_CLASSES: Record<string, string> = {
   direct_communication: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
   closed: 'bg-gray-400/10 text-gray-500 dark:text-gray-400',
   cancelled: 'bg-red-500/10 text-red-600 dark:text-red-400',
+  available: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  reserved: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  sold: 'bg-gray-400/10 text-gray-500 dark:text-gray-400',
+  hidden: 'bg-red-500/10 text-red-600 dark:text-red-400',
 }
 
 // statusMap defaults to the parts-request status labels; pass

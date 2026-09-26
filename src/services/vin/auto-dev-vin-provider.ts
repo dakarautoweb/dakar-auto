@@ -8,6 +8,7 @@ import type { VehicleResult, VinLookupResult, VinProvider } from './types'
 // nested `vehicle`, ...) — we only declare what we map, and treat
 // everything as optional since the docs don't guarantee presence.
 type AutoDevVinResponse = {
+  vinValid?: boolean | null
   make?: string | null
   model?: string | null
   trim?: string | null
@@ -122,6 +123,29 @@ export class AutoDevVinProvider implements VinProvider {
     const make = body.make?.trim() || body.vehicle?.make?.trim() || ''
     const model = body.model?.trim() || body.vehicle?.model?.trim() || ''
 
+    // Every other real field Auto.dev returned, shared by the full and
+    // partial results so a partial decode never drops data it did get.
+    const details = {
+      vin,
+      year: body.vehicle?.year ?? null,
+      trim: body.trim?.trim() || null,
+      engine: body.engine?.trim() || null,
+      transmission: body.transmission?.trim() || null,
+      bodyStyle: body.body?.trim() || null,
+      fuelType: body.fuel?.trim() || null,
+      drivetrain: body.drive?.trim() || null,
+      source: 'auto_dev',
+    }
+
+    if (make && !model && body.vinValid === true) {
+      // Auto.dev confirmed the VIN and recognized the manufacturer (from
+      // the WMI) but has no model record — common for European-market
+      // VINs. That's a real, if incomplete, answer: not an outage and not
+      // "unknown vehicle". Model stays null; never guessed.
+      console.warn(`[vin] Auto.dev identified only the make for ${masked} — returning a partial match`)
+      return { status: 'partial', vehicle: { ...details, make, model: null } }
+    }
+
     // A 200 with no make/model isn't a real decode — treat it as an
     // unexpected response shape rather than fabricating a result or
     // pretending the vehicle wasn't found (it may well exist; the response
@@ -132,20 +156,12 @@ export class AutoDevVinProvider implements VinProvider {
     }
 
     const vehicle: VehicleResult = {
-      vin,
-      year: body.vehicle?.year ?? null,
+      ...details,
       make,
       model,
-      trim: body.trim?.trim() || null,
-      engine: body.engine?.trim() || null,
-      transmission: body.transmission?.trim() || null,
-      bodyStyle: body.body?.trim() || null,
-      fuelType: body.fuel?.trim() || null,
-      drivetrain: body.drive?.trim() || null,
       // Auto.dev's v2 VIN decode response does not include an image URL —
       // never invent one. The wizard's existing placeholder art covers this.
       imageUrl: null,
-      source: 'auto_dev',
     }
 
     return { status: 'found', vehicle }

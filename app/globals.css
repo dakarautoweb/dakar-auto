@@ -161,30 +161,22 @@ html {
   }
 }
 
-/* Per-continent glow, "Trouver un véhicule" hero (see hero-map-overlay.tsx)
-   — a sliding window of 3 continents always visible, not a single one at
-   a time. Every continent's <g> uses this same keyframe, offset only via
-   a negative animation-delay one STEP (1/5 of the cycle) apart, on a
-   deliberately long 24s cycle (see CYCLE_SECONDS there) — a 15%-of-cycle
-   fade is 3.6s, slow enough to read as a soft, continuous breathing glow
-   rather than a switch. The "on" portion (15%–45% hold, fading in/out on
-   either side) spans 60% of the cycle — three step-intervals — so at any
-   instant exactly three consecutive continents are mid-hold: as the
-   oldest of the three starts fading out (past the 45% hold mark), the
-   next new one is already rising (past its own 0% mark), never a moment
-   with fewer than three lit, never a hard on/off switch. Opacity only —
-   the shape itself comes from each continent's own mask, so there's no
-   transform to fight a centering translate over. */
+/* Per-continent glow, "Trouver un véhicule" hero (see hero-map-overlay.tsx).
+   Six continents, each on this same keyframe, offset one STEP (1/6 of the
+   24s cycle) apart via a negative animation-delay. The "on" window (fade
+   in 0%–12%, hold to 55%, fade out to 70%) spans ~4 steps, so about four
+   continents glow at once over a resting layer that keeps all six faintly
+   visible. Opacity only — each shape comes from its own mask. */
 @keyframes map-region-glow {
   0%,
   100% {
     opacity: 0;
   }
-  15%,
-  45% {
+  12%,
+  55% {
     opacity: 1;
   }
-  60% {
+  70% {
     opacity: 0;
   }
 }

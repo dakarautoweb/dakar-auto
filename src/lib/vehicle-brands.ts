@@ -74,3 +74,13 @@ export const VEHICLE_BRANDS: readonly VehicleBrand[] = [...BRANDS].sort((a, b) =
 export function brandLogoSrc(slug: string): string {
   return `/brands/${slug}.png`
 }
+
+// Maps a provider-decoded make (e.g. Auto.dev's "BMW", or an all-caps
+// "MERCEDES-BENZ") onto our own display name, so a VIN-prefilled make
+// selects the matching dropdown entry. Null when we have no such brand —
+// the caller then falls back to the free-text "Other" make.
+export function findBrandByName(name: string): VehicleBrand | null {
+  const needle = name.trim().toLowerCase()
+  if (!needle) return null
+  return VEHICLE_BRANDS.find((brand) => brand.name.toLowerCase() === needle) ?? null
+}

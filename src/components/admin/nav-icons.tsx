@@ -46,6 +46,21 @@ export function VehicleFilledIcon({ className = 'h-5 w-5' }: IconProps) {
   )
 }
 
+// Vehicle inventory (distinct from VehicleFilledIcon, which is already used
+// for "Vehicle Requests"/sourcing) — same car-body silhouette plus a small
+// price-tag badge overlapping the roof, so the two nav rows read as clearly
+// different glyphs at a glance rather than near-duplicates.
+export function InventoryFilledIcon({ className = 'h-5 w-5' }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M3.5 11.5 4.6 7.8A2 2 0 0 1 6.5 6.5h7.6a2 2 0 0 1 1.9 1.3l1.1 3.4A2.1 2.1 0 0 1 18.5 13.5v2.3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2.3a2.1 2.1 0 0 1 1.5-2Z" />
+      <circle cx="6" cy="17.5" r="1.8" />
+      <circle cx="15.5" cy="17.5" r="1.8" />
+      <path d="M15.5 3.3a2.3 2.3 0 0 1 2.3 0l3 1.75a1 1 0 0 1 0 1.73l-3 1.75a2.3 2.3 0 0 1-2.3 0 2.3 2.3 0 0 1-1.15-2 2.3 2.3 0 0 1 1.15-1.98Z" opacity="0.55" />
+    </svg>
+  )
+}
+
 export function ClientsFilledIcon({ className = 'h-5 w-5' }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
@@ -71,6 +86,44 @@ export function StatisticsFilledIcon({ className = 'h-5 w-5' }: IconProps) {
       <rect x="3.5" y="13" width="4.5" height="8" rx="1.3" />
       <rect x="9.8" y="8" width="4.5" height="13" rx="1.3" />
       <rect x="16" y="3.5" width="4.5" height="17.5" rx="1.3" />
+    </svg>
+  )
+}
+
+// Solid speech-bubble with a punched question mark (the hole is real
+// negative space via an SVG mask, not a second hardcoded background color —
+// so it still reads correctly on the active item's orange gradient fill).
+export function FaqFilledIcon({ className = 'h-5 w-5' }: IconProps) {
+  const maskId = 'faq-icon-mask'
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <mask id={maskId}>
+        <rect x="0" y="0" width="24" height="24" fill="white" />
+        <text x="9.4" y="14.3" fontSize="8.5" fontWeight="700" fill="black" fontFamily="ui-sans-serif, system-ui, sans-serif">
+          ?
+        </text>
+      </mask>
+      <path
+        d="M12 2.5c5 0 9 3.4 9 7.6 0 4.2-4 7.6-9 7.6a10.3 10.3 0 0 1-2.6-.33L5.6 19.5a.8.8 0 0 1-1.18-.83l.5-3.2A7.1 7.1 0 0 1 3 10.1c0-4.2 4-7.6 9-7.6Z"
+        fill="currentColor"
+        mask={`url(#${maskId})`}
+      />
+    </svg>
+  )
+}
+
+// Parts sourcing / supplier search — a magnifying glass (a tinted lens
+// fill plus a stroked ring/handle, rather than this file's usual pure
+// fill, since a lens ring is the one shape that genuinely needs a hole)
+// with a small solid "part" rectangle inside it, so this reads clearly
+// distinct from PartsFilledIcon's wrench and InventoryFilledIcon's car.
+export function SuppliersFilledIcon({ className = 'h-5 w-5' }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.3" fill="currentColor" opacity="0.16" />
+      <circle cx="10.5" cy="10.5" r="6.3" stroke="currentColor" strokeWidth="2.2" />
+      <path d="M15.3 15.3 20.8 20.8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <rect x="7.4" y="8.9" width="6.2" height="3.2" rx="0.9" fill="currentColor" />
     </svg>
   )
 }

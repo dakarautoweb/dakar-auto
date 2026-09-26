@@ -24,6 +24,7 @@ export function SiteHeader({
   const navLinks = [
     { href: '/', label: dict.header.nav.home },
     { href: '/parts', label: dict.header.nav.parts },
+    { href: '/vehicles', label: dict.header.nav.inventory },
     { href: '/source-a-vehicle', label: dict.header.nav.sourceVehicle },
     { href: '/about', label: dict.header.nav.about },
     { href: '/#contact', label: dict.header.nav.contact },
@@ -60,21 +61,26 @@ export function SiteHeader({
           <img src="/brand/dakar-auto-logo-header.png" alt="Dakar Auto" className="h-11 w-auto sm:h-14" />
         </Link>
 
-        {/* Premium glass capsule — every nav item lives inside the same
-            rounded container, active item is a filled orange pill, thin
-            hairline separators only sit between two inactive neighbors so
-            they never touch the pill itself. */}
-        <nav className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] p-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_18px_-6px_rgba(0,0,0,0.5)] xl:flex">
+        {/* Segmented control — every nav item is a segment of the same
+            rounded capsule. A segment's corners follow its position: the
+            first is rounded only on its outer (left) side, the last only on
+            its outer (right) side, middle ones are near-square — so the
+            active fill always reads as part of the group, never as a
+            floating pill. Hairline separators only sit between two
+            inactive neighbors so they never touch the active segment. */}
+        <nav className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] p-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_18px_-6px_rgba(0,0,0,0.5)] xl:flex">
           {linksWithState.map((link, i) => {
             const prev = linksWithState[i - 1]
             const showSeparator = i > 0 && !prev.isActive && !link.isActive
+            const segmentShape =
+              i === 0 ? 'rounded-l-full rounded-r-[5px]' : i === linksWithState.length - 1 ? 'rounded-r-full rounded-l-[5px]' : 'rounded-[5px]'
             return (
               <span key={link.href} className="flex items-center">
-                {showSeparator && <span aria-hidden="true" className="mx-1 h-4 w-px bg-white/10" />}
+                {showSeparator && <span aria-hidden="true" className="h-4 w-px bg-white/10" />}
                 <Link
                   href={link.href}
                   aria-current={link.isActive ? 'page' : undefined}
-                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                  className={`relative ${segmentShape} px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                     link.isActive
                       ? 'bg-accent text-white shadow-glow'
                       : 'text-header-foreground/75 hover:bg-white/10 hover:text-white'

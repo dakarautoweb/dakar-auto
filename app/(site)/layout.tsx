@@ -8,6 +8,8 @@ import { SiteFooter } from "@/src/components/site-footer";
 import { PartRequestWizardProvider } from "@/src/components/vehicle-wizard/wizard-context";
 import { SiteSettingsProvider } from "@/src/components/site-settings-context";
 import { getPublicSiteSettings } from "@/src/services/site-settings/queries";
+import { getPublicFaqItems } from "@/src/services/faq/queries";
+import { ChatWidget } from "@/src/components/chat/chat-widget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getCurrentLocale();
   const theme = await getCurrentTheme();
   const dict = await getDictionary(locale);
-  const siteSettings = await getPublicSiteSettings();
+  const [siteSettings, faqItems] = await Promise.all([getPublicSiteSettings(), getPublicFaqItems(locale)]);
 
   return (
     <html
@@ -54,6 +56,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <main className="flex flex-1 flex-col">{children}</main>
           </PartRequestWizardProvider>
           <SiteFooter dict={dict} settings={siteSettings} />
+          <ChatWidget dict={dict.chatWidget} faqItems={faqItems} settings={siteSettings} />
         </SiteSettingsProvider>
       </body>
     </html>

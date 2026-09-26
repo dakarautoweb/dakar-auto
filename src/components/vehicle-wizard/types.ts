@@ -1,4 +1,4 @@
-import type { VehicleResult } from '@/src/services/vin/types'
+import type { PartialVehicleResult, VehicleResult } from '@/src/services/vin/types'
 import type { PartCondition, PartSide, PreferredContact } from '@/src/services/requests/types'
 import type { AttachmentType } from '@/src/services/attachments/types'
 
@@ -41,6 +41,19 @@ export function vehicleResultToConfirmed(vehicle: VehicleResult): ConfirmedVehic
     drivetrain: vehicle.drivetrain,
     imageUrl: vehicle.imageUrl,
   }
+}
+
+// What a partial VIN decode hands to the manual vehicle form: only the
+// values the provider actually returned that the form can use. Model is
+// never part of this — a partial match by definition has none.
+export type PartialVinMatch = {
+  vin: string
+  make: string
+  year: number | null
+}
+
+export function partialResultToMatch(vehicle: PartialVehicleResult): PartialVinMatch {
+  return { vin: vehicle.vin, make: vehicle.make, year: vehicle.year }
 }
 
 export type PartFormState = {

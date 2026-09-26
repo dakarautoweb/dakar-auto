@@ -5,7 +5,7 @@ import { lookupCarImage } from '@/src/services/car-image/car-image-service'
 import { getAutoDevApiKey } from './config'
 import { AutoDevVinProvider } from './auto-dev-vin-provider'
 import { MockVinProvider } from './mock-vin-provider'
-import { getCachedVehicle, setCachedVehicle } from './cache'
+import { getCachedResult, setCachedResult } from './cache'
 import type { VinLookupResult, VinProvider } from './types'
 
 // Single place to swap providers. The rest of the app only ever talks to
@@ -44,9 +44,9 @@ export async function lookupVehicleByVin(rawVin: string): Promise<VinLookupResul
     return { status: 'invalid', reason: validationError }
   }
 
-  const cached = getCachedVehicle(vin)
+  const cached = getCachedResult(vin)
   if (cached) {
-    return { status: 'found', vehicle: cached }
+    return cached
   }
 
   try {
@@ -96,7 +96,14 @@ export async function lookupVehicleByVin(rawVin: string): Promise<VinLookupResul
         }
       }
 
-      setCachedVehicle(vin, result.vehicle)
+      setCachedResult(vin, result)
+    }
+
+    // A partial match (make only) skips photo enrichment entirely: both
+    // photo lookups need at least a model to find anything meaningful, and
+    // a make-only stock photo would be a guess at what the car looks like.
+    if (result.status === 'partial') {
+      setCachedResult(vin, result)
     }
 
     return result

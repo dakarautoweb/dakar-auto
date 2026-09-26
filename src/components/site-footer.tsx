@@ -68,6 +68,11 @@ export function SiteFooter({ dict, settings }: { dict: Dictionary; settings: Pub
                 </Link>
               </li>
               <li>
+                <Link href="/vehicles" className="transition duration-200 hover:text-accent">
+                  {dict.header.nav.inventory}
+                </Link>
+              </li>
+              <li>
                 <Link href="/source-a-vehicle" className="transition duration-200 hover:text-accent">
                   {dict.header.nav.sourceVehicle}
                 </Link>
@@ -75,6 +80,11 @@ export function SiteFooter({ dict, settings }: { dict: Dictionary; settings: Pub
               <li>
                 <Link href="/#contact" className="transition duration-200 hover:text-accent">
                   {dict.header.nav.contact}
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="transition duration-200 hover:text-accent">
+                  {dict.header.nav.faq}
                 </Link>
               </li>
             </ul>

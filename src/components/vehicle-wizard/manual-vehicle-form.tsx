@@ -3,11 +3,11 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { VEHICLE_ENGINES, getModelsForMake, getVehicleYears } from '@/src/services/vehicle-data/demo-data'
-import { OTHER_BRAND_VALUE, VEHICLE_BRANDS } from '@/src/lib/vehicle-brands'
+import { OTHER_BRAND_VALUE, VEHICLE_BRANDS, brandLogoSrc, findBrandByName } from '@/src/lib/vehicle-brands'
 import { buttonClasses, cardClasses, inputClass as selectClass } from '@/src/components/ui/styles'
-import { CalendarIcon, EngineIcon, HashIcon, PriceTagIcon } from '@/src/components/home/icons'
+import { CalendarIcon, EngineIcon, HashIcon, InfoIcon, PriceTagIcon } from '@/src/components/home/icons'
 import { BrandSelect } from './brand-select'
-import type { ConfirmedVehicle } from './types'
+import type { ConfirmedVehicle, PartialVinMatch } from './types'
 
 // Small, muted icon ahead of a field's label — soft/decorative only (never
 // the sole cue for what the field is), matching the same thin currentColor
@@ -22,9 +22,36 @@ function FieldLabel({ htmlFor, icon, children }: { htmlFor: string; icon: ReactN
   )
 }
 
+// Read-only stand-in for BrandSelect when the make came from a partial VIN
+// decode. A readOnly input (rather than a disabled control) keeps it fully
+// legible, focusable, and announced as read-only, with its <label> intact.
+function LockedMake({ id, make, hint }: { id: string; make: string; hint: string }) {
+  const brand = findBrandByName(make)
+  const hintId = `${id}-hint`
+  return (
+    <>
+      <div className="relative">
+        {brand && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={brandLogoSrc(brand.slug)}
+            alt=""
+            className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 object-contain brightness-[0.4] contrast-125 dark:brightness-100 dark:contrast-100"
+          />
+        )}
+        <input id={id} type="text" readOnly value={make} aria-describedby={hintId} className={`${selectClass} cursor-default ${brand ? 'pl-11' : ''}`} />
+      </div>
+      <p id={hintId} className="mt-1.5 text-xs text-muted-foreground">
+        {hint}
+      </p>
+    </>
+  )
+}
+
 export function ManualVehicleForm({
   dict,
   initialValue,
+  partialMatch,
   onConfirm,
   onBackToVin,
 }: {
@@ -34,15 +61,25 @@ export function ManualVehicleForm({
   // without this, the shared make/model/year the user already picked would
   // be silently dropped and they'd have to re-enter everything.
   initialValue?: ConfirmedVehicle | null
+  // Set when a VIN decode only identified the make (see VinStep). Its make
+  // is pre-filled and locked — it came from the VIN itself, so the customer
+  // only fills in what the decode couldn't — and its VIN is carried onto
+  // the confirmed vehicle so the request still records it.
+  partialMatch?: PartialVinMatch | null
   onConfirm: (vehicle: ConfirmedVehicle) => void
   onBackToVin?: () => void
 }) {
   const years = useMemo(() => getVehicleYears(), [])
 
-  const initialMake = initialValue?.make ?? ''
+  // A partial match's make wins over any earlier value: it's locked below,
+  // so it must always be the one actually submitted. Canonicalized to our
+  // own brand spelling so the matching logo/model list is used.
+  const lockedMake = partialMatch ? (findBrandByName(partialMatch.make)?.name ?? partialMatch.make) : null
+  const initialMake = lockedMake ?? initialValue?.make ?? ''
   const isKnownInitialBrand = useMemo(() => VEHICLE_BRANDS.some((brand) => brand.name === initialMake), [initialMake])
 
-  const [year, setYear] = useState(initialValue?.year ? String(initialValue.year) : '')
+  const initialYear = initialValue?.year ?? partialMatch?.year ?? null
+  const [year, setYear] = useState(initialYear ? String(initialYear) : '')
   // `makeSelection` is either a known brand's display name, OTHER_BRAND_VALUE,
   // or '' — the BrandSelect's own controlled value. `customMake` only
   // matters while OTHER_BRAND_VALUE is selected; the effective `make` below
@@ -72,7 +109,7 @@ export function ManualVehicleForm({
     onConfirm({
       source: 'manual',
       identificationSource: null,
-      vin: null,
+      vin: partialMatch?.vin ?? null,
       year: Number(year),
       make,
       model,
@@ -90,6 +127,23 @@ export function ManualVehicleForm({
     <form onSubmit={handleSubmit} className={cardClasses()}>
       <h2 className="text-xl font-bold tracking-tight">{dict.wizard.manual.title}</h2>
       <p className="mt-1.5 text-sm text-muted-foreground">{dict.wizard.manual.description}</p>
+
+      {partialMatch && (
+        // Informational, not an error: the VIN lookup worked, it just
+        // couldn't provide every detail.
+        <div role="status" className="mt-5 flex items-start gap-3 rounded-2xl border border-accent/25 bg-accent-soft/40 p-4">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+            <InfoIcon className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">{dict.wizard.vin.partialTitle}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{dict.wizard.vin.partialDescription}</p>
+            <p className="mt-2 truncate font-mono text-xs tracking-wider text-muted-foreground">
+              {dict.wizard.result.vinLabel} : {partialMatch.vin}
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
@@ -110,8 +164,12 @@ export function ManualVehicleForm({
           <FieldLabel htmlFor="manual-make" icon={<PriceTagIcon className="h-3.5 w-3.5" />}>
             {dict.wizard.manual.makeLabel}
           </FieldLabel>
-          <BrandSelect id="manual-make" dict={dict} value={makeSelection} onChange={handleBrandChange} />
-          {makeSelection === OTHER_BRAND_VALUE && (
+          {lockedMake ? (
+            <LockedMake id="manual-make" make={lockedMake} hint={dict.wizard.manual.makeFromVin} />
+          ) : (
+            <BrandSelect id="manual-make" dict={dict} value={makeSelection} onChange={handleBrandChange} />
+          )}
+          {!lockedMake && makeSelection === OTHER_BRAND_VALUE && (
             <div className="mt-2.5 animate-[fade-in_150ms_ease-out]">
               <label htmlFor="manual-make-custom" className="mb-1.5 block text-xs font-medium text-muted-foreground">
                 {dict.wizard.manual.customMakeLabel}

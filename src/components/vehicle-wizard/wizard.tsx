@@ -5,7 +5,7 @@ import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { submitPartsRequestAction } from '@/src/services/requests/actions'
 import { TurnstileWidget, type TurnstileWidgetHandle } from '@/src/components/turnstile-widget'
-import type { AttachmentSummary, ConfirmedVehicle, ContactFormState, PartFormState, SelectedPhoto, WizardStep } from './types'
+import type { AttachmentSummary, ConfirmedVehicle, ContactFormState, PartFormState, PartialVinMatch, SelectedPhoto, WizardStep } from './types'
 import { usePartRequestWizard } from './wizard-context'
 import { ProgressSteps } from './progress-steps'
 import { VinStep } from './vin-step'
@@ -55,6 +55,13 @@ export function VehicleWizard({
   const [vehicleMode, setVehicleMode] = useState<'vin' | 'manual'>(() => (initialManual ? 'manual' : 'vin'))
   const [scanOpen, setScanOpen] = useState(Boolean(initialScanOpen))
   const [scannedVin, setScannedVin] = useState<string | null>(null)
+  // A VIN decode that only identified the make — kept for as long as the
+  // customer stays on the manual form it opened (including coming back to
+  // it from Review's "Edit"), so the make stays pre-filled and locked.
+  const [partialMatch, setPartialMatch] = useState<PartialVinMatch | null>(null)
+  // The partial match's VIN, once the customer leaves its manual form for
+  // the VIN screen again — re-shown in the field, but not auto-looked-up.
+  const [vinAfterPartial, setVinAfterPartial] = useState<string | null>(null)
 
   const [partPhase, setPartPhase] = useState<'category' | 'subcategory' | 'details'>(() =>
     wizard.vehicle && wizard.selectedPart ? 'details' : 'category',
@@ -110,6 +117,19 @@ export function VehicleWizard({
     // entry) goes straight to its details form; otherwise category
     // selection comes next (homepage entry / a fresh, direct visit).
     setPartPhase(wizard.selectedPart ? 'details' : 'category')
+  }
+
+  function handlePartialMatch(match: PartialVinMatch) {
+    setPartialMatch(match)
+    setVehicleMode('manual')
+  }
+
+  function handleBackToVin() {
+    if (partialMatch) {
+      setVinAfterPartial(partialMatch.vin)
+      setPartialMatch(null)
+    }
+    setVehicleMode('vin')
   }
 
   function handleCategorySelected(category: string) {
@@ -207,10 +227,12 @@ export function VehicleWizard({
         {step === 'vehicle' && vehicleMode === 'vin' && (
           <VinStep
             dict={dict}
-            initialVin={initialVin}
+            initialVin={vinAfterPartial ?? initialVin}
+            autoLookup={vinAfterPartial === null}
             scannedVin={scannedVin}
             entrySource={wizard.entrySource}
             onVehicleConfirmed={handleVehicleConfirmed}
+            onPartialMatch={handlePartialMatch}
             onManual={() => setVehicleMode('manual')}
             onScan={() => setScanOpen(true)}
           />
@@ -219,8 +241,9 @@ export function VehicleWizard({
           <ManualVehicleForm
             dict={dict}
             initialValue={wizard.vehicle?.source === 'manual' ? wizard.vehicle : null}
+            partialMatch={partialMatch}
             onConfirm={handleVehicleConfirmed}
-            onBackToVin={() => setVehicleMode('vin')}
+            onBackToVin={handleBackToVin}
           />
         )}
 

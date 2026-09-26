@@ -59,23 +59,33 @@ export function PartsPageClient({ dict }: { dict: Dictionary }) {
               <p className="mt-3 max-w-lg text-base text-muted-foreground sm:text-lg">
                 {activeCategoryData ? activeCategoryData.description : t.description}
               </p>
-
-              <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:w-auto">
-                {dict.trust.items.map((item, i) => (
-                  <li key={item.title} className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
-                    <span className={iconCircleClasses({ size: 'md', tone: 'blue' })}>
-                      <TrustIcon index={i} className="h-6 w-6" />
-                    </span>
-                    <span className="text-sm font-semibold leading-snug">{item.title}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {/* Real category renders stand in for a fabricated composite —
                 reacts to the active category (see parts-hero-visual.tsx). */}
             <PartsHeroVisual activeCategory={activeCategory} />
           </div>
+
+          {/* Benefits as a full-width feature grid under the hero (not
+              squeezed into the copy column) — one row of four solid raised
+              panels from lg, 2×2 from sm, stacked on phones. */}
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+            {dict.trust.items.map((item, i) => (
+              <li
+                key={item.title}
+                className="group relative flex items-start gap-4 overflow-hidden rounded-2xl border border-border bg-surface-raised p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-accent-gold/40 hover:shadow-card-hover"
+              >
+                <span aria-hidden="true" className="absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-accent-gold/60 to-transparent" />
+                <span className={iconCircleClasses({ size: 'md', tone: 'gold', className: 'transition duration-200 group-hover:scale-105' })}>
+                  <TrustIcon index={i} className="h-6 w-6" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold leading-snug text-foreground">{item.title}</span>
+                  <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{item.description}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 

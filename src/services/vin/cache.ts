@@ -1,5 +1,5 @@
 import 'server-only'
-import type { VehicleResult } from './types'
+import type { VinLookupResult } from './types'
 
 // Decision (see task report): we deliberately do NOT reuse vehicles already
 // stored in our own `vehicles` table to answer a VIN lookup. That table is
@@ -10,21 +10,25 @@ import type { VehicleResult } from './types'
 // says not to do.
 //
 // Instead, this is a small in-memory, short-TTL cache of *successful*
-// Auto.dev decodes only, keyed by VIN. It only smooths over accidental
-// duplicate calls in the same session (double submit, back/forward through
-// the wizard, a page refresh) — not a durable store. It's per server
-// process: it resets on redeploy/cold start and isn't shared across
-// multiple instances. That's an accepted limitation for what this is (a
-// cheap way to cut a handful of redundant billed API calls), not a
-// correctness mechanism.
+// Auto.dev decodes only (full or partial — a partial match is a real,
+// deterministic answer too, and caching it means the homepage hero handing
+// a partial VIN off to the wizard doesn't cost a second billed call),
+// keyed by VIN. It only smooths over accidental duplicate calls in the
+// same session (double submit, back/forward through the wizard, a page
+// refresh) — not a durable store. It's per server process: it resets on
+// redeploy/cold start and isn't shared across multiple instances. That's
+// an accepted limitation for what this is (a cheap way to cut a handful of
+// redundant billed API calls), not a correctness mechanism.
 const TTL_MS = 10 * 60 * 1000
 const MAX_ENTRIES = 500
 
-type CacheEntry = { vehicle: VehicleResult; expiresAt: number }
+export type CacheableVinResult = Extract<VinLookupResult, { status: 'found' | 'partial' }>
+
+type CacheEntry = { result: CacheableVinResult; expiresAt: number }
 
 const cache = new Map<string, CacheEntry>()
 
-export function getCachedVehicle(vin: string): VehicleResult | null {
+export function getCachedResult(vin: string): CacheableVinResult | null {
   const entry = cache.get(vin)
   if (!entry) return null
 
@@ -33,10 +37,10 @@ export function getCachedVehicle(vin: string): VehicleResult | null {
     return null
   }
 
-  return entry.vehicle
+  return entry.result
 }
 
-export function setCachedVehicle(vin: string, vehicle: VehicleResult): void {
+export function setCachedResult(vin: string, result: CacheableVinResult): void {
   if (cache.size >= MAX_ENTRIES) {
     const now = Date.now()
     for (const [key, entry] of cache) {
@@ -50,5 +54,5 @@ export function setCachedVehicle(vin: string, vehicle: VehicleResult): void {
     }
   }
 
-  cache.set(vin, { vehicle, expiresAt: Date.now() + TTL_MS })
+  cache.set(vin, { result, expiresAt: Date.now() + TTL_MS })
 }
