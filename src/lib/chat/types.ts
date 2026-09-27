@@ -1,25 +1,77 @@
 import type { ComponentType } from 'react'
 
-// Deliberately minimal: a real message-input flow can add a 'system' role
-// and richer content later without reshaping this. Keeping it this small
-// now is what item 9 of the spec means by "don't overengineer" — there's
-// no unused AI framework here, just the shape a future responder needs.
+// Pure types — shared by the chat widget and the /api/chat endpoint.
 export type ChatRole = 'assistant' | 'user'
+
+export const ASSISTANT_INTENTS = [
+  'parts_help',
+  'vehicle_sourcing',
+  'available_vehicles',
+  'tracking',
+  'lost_request',
+  'vin_help',
+  'photo_recognition',
+  'faq',
+  'contact',
+  'human_handoff',
+  'off_topic',
+  'general',
+] as const
+
+export type AssistantIntent = (typeof ASSISTANT_INTENTS)[number]
+
+// What a button under an assistant message may do. `link` hrefs are always
+// server-validated against src/lib/chat/routes.ts; the other kinds only
+// switch the widget to one of its own guided views.
+export type AssistantAction = { type: 'link'; href: string } | { type: 'contact' } | { type: 'faq' } | { type: 'start_recovery' }
+
+export type AssistantReply = {
+  message: string
+  intent: AssistantIntent
+  action: AssistantAction | null
+}
 
 export type ChatMessage = {
   id: string
   role: ChatRole
   content: string
+  action?: AssistantAction | null
+  // Label for a link button whose target isn't one of the fixed routes
+  // (the "Voir ma demande" link after a recovery).
+  actionLabel?: string
+  // 'recovery' messages belong to the secure lost-request flow: they are
+  // shown in the thread but never sent to the AI (see buildAiHistory).
+  channel?: 'recovery'
+  // A failed assistant turn, rendered with a retry button — never sent.
+  failed?: boolean
 }
 
-export type QuickActionId = 'find-part' | 'find-vehicle' | 'available-vehicles' | 'track-request' | 'faq' | 'contact'
+// One entry of the conversation history the client sends to /api/chat.
+export type ChatHistoryEntry = { role: ChatRole; content: string }
+
+export type ChatRequestBody = {
+  messages: ChatHistoryEntry[]
+  locale: string
+  pathname: string | null
+}
+
+export type ChatErrorCode =
+  | 'invalid_request'
+  | 'not_configured'
+  | 'too_many_requests'
+  | 'timeout'
+  | 'rate_limited'
+  | 'provider_error'
+  | 'invalid_result'
+  | 'aborted'
+
+export type ChatApiResponse = { ok: true; reply: AssistantReply } | { ok: false; error: ChatErrorCode }
+
+export type QuickActionId = 'find-part' | 'find-vehicle' | 'available-vehicles' | 'track-request' | 'lost-request' | 'faq' | 'contact'
 
 // 'link' actions navigate straight to an existing route; 'faq'/'contact'
-// instead switch the panel to a guided sub-view backed by real data (FAQ
-// items, site settings) — see chat-widget.tsx. This split is the "clean
-// separation between UI and response logic" item 9 asks for: swapping the
-// guided FAQ/contact views for an AI-driven response later only touches
-// chat-widget.tsx, never this action list.
+// switch the panel to a guided sub-view backed by real data (FAQ items,
+// site settings); 'recovery' starts the secure lost-request flow.
 export type QuickAction =
   | { id: QuickActionId; label: string; icon: ComponentType<{ className?: string }>; kind: 'link'; href: string }
-  | { id: QuickActionId; label: string; icon: ComponentType<{ className?: string }>; kind: 'faq' | 'contact' }
+  | { id: QuickActionId; label: string; icon: ComponentType<{ className?: string }>; kind: 'faq' | 'contact' | 'recovery' }

@@ -431,6 +431,20 @@
         "errorUnavailable": "L’analyse de la photo est temporairement indisponible. Veuillez réessayer.",
         "errorTimeout": "L’analyse a pris trop de temps. Veuillez réessayer.",
         "errorRateLimited": "Trop de demandes d’analyse pour le moment. Veuillez réessayer dans un instant.",
+        "camera": {
+          "capture": "Prendre la photo",
+          "cancel": "Annuler",
+          "switchCamera": "Changer de caméra",
+          "starting": "Ouverture de la caméra…",
+          "previewLabel": "Aperçu de la caméra",
+          "hint": "Cadrez la pièce entière, bien éclairée, puis prenez la photo.",
+          "errorGeneric": "Impossible d’accéder à la caméra. Vérifiez les autorisations de votre navigateur ou choisissez une image dans la galerie.",
+          "errorPermission": "L’accès à la caméra a été refusé. Autorisez la caméra dans les réglages de votre navigateur ou choisissez une image dans la galerie.",
+          "errorNotFound": "Aucune caméra n’a été détectée sur cet appareil. Choisissez une image dans la galerie.",
+          "errorInUse": "La caméra est déjà utilisée par une autre application. Fermez-la puis réessayez, ou choisissez une image dans la galerie.",
+          "errorUnsupported": "Ce navigateur ne permet pas d’utiliser la caméra ici. Choisissez une image dans la galerie.",
+          "errorCapture": "La photo n’a pas pu être prise. Réessayez ou choisissez une image dans la galerie."
+        },
         "result": {
           "partNameLabel": "Pièce probable",
           "categoryLabel": "Catégorie",
@@ -1401,7 +1415,7 @@
     "title": "Assistant Dakar Auto",
     "status": "Assistance rapide",
     "welcome": "Bonjour 👋 Comment pouvons-nous vous aider ?",
-    "guidedNotice": "Assistance guidée — choisissez une option ci-dessous.",
+    "guidedNotice": "Choisissez une option ou posez votre question.",
     "backToMenu": "Retour",
     "quickActions": {
       "findPart": "Trouver une pièce",
@@ -1409,7 +1423,8 @@
       "availableVehicles": "Véhicules disponibles",
       "trackRequest": "Suivre ma demande",
       "faq": "Questions fréquentes",
-      "contact": "Nous contacter"
+      "contact": "Nous contacter",
+      "lostRequest": "J’ai perdu ma demande"
     },
     "faq": {
       "intro": "Voici quelques questions fréquentes :",
@@ -1422,6 +1437,86 @@
       "whatsapp": "WhatsApp",
       "phone": "Téléphone",
       "email": "Email"
+    },
+    "guidedOnlyNotice": "Assistance guidée — choisissez une option ci-dessous.",
+    "menu": "Menu",
+    "composer": {
+      "label": "Votre message",
+      "placeholder": "Posez votre question…",
+      "send": "Envoyer",
+      "hint": "Entrée pour envoyer · Maj+Entrée pour aller à la ligne"
+    },
+    "typing": "L’assistant écrit…",
+    "retry": "Réessayer",
+    "lostRequestReply": "Pas de problème, je vais vous aider à retrouver votre demande.",
+    "errors": {
+      "unavailable": "L’assistant est temporairement indisponible. Veuillez réessayer.",
+      "tooManyRequests": "Vous avez envoyé beaucoup de messages. Patientez un instant avant de réessayer.",
+      "invalidRequest": "Ce message n’a pas pu être envoyé. Raccourcissez-le puis réessayez."
+    },
+    "actions": {
+      "home": "Accueil",
+      "parts": "Voir les pièces",
+      "vehicleIdentify": "Identifier mon véhicule",
+      "sourceVehicle": "Demander un véhicule",
+      "vehicles": "Voir les véhicules disponibles",
+      "vehicleDetail": "Voir ce véhicule",
+      "track": "Suivre ma demande",
+      "faq": "Questions fréquentes",
+      "about": "À propos",
+      "contact": "Contacter Dakar Auto",
+      "startRecovery": "Retrouver ma demande"
+    },
+    "recovery": {
+      "start": "Je vais vous aider à retrouver votre demande de façon sécurisée. Les informations que vous saisissez ici restent dans ce formulaire sécurisé et ne sont pas transmises à l’assistant IA.",
+      "askContact": "Quel email ou numéro de téléphone avez-vous utilisé pour la demande ?",
+      "contactLabel": "Email ou téléphone",
+      "contactPlaceholder": "vous@exemple.com ou +221 77 000 00 00",
+      "invalidContact": "Entrez une adresse email ou un numéro de téléphone valide.",
+      "askName": "Quel nom de famille avez-vous utilisé ?",
+      "nameLabel": "Nom de famille",
+      "namePlaceholder": "Ex. : Diop",
+      "invalidName": "Entrez votre nom de famille.",
+      "searching": "Recherche en cours…",
+      "askKind": "Plusieurs demandes peuvent correspondre. De quel type de demande s’agit-il ?",
+      "kinds": {
+        "parts": "Pièce automobile",
+        "vehicle": "Recherche de véhicule"
+      },
+      "askPeriod": "Plusieurs demandes peuvent correspondre. Environ quand avez-vous envoyé la demande ?",
+      "periods": {
+        "week": "Il y a moins d’une semaine",
+        "month": "Il y a 1 à 4 semaines",
+        "quarter": "Il y a 1 à 3 mois",
+        "older": "Il y a plus de 3 mois"
+      },
+      "codeSent": "J’ai trouvé une correspondance avec ces informations. Pour protéger vos données, un code de vérification a été envoyé à {destination}.",
+      "codeResent": "Un nouveau code a été envoyé à {destination}.",
+      "askCode": "Entrez le code à 6 chiffres reçu par email.",
+      "codeLabel": "Code de vérification",
+      "codePlaceholder": "6 chiffres",
+      "codeEntered": "Code saisi",
+      "verify": "Vérifier",
+      "resend": "Renvoyer le code",
+      "resendIn": "Renvoyer dans {seconds} s",
+      "invalidCode": "Code incorrect. Tentatives restantes : {remaining}.",
+      "expired": "Ce code a expiré ou n’est plus valide. Recommencez la récupération.",
+      "locked": "Trop de tentatives incorrectes. Recommencez plus tard ou contactez Dakar Auto.",
+      "notFound": "Nous n’avons pas pu retrouver une demande avec ces informations. Vérifiez les informations ou contactez Dakar Auto.",
+      "needsAssistance": "Nous ne pouvons pas identifier votre demande de façon sécurisée avec ces informations. Contactez Dakar Auto : notre équipe vous aidera à la retrouver.",
+      "rateLimited": "Trop de tentatives. Merci de réessayer dans quelques minutes.",
+      "deliveryFailed": "Nous n’avons pas pu envoyer le code de vérification. Réessayez plus tard ou contactez Dakar Auto.",
+      "unavailable": "La récupération de demande est temporairement indisponible. Vous pouvez contacter Dakar Auto.",
+      "found": "Demande retrouvée",
+      "chooseRequest": "Plusieurs demandes sont associées à votre adresse email. Laquelle souhaitez-vous consulter ?",
+      "statusLine": "Statut : {status}",
+      "viewRequest": "Voir ma demande",
+      "completed": "Récupération de demande terminée.",
+      "submit": "Continuer",
+      "cancel": "Annuler",
+      "cancelled": "Récupération annulée.",
+      "restart": "Recommencer",
+      "contactUs": "Contacter Dakar Auto"
     }
   }
 }

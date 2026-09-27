@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode, type RefObject } from 'react'
 import { Trash2 } from 'lucide-react'
 import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
@@ -28,8 +28,17 @@ import {
   resolveCategoryLabel,
   resolveSubcategoryLabel,
 } from '@/src/lib/part-recognition/wizard-mapping'
+import { PhotoCameraSession, browserCameraEnv, type CameraErrorKind, type CameraFacing } from '@/src/lib/photo-camera'
 
 const ACCEPT = ALLOWED_MIME_TYPES.join(',')
+
+// In-modal camera ("Prendre une photo"). 'capture' = the frame could not be
+// encoded after the shutter was pressed.
+type CameraState =
+  | { phase: 'off' }
+  | { phase: 'starting' }
+  | { phase: 'live'; stream: MediaStream; canSwitch: boolean }
+  | { phase: 'error'; kind: CameraErrorKind | 'capture' }
 
 type Analysis = { phase: 'idle' } | { phase: 'analyzing' } | { phase: 'done'; result: PartRecognitionResult } | { phase: 'error'; message: string }
 
@@ -54,7 +63,6 @@ export function IdentifyPhotoModal({
 }) {
   const t = dict.wizard.parts.identifyPhoto
   const titleId = useId()
-  const cameraInputRef = useRef<HTMLInputElement>(null)
   const galleryInputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   // The in-flight request, if any — aborted on close/unmount and used to
@@ -67,6 +75,13 @@ export function IdentifyPhotoModal({
   const [dragActive, setDragActive] = useState(false)
   const [analysis, setAnalysis] = useState<Analysis>({ phase: 'idle' })
   const analyzing = analysis.phase === 'analyzing'
+
+  const cameraRef = useRef<PhotoCameraSession | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const captureButtonRef = useRef<HTMLButtonElement>(null)
+  const [camera, setCamera] = useState<CameraState>({ phase: 'off' })
+  const [facing, setFacing] = useState<CameraFacing>('environment')
+  const liveStream = camera.phase === 'live' ? camera.stream : null
 
   useEffect(() => {
     panelRef.current?.focus()
@@ -93,6 +108,88 @@ export function IdentifyPhotoModal({
     return () => abortRef.current?.abort()
   }, [])
 
+  // The camera is never left running: it stops on capture, cancel, a switch
+  // to the gallery, and here when the modal closes/unmounts (the session
+  // also releases a stream that only arrives after that).
+  useEffect(() => {
+    return () => cameraRef.current?.stop()
+  }, [])
+
+  // Attach the live stream once the <video> exists (it mounts with the
+  // 'live' phase), then move focus to the shutter button.
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !liveStream) return
+    video.srcObject = liveStream
+    video.play().catch(() => {
+      // autoPlay + muted normally covers this; nothing useful to show.
+    })
+    captureButtonRef.current?.focus()
+    return () => {
+      video.srcObject = null
+    }
+  }, [liveStream])
+
+  async function openCamera(nextFacing: CameraFacing = 'environment') {
+    if (analyzing) return
+    cameraRef.current ??= new PhotoCameraSession(browserCameraEnv())
+    setError(null)
+    setFacing(nextFacing)
+    setCamera({ phase: 'starting' })
+    const outcome = await cameraRef.current.start(nextFacing)
+    if (outcome.ok) setCamera({ phase: 'live', stream: outcome.stream, canSwitch: outcome.canSwitch })
+    else if (outcome.error !== 'cancelled') setCamera({ phase: 'error', kind: outcome.error })
+  }
+
+  function closeCamera() {
+    cameraRef.current?.stop()
+    setCamera({ phase: 'off' })
+    panelRef.current?.focus()
+  }
+
+  async function handleCapture() {
+    const video = videoRef.current
+    const session = cameraRef.current
+    if (!video || !session) return
+    const captured = await session.capture(video)
+    if (!captured) {
+      session.stop()
+      setCamera({ phase: 'error', kind: 'capture' })
+      return
+    }
+    setCamera({ phase: 'off' })
+    // Same validation + preview path as a gallery pick or a drop; the AI is
+    // only called when the customer presses "Analyze".
+    acceptFile(captured)
+  }
+
+  function openGallery() {
+    if (camera.phase !== 'off') {
+      cameraRef.current?.stop()
+      setCamera({ phase: 'off' })
+    }
+    galleryInputRef.current?.click()
+  }
+
+  function cameraErrorMessage(kind: CameraErrorKind | 'capture'): string {
+    const c = t.camera
+    switch (kind) {
+      case 'permission_denied':
+        return c.errorPermission
+      case 'not_found':
+        return c.errorNotFound
+      case 'in_use':
+        return c.errorInUse
+      case 'insecure':
+      case 'unsupported':
+        return c.errorUnsupported
+      case 'capture':
+        return c.errorCapture
+      default:
+        return c.errorGeneric
+    }
+  }
+
   function acceptFile(candidate: File) {
     if (analyzing) return
     if (!ALLOWED_MIME_TYPES.includes(candidate.type as (typeof ALLOWED_MIME_TYPES)[number])) {
@@ -110,8 +207,6 @@ export function IdentifyPhotoModal({
     setAnalysis({ phase: 'idle' })
   }
 
-  // Shared by both hidden inputs so a camera capture and a gallery pick go
-  // through exactly the same validation/preview path.
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const picked = e.target.files?.[0]
     if (picked) acceptFile(picked)
@@ -189,7 +284,22 @@ export function IdentifyPhotoModal({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-          {!file && (
+          {camera.phase !== 'off' && (
+            <CameraView
+              t={t}
+              camera={camera}
+              videoRef={videoRef}
+              captureButtonRef={captureButtonRef}
+              errorMessage={camera.phase === 'error' ? cameraErrorMessage(camera.kind) : null}
+              onCapture={handleCapture}
+              onCancel={closeCamera}
+              onRetry={() => openCamera(facing)}
+              onSwitch={() => openCamera(facing === 'environment' ? 'user' : 'environment')}
+              onGallery={openGallery}
+            />
+          )}
+
+          {!file && camera.phase === 'off' && (
             <div
               onDragOver={(e) => {
                 e.preventDefault()
@@ -216,7 +326,7 @@ export function IdentifyPhotoModal({
               <div className="mt-7 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={() => cameraInputRef.current?.click()}
+                  onClick={() => openCamera()}
                   className="inline-flex h-16 w-full items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl bg-accent px-4 text-sm font-semibold text-accent-foreground shadow-card transition duration-200 hover:-translate-y-px hover:bg-accent-hover hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface active:translate-y-0 active:scale-[0.98] active:bg-accent sm:h-[74px] sm:text-[15px]"
                 >
                   <CameraIcon className="h-5 w-5 shrink-0" />
@@ -224,7 +334,7 @@ export function IdentifyPhotoModal({
                 </button>
                 <button
                   type="button"
-                  onClick={() => galleryInputRef.current?.click()}
+                  onClick={openGallery}
                   className="inline-flex h-16 w-full items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl border border-border bg-card px-4 text-sm font-semibold text-foreground shadow-card transition duration-200 hover:-translate-y-px hover:border-accent-hover hover:bg-accent-soft/50 hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface active:translate-y-0 active:scale-[0.98] sm:h-[74px] sm:text-[15px]"
                 >
                   <ImageIcon className="h-5 w-5 shrink-0" />
@@ -236,22 +346,10 @@ export function IdentifyPhotoModal({
             </div>
           )}
 
-          {/* Two hidden inputs, one per source, both feeding handleInputChange.
-              The camera one sets capture="environment" so supporting mobile
-              browsers open the rear camera directly (no getUserMedia, no
-              persistent permission). The gallery one deliberately has no
-              `capture`: on iOS that attribute hides the photo library. On
-              desktop `capture` is ignored and both simply open a file picker. */}
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept={ACCEPT}
-            capture="environment"
-            className="hidden"
-            tabIndex={-1}
-            aria-hidden="true"
-            onChange={handleInputChange}
-          />
+          {/* Gallery source. Deliberately no `capture`: on iOS that attribute
+              hides the photo library. "Take a photo" uses the in-modal
+              camera (CameraView) rather than a file input, since desktop
+              browsers ignore `capture` and would just open a file picker. */}
           <input
             ref={galleryInputRef}
             type="file"
@@ -262,9 +360,9 @@ export function IdentifyPhotoModal({
             onChange={handleInputChange}
           />
 
-          {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          {error && camera.phase === 'off' && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-          {file && previewUrl && (
+          {file && previewUrl && camera.phase === 'off' && (
             <div>
               <div className="relative overflow-hidden rounded-2xl border border-border bg-surface">
                 {/* eslint-disable-next-line @next/next/no-img-element -- local blob: preview, not an optimizable content image */}
@@ -289,7 +387,7 @@ export function IdentifyPhotoModal({
                     <button
                       type="button"
                       disabled={analyzing}
-                      onClick={() => cameraInputRef.current?.click()}
+                      onClick={() => openCamera()}
                       className={buttonClasses({ variant: 'secondary', size: 'sm', className: 'whitespace-nowrap' })}
                     >
                       <CameraIcon className="h-4 w-4 shrink-0" />
@@ -375,6 +473,111 @@ export function IdentifyPhotoModal({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// Live camera, replacing the upload area inside the same modal. The preview
+// uses object-contain so what the customer sees is exactly the frame that
+// gets captured (letterboxed on the dark frame, never cropped).
+function CameraView({
+  t,
+  camera,
+  videoRef,
+  captureButtonRef,
+  errorMessage,
+  onCapture,
+  onCancel,
+  onRetry,
+  onSwitch,
+  onGallery,
+}: {
+  t: Dictionary['wizard']['parts']['identifyPhoto']
+  camera: Exclude<CameraState, { phase: 'off' }>
+  videoRef: RefObject<HTMLVideoElement | null>
+  captureButtonRef: RefObject<HTMLButtonElement | null>
+  errorMessage: string | null
+  onCapture: () => void
+  onCancel: () => void
+  onRetry: () => void
+  onSwitch: () => void
+  onGallery: () => void
+}) {
+  const c = t.camera
+
+  if (camera.phase === 'error') {
+    const canRetry = camera.kind !== 'insecure' && camera.kind !== 'unsupported' && camera.kind !== 'not_found'
+    return (
+      <div className="rounded-2xl border border-border bg-surface p-4">
+        <div role="alert" className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-red-600 dark:text-red-400">
+            <AlertCircleIcon className="h-5 w-5" />
+          </span>
+          <p className="text-sm leading-relaxed text-foreground">{errorMessage}</p>
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <button type="button" onClick={onGallery} className={buttonClasses({ variant: 'primary', size: 'sm', className: 'whitespace-nowrap' })}>
+            <ImageIcon className="h-4 w-4 shrink-0" />
+            {t.chooseFromGallery}
+          </button>
+          {canRetry && (
+            <button type="button" onClick={onRetry} className={buttonClasses({ variant: 'secondary', size: 'sm', className: 'whitespace-nowrap' })}>
+              <RefreshIcon className="h-4 w-4 shrink-0" />
+              {t.retry}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onCancel}
+            className={buttonClasses({ variant: 'secondary', size: 'sm', className: `whitespace-nowrap ${canRetry ? 'sm:col-span-2' : ''}` })}
+          >
+            {c.cancel}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const live = camera.phase === 'live'
+  return (
+    <div>
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-neutral-950 ring-1 ring-white/10">
+        {live ? (
+          <video ref={videoRef} autoPlay playsInline muted aria-label={c.previewLabel} className="block h-full w-full object-contain" />
+        ) : (
+          <div role="status" aria-live="polite" className="flex h-full flex-col items-center justify-center gap-3 text-white/80">
+            <span className="flex h-14 w-14 animate-pulse items-center justify-center rounded-full bg-accent/15 text-accent">
+              <CameraIcon className="h-7 w-7" />
+            </span>
+            <p className="text-sm">{c.starting}</p>
+          </div>
+        )}
+        {live && camera.canSwitch && (
+          <button
+            type="button"
+            onClick={onSwitch}
+            aria-label={c.switchCamera}
+            title={c.switchCamera}
+            className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm transition duration-200 hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+          >
+            <RefreshIcon className="h-[18px] w-[18px]" />
+          </button>
+        )}
+      </div>
+      <p className="mt-3 text-center text-xs text-muted-foreground">{c.hint}</p>
+      <button
+        ref={captureButtonRef}
+        type="button"
+        onClick={onCapture}
+        disabled={!live}
+        className="mt-4 inline-flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-accent px-4 text-[15px] font-semibold text-accent-foreground shadow-card transition duration-200 hover:-translate-y-px hover:bg-accent-hover hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-card active:translate-y-0 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+      >
+        <CameraIcon className="h-5 w-5 shrink-0" />
+        {c.capture}
+      </button>
+      <button type="button" onClick={onCancel} className={buttonClasses({ variant: 'secondary', size: 'sm', className: 'mt-2 w-full' })}>
+        {c.cancel}
+      </button>
     </div>
   )
 }

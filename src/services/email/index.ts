@@ -10,3 +10,4 @@ export { sendVehicleRequestStatusUpdateEmail } from './send-vehicle-request-stat
 export type { VehicleRequestStatusUpdateEmailData } from './templates/vehicle-request-status-update'
 export { sendTableReportEmail } from './send-table-report-email'
 export type { SendTableReportResult } from './send-table-report-email'
+export { sendRequestRecoveryCodeEmail } from './send-request-recovery-code-email'

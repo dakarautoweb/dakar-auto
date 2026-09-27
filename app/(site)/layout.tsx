@@ -10,6 +10,8 @@ import { SiteSettingsProvider } from "@/src/components/site-settings-context";
 import { getPublicSiteSettings } from "@/src/services/site-settings/queries";
 import { getPublicFaqItems } from "@/src/services/faq/queries";
 import { ChatWidget } from "@/src/components/chat/chat-widget";
+import { isChatAssistantConfigured } from "@/src/services/chat/config";
+import { isRecoveryConfigured } from "@/src/services/request-recovery/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,7 +58,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <main className="flex flex-1 flex-col">{children}</main>
           </PartRequestWizardProvider>
           <SiteFooter dict={dict} settings={siteSettings} />
-          <ChatWidget dict={dict.chatWidget} faqItems={faqItems} settings={siteSettings} />
+          <ChatWidget
+            dict={dict.chatWidget}
+            faqItems={faqItems}
+            settings={siteSettings}
+            locale={locale}
+            aiEnabled={isChatAssistantConfigured()}
+            recoveryEnabled={isRecoveryConfigured()}
+          />
         </SiteSettingsProvider>
       </body>
     </html>

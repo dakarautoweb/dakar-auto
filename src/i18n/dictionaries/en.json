@@ -431,6 +431,20 @@
         "errorUnavailable": "Photo analysis is temporarily unavailable. Please try again.",
         "errorTimeout": "The analysis took too long. Please try again.",
         "errorRateLimited": "Too many analysis requests right now. Please try again in a moment.",
+        "camera": {
+          "capture": "Take the photo",
+          "cancel": "Cancel",
+          "switchCamera": "Switch camera",
+          "starting": "Opening the camera…",
+          "previewLabel": "Camera preview",
+          "hint": "Frame the whole part in good light, then take the photo.",
+          "errorGeneric": "Unable to access the camera. Check your browser permissions or choose an image from the gallery.",
+          "errorPermission": "Camera access was denied. Allow the camera in your browser settings or choose an image from the gallery.",
+          "errorNotFound": "No camera was found on this device. Choose an image from the gallery.",
+          "errorInUse": "The camera is already in use by another app. Close it and try again, or choose an image from the gallery.",
+          "errorUnsupported": "This browser can’t use the camera here. Choose an image from the gallery.",
+          "errorCapture": "The photo couldn’t be taken. Try again or choose an image from the gallery."
+        },
         "result": {
           "partNameLabel": "Probable part",
           "categoryLabel": "Category",
@@ -1401,7 +1415,7 @@
     "title": "Dakar Auto Assistant",
     "status": "Quick assistance",
     "welcome": "Hello 👋 How can we help you?",
-    "guidedNotice": "Guided assistance — pick an option below.",
+    "guidedNotice": "Pick an option or ask your question.",
     "backToMenu": "Back",
     "quickActions": {
       "findPart": "Find a part",
@@ -1409,7 +1423,8 @@
       "availableVehicles": "Available vehicles",
       "trackRequest": "Track my request",
       "faq": "Frequently asked questions",
-      "contact": "Contact us"
+      "contact": "Contact us",
+      "lostRequest": "I lost my request"
     },
     "faq": {
       "intro": "Here are some frequently asked questions:",
@@ -1422,6 +1437,86 @@
       "whatsapp": "WhatsApp",
       "phone": "Phone",
       "email": "Email"
+    },
+    "guidedOnlyNotice": "Guided assistance — pick an option below.",
+    "menu": "Menu",
+    "composer": {
+      "label": "Your message",
+      "placeholder": "Ask your question…",
+      "send": "Send",
+      "hint": "Enter to send · Shift+Enter for a new line"
+    },
+    "typing": "The assistant is typing…",
+    "retry": "Try again",
+    "lostRequestReply": "No problem, I’ll help you find your request.",
+    "errors": {
+      "unavailable": "The assistant is temporarily unavailable. Please try again.",
+      "tooManyRequests": "You’ve sent a lot of messages. Please wait a moment before trying again.",
+      "invalidRequest": "This message couldn’t be sent. Please shorten it and try again."
+    },
+    "actions": {
+      "home": "Home",
+      "parts": "Browse parts",
+      "vehicleIdentify": "Identify my vehicle",
+      "sourceVehicle": "Request a vehicle",
+      "vehicles": "See available vehicles",
+      "vehicleDetail": "View this vehicle",
+      "track": "Track my request",
+      "faq": "FAQ",
+      "about": "About",
+      "contact": "Contact Dakar Auto",
+      "startRecovery": "Find my request"
+    },
+    "recovery": {
+      "start": "I’ll help you find your request securely. What you type here stays in this secure form and is not sent to the AI assistant.",
+      "askContact": "Which email or phone number did you use for the request?",
+      "contactLabel": "Email or phone",
+      "contactPlaceholder": "you@example.com or +221 77 000 00 00",
+      "invalidContact": "Enter a valid email address or phone number.",
+      "askName": "Which last name did you use?",
+      "nameLabel": "Last name",
+      "namePlaceholder": "e.g. Diop",
+      "invalidName": "Enter your last name.",
+      "searching": "Searching…",
+      "askKind": "Several requests may match. What kind of request was it?",
+      "kinds": {
+        "parts": "Car part",
+        "vehicle": "Vehicle sourcing"
+      },
+      "askPeriod": "Several requests may match. Roughly when did you send the request?",
+      "periods": {
+        "week": "Less than a week ago",
+        "month": "1 to 4 weeks ago",
+        "quarter": "1 to 3 months ago",
+        "older": "More than 3 months ago"
+      },
+      "codeSent": "I found a match for this information. To protect your data, a verification code has been sent to {destination}.",
+      "codeResent": "A new code has been sent to {destination}.",
+      "askCode": "Enter the 6-digit code you received by email.",
+      "codeLabel": "Verification code",
+      "codePlaceholder": "6 digits",
+      "codeEntered": "Code entered",
+      "verify": "Verify",
+      "resend": "Resend code",
+      "resendIn": "Resend in {seconds}s",
+      "invalidCode": "Incorrect code. Attempts left: {remaining}.",
+      "expired": "This code has expired or is no longer valid. Please start again.",
+      "locked": "Too many incorrect attempts. Try again later or contact Dakar Auto.",
+      "notFound": "We couldn’t find a request with this information. Check the details or contact Dakar Auto.",
+      "needsAssistance": "We can’t securely identify your request with this information. Please contact Dakar Auto — our team will help you find it.",
+      "rateLimited": "Too many attempts. Please try again in a few minutes.",
+      "deliveryFailed": "We couldn’t send the verification code. Try again later or contact Dakar Auto.",
+      "unavailable": "Request recovery is temporarily unavailable. You can contact Dakar Auto.",
+      "found": "Request found",
+      "chooseRequest": "Several requests are linked to your email address. Which one would you like to view?",
+      "statusLine": "Status: {status}",
+      "viewRequest": "View my request",
+      "completed": "Request recovery completed.",
+      "submit": "Continue",
+      "cancel": "Cancel",
+      "cancelled": "Recovery cancelled.",
+      "restart": "Start again",
+      "contactUs": "Contact Dakar Auto"
     }
   }
 }
