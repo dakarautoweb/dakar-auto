@@ -421,14 +421,33 @@
         "errorTooLarge": "The photo must be under 8MB.",
         "errorInvalidType": "Unsupported format. Use JPG, PNG, or WEBP.",
         "readyTitle": "Photo ready for analysis",
-        "readyDescription": "Automatic identification will be available soon.",
+        "readyDescription": "Press “Analyze photo” to identify the part. The photo is not stored.",
         "chooseManually": "Choose a category manually",
+        "analyze": "Analyze photo",
+        "analyzing": "Analyzing the part...",
+        "analyzingHint": "This can take a few seconds.",
+        "retry": "Retry",
+        "analyzeAnother": "Analyze another photo",
+        "errorUnavailable": "Photo analysis is temporarily unavailable. Please try again.",
+        "errorTimeout": "The analysis took too long. Please try again.",
+        "errorRateLimited": "Too many analysis requests right now. Please try again in a moment.",
         "result": {
           "partNameLabel": "Probable part",
           "categoryLabel": "Category",
           "subcategoryLabel": "Subcategory",
-          "confidenceLabel": "Confidence",
-          "useThisCategory": "Use this category"
+          "confidenceLabel": "Estimated confidence",
+          "useThisCategory": "Use this category",
+          "identifiedTitle": "Part identified",
+          "multiplePartsTitle": "Multiple parts detected",
+          "multiplePartsDescription": "We detected several parts in the photo. Which one are you looking for?",
+          "useThisPart": "Use this part",
+          "confirmSubcategoryHint": "You’ll choose the exact subcategory in the next step.",
+          "uncertainTitle": "We’re not sure about this part.",
+          "uncertainDescription": "Try a sharper photo or choose the part manually.",
+          "notAPartTitle": "We couldn’t identify an automotive part in this photo.",
+          "retryWithAnotherPhoto": "Try again with another photo",
+          "otherTitle": "Part outside our catalog",
+          "otherDescription": "This part doesn’t match any Dakar Auto catalog category. Choose “Can’t find your part?” to describe it."
         }
       }
     },
@@ -1328,7 +1347,9 @@
     "notFoundTitle": "Vehicle Not Found",
     "notFoundDescription": "This vehicle is no longer available or the link is incorrect.",
     "kmSuffix": "km",
-    "relatedTitle": "Other available vehicles"
+    "relatedTitle": "Other available vehicles",
+    "relatedBrowseText": "Explore our full inventory of available vehicles.",
+    "relatedBrowseCta": "View all vehicles"
   },
   "featuredVehicles": {
     "eyebrow": "INVENTORY",

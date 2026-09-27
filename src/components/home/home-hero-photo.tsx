@@ -85,7 +85,10 @@ export function HomeHeroPhoto() {
           style={{ ...HERO_PHOTO_STYLE, WebkitMaskImage: FADE_MASK, maskImage: FADE_MASK }}
         />
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent lg:hidden" />
+      {/* Bottom fade into the page background (near-black in dark, the
+          warm light --background in light) so the photo never ends on a
+          hard edge — below lg at the strip's base, at lg+ at the section's. */}
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background via-background/60 to-transparent lg:h-48 xl:h-56" />
     </div>
   )
 }

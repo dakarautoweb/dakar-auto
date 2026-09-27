@@ -1,15 +1,72 @@
-// Shape for a future multimodal AI photo-recognition result. No AI
-// integration exists yet — see identify-photo-modal.tsx, where this type
-// is only used to type a `result` state that is never actually populated.
-// Kept intentionally small: just enough fields for the result UI already
-// built there (probable part name, category, subcategory, a confidence
-// indicator, and a short explanation) to have something concrete to render
-// once a real recognition API is wired in later.
-export type PartRecognitionResult = {
+import type { PartCategoryKey } from '@/src/lib/parts-catalog'
+
+// Shared by the server recognition service (src/services/part-recognition/),
+// the /api/part-recognition route and the browser modal
+// (identify-photo-modal.tsx). Pure types only — safe to import anywhere.
+
+// multiple_parts: several distinct, separately requestable parts are
+// visible (e.g. rotors + pads) — the customer picks one of `candidates`.
+// Several copies of the same part are still `identified`.
+export type PartRecognitionStatus = 'identified' | 'multiple_parts' | 'uncertain' | 'not_a_part'
+
+// A canonical catalog key from PART_CATEGORY_KEYS, or OTHER_KEY when the
+// part doesn't cleanly match the Dakar Auto catalog.
+export type RecognitionCategory = PartCategoryKey | 'other'
+
+// One distinct part among several. Validated exactly like the main result
+// (see validate-result.ts): a subcategory that doesn't belong to the
+// category is dropped, leaving a category-only candidate the customer
+// confirms on the subcategory step.
+export type PartRecognitionCandidate = {
+  // Localized (site locale).
   partName: string
-  category: string
+  category: RecognitionCategory
   subcategory: string | null
-  // 0-1 — rendered as a percentage/qualitative indicator in the result UI.
+  // 0-1, per candidate — the model's own estimate, not a calibrated
+  // probability; confidences across candidates don't sum to 1.
   confidence: number
-  explanation: string
 }
+
+export type PartRecognitionResult = {
+  status: PartRecognitionStatus
+  // Localized (site locale) — shown to the customer and used to prefill
+  // Part Details. Null when no part could be named.
+  partName: string | null
+  category: RecognitionCategory
+  // A key from PART_SUBCATEGORY_KEYS[category], or null. Always re-checked
+  // server-side (see validate-result.ts), never trusted from the model.
+  subcategory: string | null
+  // 0-1 — the model's own estimate, not a calibrated probability.
+  confidence: number
+  needsConfirmation: boolean
+  // Localized, 1–2 short sentences.
+  explanation: string
+  // multiple_parts: 2–3 distinct candidates, deduplicated by category/
+  // subcategory. uncertain: up to 3 plausible choices. identified and
+  // not_a_part: always [] (the main fields above are the answer).
+  candidates: PartRecognitionCandidate[]
+}
+
+// The only vehicle details ever sent for recognition. Deliberately excludes
+// the VIN and anything about the customer.
+export type RecognitionVehicleContext = {
+  year: number | null
+  make: string
+  model: string
+  engine: string | null
+}
+
+export type PartRecognitionErrorCode =
+  | 'not_configured'
+  | 'invalid_request'
+  | 'missing_image'
+  | 'empty_image'
+  | 'unsupported_type'
+  | 'too_large'
+  | 'timeout'
+  | 'rate_limited'
+  | 'provider_error'
+  | 'invalid_result'
+
+// JSON body returned by POST /api/part-recognition.
+export type PartRecognitionResponse = { ok: true; result: PartRecognitionResult } | { ok: false; error: PartRecognitionErrorCode }

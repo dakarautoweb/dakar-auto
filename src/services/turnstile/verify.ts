@@ -68,7 +68,16 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
     const data = (await res.json()) as { success: boolean; hostname?: string; 'error-codes'?: string[] }
 
     if (!data.success) {
-      console.warn('[turnstile] verification failed, error-codes:', (data['error-codes'] ?? ['unknown']).join(','))
+      // hostname (when Cloudflare returns it) is the domain the token was
+      // solved on — not secret, and it shows which deployment/domain the
+      // failing submits come from. "invalid-input-secret" or
+      // "invalid-input-response" on every submit usually means the site key
+      // and TURNSTILE_SECRET_KEY belong to different Turnstile widgets.
+      console.warn(
+        '[turnstile] verification failed, error-codes:',
+        (data['error-codes'] ?? ['unknown']).join(','),
+        data.hostname ? `hostname=${data.hostname}` : ''
+      )
       return { ok: false, reason: 'invalid_token' }
     }
 

@@ -158,7 +158,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
   }
 
   return (
-    <section id="hero" className="relative overflow-hidden border-b border-border">
+    <section id="hero" className="relative overflow-hidden">
       <HomeHeroPhoto />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/40 to-transparent" />
 

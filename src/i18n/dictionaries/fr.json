@@ -421,14 +421,33 @@
         "errorTooLarge": "La photo doit faire moins de 8 Mo.",
         "errorInvalidType": "Format non pris en charge. Utilisez JPG, PNG ou WEBP.",
         "readyTitle": "Photo prête pour l’analyse",
-        "readyDescription": "L’identification automatique sera disponible prochainement.",
+        "readyDescription": "Appuyez sur « Analyser la photo » pour identifier la pièce. La photo n’est pas enregistrée.",
         "chooseManually": "Choisir une catégorie manuellement",
+        "analyze": "Analyser la photo",
+        "analyzing": "Analyse de la pièce...",
+        "analyzingHint": "Cela peut prendre quelques secondes.",
+        "retry": "Réessayer",
+        "analyzeAnother": "Analyser une autre photo",
+        "errorUnavailable": "L’analyse de la photo est temporairement indisponible. Veuillez réessayer.",
+        "errorTimeout": "L’analyse a pris trop de temps. Veuillez réessayer.",
+        "errorRateLimited": "Trop de demandes d’analyse pour le moment. Veuillez réessayer dans un instant.",
         "result": {
           "partNameLabel": "Pièce probable",
           "categoryLabel": "Catégorie",
           "subcategoryLabel": "Sous-catégorie",
-          "confidenceLabel": "Confiance",
-          "useThisCategory": "Utiliser cette catégorie"
+          "confidenceLabel": "Confiance estimée",
+          "useThisCategory": "Utiliser cette catégorie",
+          "identifiedTitle": "Pièce identifiée",
+          "multiplePartsTitle": "Plusieurs pièces détectées",
+          "multiplePartsDescription": "Nous avons détecté plusieurs pièces sur la photo. Laquelle recherchez-vous ?",
+          "useThisPart": "Utiliser cette pièce",
+          "confirmSubcategoryHint": "Vous choisirez la sous-catégorie exacte à l’étape suivante.",
+          "uncertainTitle": "Nous ne sommes pas certains de cette pièce.",
+          "uncertainDescription": "Essayez une photo plus nette ou choisissez la pièce manuellement.",
+          "notAPartTitle": "Nous n’avons pas pu identifier une pièce automobile sur cette photo.",
+          "retryWithAnotherPhoto": "Réessayer avec une autre photo",
+          "otherTitle": "Pièce hors catalogue",
+          "otherDescription": "Cette pièce ne correspond à aucune catégorie du catalogue Dakar Auto. Choisissez « Vous ne trouvez pas votre pièce ? » pour la décrire."
         }
       }
     },
@@ -1328,7 +1347,9 @@
     "notFoundTitle": "Véhicule introuvable",
     "notFoundDescription": "Ce véhicule n’est plus disponible ou le lien est incorrect.",
     "kmSuffix": "km",
-    "relatedTitle": "Autres véhicules disponibles"
+    "relatedTitle": "Autres véhicules disponibles",
+    "relatedBrowseText": "Découvrez l’ensemble de notre inventaire de véhicules disponibles.",
+    "relatedBrowseCta": "Voir tous les véhicules"
   },
   "featuredVehicles": {
     "eyebrow": "INVENTAIRE",

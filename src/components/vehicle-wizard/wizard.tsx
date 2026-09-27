@@ -15,6 +15,8 @@ import { CategoryStep } from './category-step'
 import { SubcategoryStep } from './subcategory-step'
 import { PartDetailsStep } from './part-details-step'
 import { OTHER_KEY } from '@/src/lib/parts-catalog'
+import type { PartRecognitionResult } from '@/src/lib/part-recognition/types'
+import { planRecognitionApplication, toRecognitionVehicleContext } from '@/src/lib/part-recognition/wizard-mapping'
 import { ContactStep } from './contact-step'
 import { ReviewStep } from './review-step'
 import { SuccessStep } from './success-step'
@@ -159,6 +161,23 @@ export function VehicleWizard({
     setPartPhase('details')
   }
 
+  // "Use this part/category" from photo recognition. A full match fills in
+  // category + subcategory + part name and skips straight to Part Details;
+  // a category-only match lands on the normal subcategory grid so the
+  // customer confirms it; anything else leaves the manual flow untouched.
+  function handleRecognitionUsed(result: PartRecognitionResult) {
+    const plan = planRecognitionApplication(result, dict.categories.items)
+    if (plan.kind === 'manual') return
+    if (plan.kind === 'subcategory') {
+      handleCategorySelected(plan.category)
+      return
+    }
+    wizard.changeCategory(plan.category)
+    wizard.selectSubcategory(plan.subcategory)
+    setPart({ category: plan.category, partName: plan.partName, side: null, condition: 'no_preference', quantity: 1, description: '' })
+    setPartPhase('details')
+  }
+
   function handlePartContinue(newPart: PartFormState) {
     setPart(newPart)
     setStep('contact')
@@ -248,7 +267,15 @@ export function VehicleWizard({
         )}
 
         {step === 'parts' && partPhase === 'category' && (
-          <CategoryStep dict={dict} selectedCategory={wizard.category} onSelect={handleCategorySelected} onBack={() => setStep('vehicle')} />
+          <CategoryStep
+            dict={dict}
+            locale={locale}
+            vehicle={toRecognitionVehicleContext(wizard.vehicle)}
+            selectedCategory={wizard.category}
+            onSelect={handleCategorySelected}
+            onUseRecognition={handleRecognitionUsed}
+            onBack={() => setStep('vehicle')}
+          />
         )}
         {step === 'parts' && partPhase === 'subcategory' && wizard.category && (
           <SubcategoryStep

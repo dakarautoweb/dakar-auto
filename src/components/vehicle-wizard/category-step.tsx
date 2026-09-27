@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
-import { PART_CATEGORY_IMAGES, PART_CATEGORY_KEYS, type PartCategoryKey } from '@/src/lib/parts-catalog'
+import { PART_CATEGORY_IMAGES, type PartCategoryKey } from '@/src/lib/parts-catalog'
+import type { PartRecognitionResult, RecognitionVehicleContext } from '@/src/lib/part-recognition/types'
 import { ArrowRightIcon, CameraIcon, CheckCircleIcon, RequestToolIcon } from '@/src/components/home/icons'
 import { CategoryImage } from '@/src/components/parts/category-image'
 import { IdentifyPhotoModal } from './identify-photo-modal'
@@ -11,13 +13,22 @@ import { IdentifyPhotoModal } from './identify-photo-modal'
 // object-cover, is what makes them read as premium product photography.
 export function CategoryStep({
   dict,
+  locale,
+  vehicle,
   selectedCategory,
   onSelect,
+  onUseRecognition,
   onBack,
 }: {
   dict: Dictionary
+  locale: Locale
+  // Passed through to photo recognition as supporting context — year/make/
+  // model/engine only, never the VIN.
+  vehicle: RecognitionVehicleContext | null
   selectedCategory?: string | null
   onSelect: (category: string) => void
+  // "Use this part/category" from the photo-recognition result.
+  onUseRecognition: (result: PartRecognitionResult) => void
   // Only passed when there's a vehicle step to return to (see wizard.tsx) —
   // omitted, this renders exactly as before.
   onBack?: () => void
@@ -134,10 +145,12 @@ export function CategoryStep({
       {identifyOpen && (
         <IdentifyPhotoModal
           dict={dict}
+          locale={locale}
+          vehicle={vehicle}
           onClose={() => setIdentifyOpen(false)}
-          onUseCategory={(category) => {
-            if ((PART_CATEGORY_KEYS as readonly string[]).includes(category)) onSelect(category)
+          onUseResult={(result) => {
             setIdentifyOpen(false)
+            onUseRecognition(result)
           }}
         />
       )}

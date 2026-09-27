@@ -29,6 +29,7 @@ export function SiteHeader({
     { href: '/source-a-vehicle', label: dict.header.nav.sourceVehicle },
     { href: '/about', label: dict.header.nav.about },
     { href: '/#contact', label: dict.header.nav.contact },
+    { href: '/track', label: dict.header.nav.track },
   ]
 
   const linksWithState = navLinks.map((link) => ({
@@ -38,10 +39,10 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-header-bg/90 text-header-foreground shadow-[0_1px_0_0_rgba(0,0,0,0.4)] backdrop-blur-xl supports-[backdrop-filter]:bg-header-bg/75">
-      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 nav:max-w-[90rem] nav:gap-3 nav:px-6">
         <Link
           href="/"
-          className="absolute left-1/2 flex shrink-0 -translate-x-1/2 items-center xl:static xl:left-auto xl:translate-x-0"
+          className="absolute left-1/2 flex shrink-0 -translate-x-1/2 items-center nav:static nav:left-auto nav:translate-x-0"
         >
           {/* Real brand lockup (icon + wordmark + tagline baked in) — this
               header stays permanently dark so the light-on-dark logo is
@@ -53,10 +54,10 @@ export function SiteHeader({
               public/brand/dakar-auto-logo-header.png. The navbar height
               itself (h-16 on the row above) is untouched; only the visible
               glyph is bigger now that the box isn't mostly empty space.
-              Below xl (where the nav capsule/CTA are hidden behind the
+              Below the `nav` breakpoint (where the nav capsule/CTA are hidden behind the
               burger menu) the logo is absolutely centered in the header
               row instead of sitting flush left next to a lone right-side
-              burger button — desktop (xl+) goes back to the normal
+              burger button — desktop (nav+) goes back to the normal
               in-flow left position. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/dakar-auto-logo-header.png" alt="Dakar Auto" className="h-11 w-auto sm:h-14" />
@@ -69,7 +70,7 @@ export function SiteHeader({
             active fill always reads as part of the group, never as a
             floating pill. Hairline separators only sit between two
             inactive neighbors so they never touch the active segment. */}
-        <nav className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] p-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_18px_-6px_rgba(0,0,0,0.5)] xl:flex">
+        <nav className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] p-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_18px_-6px_rgba(0,0,0,0.5)] nav:flex">
           {linksWithState.map((link, i) => {
             const prev = linksWithState[i - 1]
             const showSeparator = i > 0 && !prev.isActive && !link.isActive
@@ -81,7 +82,7 @@ export function SiteHeader({
                 <Link
                   href={link.href}
                   aria-current={link.isActive ? 'page' : undefined}
-                  className={`relative ${segmentShape} px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                  className={`relative ${segmentShape} px-3 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                     link.isActive
                       ? 'bg-accent text-white shadow-glow'
                       : 'text-header-foreground/75 hover:bg-white/10 hover:text-white'
@@ -94,7 +95,7 @@ export function SiteHeader({
           })}
         </nav>
 
-        <div className="hidden items-center gap-2.5 xl:flex">
+        <div className="hidden items-center gap-2.5 nav:flex">
           <LanguageSwitcher current={locale} label={dict.header.languageSwitcher} dark />
           <ThemeToggle current={theme} labels={dict.header.themeToggle} variant="overlay" />
           {/* whitespace-nowrap + shrink-0: the FR label ("Demander un devis")

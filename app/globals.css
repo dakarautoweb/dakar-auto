@@ -106,6 +106,13 @@
   --surface-raised: #1f1f23;
 }
 
+/* Where the full desktop header (7-link capsule + language/theme + quote
+   CTA) fits on one row without overflowing — below it the burger menu
+   carries the same links. See site-header.tsx. */
+@theme {
+  --breakpoint-nav: 90rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -161,6 +168,17 @@ html {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Soft accent band sweeping over the photo while it is being analyzed
+   (identify-photo-modal.tsx). Zeroed by the reduced-motion rule below. */
+@keyframes scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(300%);
   }
 }
 

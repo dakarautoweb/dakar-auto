@@ -26,7 +26,12 @@ export async function trackLookupAction(requestNumber: string, contact: string, 
   if (isRateLimited(clientKey)) return { ok: false, reason: 'rate_limited' }
 
   const turnstileResult = await verifyTurnstileToken(turnstileToken)
-  if (!turnstileResult.ok) return { ok: false, reason: 'turnstile' }
+  if (!turnstileResult.ok) {
+    // Reason only (missing_token / invalid_token / timeout / server_error) —
+    // never the token or the looked-up request number/contact.
+    console.warn('[track] lookup blocked by Turnstile:', turnstileResult.reason)
+    return { ok: false, reason: 'turnstile' }
+  }
 
   // DA- => parts request, VR- => vehicle sourcing request. Anything else
   // (typo, no prefix) falls through to the parts lookup, same as before

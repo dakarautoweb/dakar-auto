@@ -23,6 +23,7 @@ import {
   PhoneIcon,
   WhatsAppIcon,
   CheckIcon,
+  ArrowRightIcon,
 } from '@/src/components/home/icons'
 
 function formatPrice(price: number | null, currency: string, locale: string, fallback: string): string {
@@ -138,27 +139,6 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-          {vehicle.description && (
-            <div className={cardClasses({ padding: 'sm' })}>
-              <h2 className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.descriptionTitle}</h2>
-              <p className="mt-2.5 text-sm leading-relaxed whitespace-pre-line text-foreground/90">{vehicle.description}</p>
-            </div>
-          )}
-
-          {vehicle.options.length > 0 && (
-            <div className={cardClasses({ padding: 'sm' })}>
-              <h2 className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.optionsTitle}</h2>
-              <ul className="mt-3 grid gap-x-4 gap-y-2 text-sm text-foreground sm:grid-cols-2">
-                {vehicle.options.map((option) => (
-                  <li key={option} className="flex items-start gap-2">
-                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-gold" />
-                    {option}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
           {hasContact && (
             <div className={cardClasses({ padding: 'none', tone: 'solid-accent', className: 'relative overflow-hidden p-6 sm:p-7' })}>
               <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-accent-gold via-accent to-accent-gold" />
@@ -202,6 +182,36 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
+      {/* Long-form content sits under the whole two-column block, full
+          width, so the right column stays about as tall as the gallery. */}
+      {(vehicle.description || vehicle.options.length > 0) && (
+        <div className="mt-8 space-y-5 lg:mt-12">
+          {vehicle.description && (
+            <div className={cardClasses({ padding: 'sm' })}>
+              <h2 className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.descriptionTitle}</h2>
+              <p className="mt-2.5 max-w-4xl text-sm leading-relaxed whitespace-pre-line text-foreground/90">{vehicle.description}</p>
+            </div>
+          )}
+
+          {vehicle.options.length > 0 && (
+            <div className={cardClasses({ padding: 'none', className: 'p-5 sm:p-6' })}>
+              <div className="flex items-center gap-3">
+                <h2 className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.optionsTitle}</h2>
+                <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-accent-gold/40 to-transparent" />
+              </div>
+              <ul className="mt-4 grid gap-x-6 gap-y-2.5 text-sm text-foreground sm:grid-cols-2 lg:grid-cols-3">
+                {vehicle.options.map((option) => (
+                  <li key={option} className="flex items-start gap-2">
+                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-gold" />
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
       {relatedVehicles.length > 0 && (
         <div className="mt-16 border-t border-border pt-12">
           <h2 className="text-2xl font-bold tracking-tight text-balance">{t.relatedTitle}</h2>
@@ -209,6 +219,28 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             {relatedVehicles.map((related) => (
               <VehicleCard key={related.id} dict={dict} locale={locale} vehicle={related} />
             ))}
+            {/* Fewer than 3 related vehicles: a compact "browse all" tile
+                fills the remaining desktop slots instead of leaving an empty
+                gap. With one vehicle it sits next to the card (sm+); with
+                two, sm already shows a full row, so it's desktop-only. */}
+            {relatedVehicles.length < 3 && (
+              <Link
+                href="/vehicles"
+                className={cardClasses({
+                  padding: 'none',
+                  className: `group flex-col items-center justify-center gap-4 border-dashed p-6 text-center hover:border-accent-gold/45 sm:p-8 ${
+                    relatedVehicles.length === 1 ? 'flex lg:col-span-2' : 'hidden lg:flex'
+                  }`,
+                })}
+              >
+                <CarSideIcon className="h-12 w-12 text-accent-gold transition-transform duration-200 group-hover:scale-105" />
+                <p className="max-w-sm text-base leading-relaxed text-muted-foreground">{t.relatedBrowseText}</p>
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground transition duration-200 group-hover:text-accent">
+                  {t.relatedBrowseCta}
+                  <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       )}

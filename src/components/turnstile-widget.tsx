@@ -1,8 +1,10 @@
 'use client'
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { preconnect } from 'react-dom'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { AlertCircleIcon, RefreshIcon } from '@/src/components/home/icons'
+import { describeTurnstileError, isTurnstileTestSiteKey } from '@/src/lib/turnstile-errors'
 
 // Public site key — meant to ship in the client bundle (that's the whole
 // point of NEXT_PUBLIC_*). Read with a literal `process.env.NEXT_PUBLIC_…`
@@ -20,14 +22,17 @@ const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render
 // How long the api.js download may take before it counts as failed.
 // Cloudflare's script normally arrives in well under a second; a request
 // that neither loads nor errors (network filter returning nothing, stalled
-// connection) would otherwise leave the spinner up forever.
-const SCRIPT_TIMEOUT_MS = 9000
+// connection) would otherwise leave the spinner up forever. Generous
+// enough for a slow mobile connection, where 9s was cutting off real loads.
+const SCRIPT_TIMEOUT_MS = 15000
 
-// One silent automatic retry covers the common transient cases (flaky
-// network, a Cloudflare hiccup, a render racing the script). After that
-// the compact error block with a manual Retry button takes over, so a
-// broken setup can never loop.
-const MAX_AUTO_RETRIES = 1
+// Two silent automatic retries, backing off (1.5s, then 3s), cover the
+// common transient cases (flaky network, a Cloudflare hiccup, a challenge
+// error in the browser). Configuration errors (bad site key, hostname not
+// allowed) skip them — see describeTurnstileError. After that the compact
+// error block with a manual Retry button takes over, so a broken setup can
+// never loop.
+const MAX_AUTO_RETRIES = 2
 const AUTO_RETRY_DELAY_MS = 1500
 
 type TurnstileApi = {
@@ -98,7 +103,7 @@ function loadTurnstileScript(): Promise<TurnstileApi> {
   return attempt
 }
 
-let missingKeyLogged = false
+let configWarningLogged = false
 
 export type TurnstileWidgetHandle = {
   // Discards the current (possibly already-used, expired, or failed)
@@ -143,6 +148,11 @@ export const TurnstileWidget = forwardRef<
   const autoRetriesRef = useRef(0)
   const retryTimerRef = useRef<number | null>(null)
 
+  // Opens the connection to Cloudflare while the page is still hydrating,
+  // so api.js and the challenge iframe start sooner — less time for the
+  // script timeout to bite on a slow network. Deduplicated by React.
+  if (SITE_KEY) preconnect('https://challenges.cloudflare.com')
+
   // Latest callbacks without re-running the mount effect on every parent
   // render (the parents pass inline setters).
   const callbacksRef = useRef({ onToken, onExpire, onError })
@@ -169,14 +179,19 @@ export const TurnstileWidget = forwardRef<
     widgetIdRef.current = null
   }, [])
 
-  // One concise console line per failure (never the site key, never the
-  // token), then either a single delayed automatic retry or the error block.
+  // One concise console line per failure, then either a delayed automatic
+  // retry or the error block. Diagnostic context only: the page hostname
+  // (what Cloudflare's hostname allow-list is checked against) and the
+  // first characters of the public site key (enough to tell which key a
+  // deployment was built with) — never the token.
   const handleFailure = useCallback(
-    (stage: 'script' | 'render' | 'widget', detail: string) => {
+    (stage: 'script' | 'render' | 'widget', detail: string, retryable = true) => {
       removeWidget()
       callbacksRef.current.onToken('')
-      const willRetry = autoRetriesRef.current < MAX_AUTO_RETRIES
-      console.warn(`[turnstile] ${stage} failed: ${detail}${willRetry ? ' — retrying automatically' : ''}`)
+      const willRetry = retryable && autoRetriesRef.current < MAX_AUTO_RETRIES
+      const context = `host=${window.location.hostname} key=${SITE_KEY.slice(0, 6)}… auto-retry ${autoRetriesRef.current}/${MAX_AUTO_RETRIES}`
+      const log = retryable ? console.warn : console.error
+      log(`[turnstile] ${stage} failed: ${detail} (${context})${willRetry ? ' — retrying automatically' : ''}`)
 
       if (willRetry) {
         autoRetriesRef.current += 1
@@ -184,7 +199,7 @@ export const TurnstileWidget = forwardRef<
         retryTimerRef.current = window.setTimeout(() => {
           retryTimerRef.current = null
           setAttempt((current) => current + 1)
-        }, AUTO_RETRY_DELAY_MS)
+        }, AUTO_RETRY_DELAY_MS * autoRetriesRef.current)
         return
       }
       setStatus('error')
@@ -225,7 +240,8 @@ export const TurnstileWidget = forwardRef<
               callbacksRef.current.onExpire?.()
             },
             'error-callback': (errorCode) => {
-              handleFailure('widget', `error code ${errorCode ?? 'unknown'}`)
+              const { retryable, hint } = describeTurnstileError(errorCode)
+              handleFailure('widget', `error code ${errorCode ?? 'unknown'}: ${hint}`, retryable)
               // Tells Turnstile the error was handled (no uncaught throw).
               return true
             },
@@ -256,9 +272,13 @@ export const TurnstileWidget = forwardRef<
   )
 
   useEffect(() => {
-    if (!SITE_KEY && !missingKeyLogged) {
-      missingKeyLogged = true
+    if (configWarningLogged) return
+    if (!SITE_KEY) {
+      configWarningLogged = true
       console.error('[turnstile] NEXT_PUBLIC_TURNSTILE_SITE_KEY is not set in this build — widget disabled, protected forms stay locked')
+    } else if (isTurnstileTestSiteKey(SITE_KEY) && !['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+      configWarningLogged = true
+      console.error('[turnstile] this build uses a Cloudflare test site key — server verification with the real secret will reject its tokens')
     }
   }, [])
 

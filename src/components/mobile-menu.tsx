@@ -58,9 +58,8 @@ export function MobileMenu({
     { href: '/faq', label: dict.header.nav.faq },
     { href: '/track', label: dict.header.nav.track },
   ]
-  // Track and FAQ stay reachable (hero feature strip, tracking emails,
-  // footer link) even though they're dropped from the primary nav to match
-  // the reference's 5-item header; kept last here as lower-emphasis links.
+  // Same order as the desktop capsule (site-header.tsx), which has no FAQ
+  // entry — FAQ stays reachable from the footer.
 
   // Portaled to document.body instead of rendered inline: <header> has
   // backdrop-blur-xl (a backdrop-filter), which per spec makes it a
@@ -118,11 +117,11 @@ export function MobileMenu({
   )
 
   return (
-    // ml-auto: below xl the logo is absolutely centered (see site-header.tsx)
+    // ml-auto: below the `nav` breakpoint the logo is absolutely centered (see site-header.tsx)
     // and out of the flex flow, so this burger button is briefly the only
     // in-flow child — margin-left:auto is what keeps it pinned to the
     // right edge instead of collapsing to the row's start.
-    <div className="ml-auto xl:hidden">
+    <div className="ml-auto nav:hidden">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
