@@ -11,7 +11,6 @@ import { getPublicSiteSettings } from "@/src/services/site-settings/queries";
 import { getPublicFaqItems } from "@/src/services/faq/queries";
 import { ChatWidget } from "@/src/components/chat/chat-widget";
 import { isChatAssistantConfigured } from "@/src/services/chat/config";
-import { isRecoveryConfigured } from "@/src/services/request-recovery/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,7 +63,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             settings={siteSettings}
             locale={locale}
             aiEnabled={isChatAssistantConfigured()}
-            recoveryEnabled={isRecoveryConfigured()}
           />
         </SiteSettingsProvider>
       </body>

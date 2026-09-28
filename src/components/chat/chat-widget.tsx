@@ -115,14 +115,12 @@ export function ChatWidget({
   settings,
   locale,
   aiEnabled,
-  recoveryEnabled,
 }: {
   dict: Dictionary['chatWidget']
   faqItems: PublicFaqItem[]
   settings: PublicSiteSettings
   locale: string
   aiEnabled: boolean
-  recoveryEnabled: boolean
 }) {
   const [open, setOpen] = useState(false)
   const attentionSeen = useSyncExternalStore(subscribeToNothing, readAttentionSeen, attentionSeenOnServer)
@@ -150,7 +148,6 @@ export function ChatWidget({
   const recovery = useRequestRecovery({
     dict,
     locale,
-    enabled: recoveryEnabled,
     push: pushMessages,
     onFinished: () => setStage(aiEnabled ? 'chat' : 'menu'),
   })
@@ -250,7 +247,7 @@ export function ChatWidget({
 
   function startRecovery() {
     setStage('recovery')
-    recovery.start()
+    void recovery.start()
   }
 
   async function requestReply(conversation: ChatMessage[]) {

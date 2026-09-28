@@ -24,8 +24,13 @@ import earth from '@/public/tracking/track-earth.webp'
 //   left/top/bottom so the starry space melts into the page background; the
 //   route overlay sits outside that horizontal mask (it fades in on its own)
 //   so it can start left of the planet.
-// - "compact" (below lg): an in-flow 2:1 banner cropped to the planet's
-//   upper right (the empty left space is cut off), faded out at the edges.
+// - "compact" (below lg): an in-flow, edge-to-edge 8:5 stage. The photo is
+//   drawn at ~161% of the stage width and anchored right, so the stage shows
+//   roughly the photo's right 62% (Europe/Africa and the rim glow; the empty
+//   starry space is cropped off) and a 9%–87% band of its height. It is not
+//   faded on the right, so on phones the planet reads as continuing past the
+//   screen edge; the bottom fades out fully so the page heading can overlap
+//   it (see app/(site)/track/page.tsx).
 
 const W = earth.width
 const H = earth.height
@@ -67,10 +72,15 @@ const FULL_MASK =
 // than the section and gets clipped), so the planet melts away before the
 // header and footer instead of being cut off.
 const SECTION_MASK = '[mask-image:linear-gradient(to_bottom,transparent,black_12%,black_78%,transparent)]'
-// Same split for the compact banner: horizontal fade on the photo, vertical
-// fade on the (shorter) banner box that crops it.
-const COMPACT_MASK = '[mask-image:linear-gradient(to_right,transparent_24%,black_46%,black_80%,transparent)]'
-const BANNER_MASK = '[mask-image:linear-gradient(to_bottom,transparent,black_24%,black_70%,transparent)]'
+// Same split for the compact stage: horizontal fade on the photo (only the
+// starry left side on phones, where the stage is full-bleed; both sides from
+// sm, where it no longer reaches the screen edges), vertical fade on the
+// stage box that crops it. The bottom fade reaches full transparency well
+// before the edge so the overlapping heading sits on plain page background
+// (dark or light theme alike), never on the bright city lights.
+const COMPACT_MASK =
+  '[mask-image:linear-gradient(to_right,transparent_30%,black_48%)] sm:[mask-image:linear-gradient(to_right,transparent_30%,black_48%,black_84%,transparent)]'
+const STAGE_MASK = '[mask-image:linear-gradient(to_bottom,transparent,black_14%,black_52%,transparent_88%)]'
 
 function PaperPlane() {
   return (
@@ -164,12 +174,12 @@ export function TrackingHeroArt({
 }) {
   if (variant === 'compact') {
     return (
-      <div className={`relative aspect-[2/1] overflow-hidden ${BANNER_MASK} ${className}`} aria-hidden="true">
-        <div className="absolute top-0 right-0 aspect-[1774/887] w-[135%]">
+      <div className={`relative aspect-[8/5] overflow-hidden ${STAGE_MASK} ${className}`} aria-hidden="true">
+        <div className="absolute top-[-11.6%] right-0 aspect-[1774/887] w-[161%]">
           <div className={`absolute inset-0 ${COMPACT_MASK}`}>
-            <Image src={earth} alt="" fill sizes="(min-width: 1024px) 1px, 100vw" className="object-cover" />
+            <Image src={earth} alt="" fill sizes="(min-width: 1024px) 1px, (min-width: 640px) 1030px, 161vw" className="object-cover" />
           </div>
-          <Overlay id="track-earth-route-compact" scale={1.8} />
+          <Overlay id="track-earth-route-compact" scale={1.6} />
         </div>
       </div>
     )

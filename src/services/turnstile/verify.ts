@@ -11,6 +11,28 @@ import { headers } from 'next/headers'
 const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 const TIMEOUT_MS = 5000
 
+// Safe, coarse label for a siteverify rejection so the logs say which layer
+// broke: our secret (wrong/other widget's secret → key mismatch), the token
+// (expired, reused or forged), or something else. Never includes the token.
+export type TurnstileFailureCategory = 'secret_invalid' | 'token_expired_or_reused' | 'token_invalid' | 'other'
+
+export function categorizeSiteverifyErrors(codes: string[]): TurnstileFailureCategory {
+  if (codes.some((c) => c === 'invalid-input-secret' || c === 'missing-input-secret')) return 'secret_invalid'
+  if (codes.includes('timeout-or-duplicate')) return 'token_expired_or_reused'
+  if (codes.some((c) => c === 'invalid-input-response' || c === 'missing-input-response')) return 'token_invalid'
+  return 'other'
+}
+
+// The host this deployment is expected to serve (NEXT_PUBLIC_APP_URL), used
+// only to flag a solved challenge coming from somewhere else.
+function expectedHostname(): string | null {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL?.trim() ?? '').hostname || null
+  } catch {
+    return null
+  }
+}
+
 export type TurnstileVerifyResult =
   | { ok: true }
   | { ok: false; reason: 'missing_token' | 'invalid_token' | 'timeout' | 'server_error' }
@@ -44,7 +66,9 @@ async function getClientIp(): Promise<string | undefined> {
 export async function verifyTurnstileToken(token: string | null | undefined): Promise<TurnstileVerifyResult> {
   if (!token || !token.trim()) return { ok: false, reason: 'missing_token' }
 
-  const secret = process.env.TURNSTILE_SECRET_KEY
+  // Trimmed like the public site key: a pasted trailing newline would
+  // otherwise make Cloudflare reject every token as invalid-input-secret.
+  const secret = process.env.TURNSTILE_SECRET_KEY?.trim()
   if (!secret) {
     console.error('[turnstile] TURNSTILE_SECRET_KEY is not configured — failing safe (blocking)')
     return { ok: false, reason: 'server_error' }
@@ -73,12 +97,22 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
       // failing submits come from. "invalid-input-secret" or
       // "invalid-input-response" on every submit usually means the site key
       // and TURNSTILE_SECRET_KEY belong to different Turnstile widgets.
-      console.warn(
-        '[turnstile] verification failed, error-codes:',
-        (data['error-codes'] ?? ['unknown']).join(','),
+      const codes = data['error-codes'] ?? []
+      const category = categorizeSiteverifyErrors(codes)
+      const log = category === 'secret_invalid' ? console.error : console.warn
+      log(
+        `[turnstile] verification failed: category=${category} error-codes=${codes.join(',') || 'unknown'}`,
         data.hostname ? `hostname=${data.hostname}` : ''
       )
       return { ok: false, reason: 'invalid_token' }
+    }
+
+    // Informational only (Cloudflare's hostname allow-list is the real
+    // gate): a mismatch points at a preview/other domain or a wrong
+    // NEXT_PUBLIC_APP_URL. localhost is expected in development.
+    const expected = expectedHostname()
+    if (data.hostname && expected && data.hostname !== expected && process.env.NODE_ENV === 'production') {
+      console.warn(`[turnstile] verified on unexpected hostname=${data.hostname} (expected ${expected})`)
     }
 
     return { ok: true }

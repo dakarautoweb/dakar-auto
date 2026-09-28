@@ -11,6 +11,9 @@ export type RecoveryPeriod = (typeof RECOVERY_PERIODS)[number]
 export type RecoveryDiscriminator = { type: 'kind'; value: RecoveryRequestKind } | { type: 'period'; value: RecoveryPeriod }
 
 export type RecoveryApiRequest =
+  // Sent when the flow starts: the endpoint checks its own runtime
+  // configuration (and logs why, if it's broken) before the customer types anything.
+  | { action: 'status'; locale: string }
   | { action: 'lookup'; contact: string; lastName: string; discriminator?: RecoveryDiscriminator | null; locale: string }
   | { action: 'verify'; challengeId: string; code: string; locale: string }
   | { action: 'resend'; challengeId: string; locale: string }
@@ -27,6 +30,7 @@ export type RecoveredRequest = {
 }
 
 export type RecoveryApiResponse =
+  | { status: 'ready' }
   | { status: 'need_discriminator'; discriminator: 'kind' | 'period' }
   | { status: 'code_sent'; challengeId: string; destination: string; resendAfterSeconds: number }
   | { status: 'verified'; request: RecoveredRequest }

@@ -33,13 +33,11 @@ function fill(template: string, values: Record<string, string | number>): string
 export function useRequestRecovery({
   dict,
   locale,
-  enabled,
   push,
   onFinished,
 }: {
   dict: Dictionary['chatWidget']
   locale: string
-  enabled: boolean
   push: PushMessage
   onFinished: () => void
 }) {
@@ -60,10 +58,16 @@ export function useRequestRecovery({
     setState({ step: 'failed', discriminator: null, busy: false, inputError: null, resendAvailableAt: 0 })
   }
 
-  function start() {
+  // Availability is decided by /api/chat/recovery at the moment the flow
+  // starts, not by the page render: a broken server configuration then shows
+  // up as a logged, diagnosable request instead of a silently hidden flow.
+  async function start() {
     reset()
-    if (!enabled) {
-      say(t.unavailable, { action: { type: 'contact' } })
+    setState({ step: 'contact', discriminator: null, busy: true, inputError: null, resendAvailableAt: 0 })
+    const status = await postRecovery({ action: 'status', locale })
+    if (status.status !== 'ready') {
+      setState(null)
+      say(status.status === 'rate_limited' ? t.rateLimited : t.unavailable, { action: { type: 'contact' } })
       onFinished()
       return
     }

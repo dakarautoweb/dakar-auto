@@ -102,3 +102,50 @@ describe('verifyTurnstileToken', () => {
     expect(result).toEqual({ ok: false, reason: 'timeout' })
   })
 })
+
+describe('Turnstile diagnostics', () => {
+  it('categorizes siteverify rejections so logs tell secret vs token problems apart', async () => {
+    const { categorizeSiteverifyErrors } = await import('../verify')
+    expect(categorizeSiteverifyErrors(['invalid-input-secret'])).toBe('secret_invalid')
+    expect(categorizeSiteverifyErrors(['missing-input-secret'])).toBe('secret_invalid')
+    expect(categorizeSiteverifyErrors(['timeout-or-duplicate'])).toBe('token_expired_or_reused')
+    expect(categorizeSiteverifyErrors(['invalid-input-response'])).toBe('token_invalid')
+    expect(categorizeSiteverifyErrors([])).toBe('other')
+  })
+
+  it('logs the category — never the token or secret — and still fails closed', async () => {
+    process.env.TURNSTILE_SECRET_KEY = 'secret-value-never-logged'
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: false, 'error-codes': ['invalid-input-secret'] }) }))
+    const logged: string[] = []
+    const spy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => void logged.push(args.join(' ')))
+
+    const result = await verifyTurnstileToken('token-value-never-logged')
+
+    expect(result).toEqual({ ok: false, reason: 'invalid_token' })
+    expect(logged.join('\n')).toContain('category=secret_invalid')
+    expect(logged.join('\n')).not.toContain('secret-value-never-logged')
+    expect(logged.join('\n')).not.toContain('token-value-never-logged')
+    spy.mockRestore()
+  })
+
+  it('trims a secret pasted with a trailing newline before sending it', async () => {
+    process.env.TURNSTILE_SECRET_KEY = 'real-secret\n'
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true }) })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await verifyTurnstileToken('token')
+
+    const body = fetchMock.mock.calls[0][1].body as URLSearchParams
+    expect(body.get('secret')).toBe('real-secret')
+  })
+
+  it('treats a whitespace-only secret as not configured', async () => {
+    process.env.TURNSTILE_SECRET_KEY = '  \n'
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    expect(await verifyTurnstileToken('token')).toEqual({ ok: false, reason: 'server_error' })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+})

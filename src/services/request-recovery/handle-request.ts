@@ -1,11 +1,10 @@
 import 'server-only'
 import { defaultLocale, isLocale, type Locale } from '@/src/i18n/config'
 import { getDictionary } from '@/src/i18n/dictionaries'
-import { resendClient } from '@/src/services/email/config'
 import { sendRequestRecoveryCodeEmail } from '@/src/services/email'
 import { clientKeyFromRequest, createMemoryRateLimiter } from '@/src/services/rate-limit/memory-rate-limiter'
 import { RECOVERY_PERIODS, type RecoveredRequest, type RecoveryApiResponse, type RecoveryDiscriminator } from '@/src/lib/request-recovery/types'
-import { getRecoverySecret } from './config'
+import { getRecoveryConfigStatus } from './config'
 import { lookupRequest, resendCode, verifyCode, type RecoveryDeps } from './flow'
 import { OTP_TTL_MS } from './otp'
 import { supabaseRecoveryRepository } from './repository'
@@ -20,7 +19,11 @@ const limiters = {
   lookup: createMemoryRateLimiter({ windowMs: WINDOW_MS, max: 5 }),
   verify: createMemoryRateLimiter({ windowMs: WINDOW_MS, max: 12 }),
   resend: createMemoryRateLimiter({ windowMs: WINDOW_MS, max: 4 }),
+  status: createMemoryRateLimiter({ windowMs: WINDOW_MS, max: 30 }),
 }
+
+const ACTIONS = ['status', 'lookup', 'verify', 'resend'] as const
+type RecoveryAction = (typeof ACTIONS)[number]
 
 function reply(body: RecoveryApiResponse, status = 200): Response {
   return Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } })
@@ -49,12 +52,20 @@ async function toPublicRequest(record: RecoveredRequestRecord, locale: Locale): 
   }
 }
 
+// This endpoint — not the page render — is the source of truth for whether
+// recovery can run. A broken configuration keeps it closed (never a weaker
+// fallback) and logs exactly which safe flag failed; the client only ever
+// sees the generic "unavailable".
 export async function handleRecoveryRequest(request: Request): Promise<Response> {
-  const secret = getRecoverySecret()
-  if (!secret || !resendClient) {
-    console.error('[request-recovery] Not configured: REQUEST_RECOVERY_SECRET and RESEND_API_KEY are required')
+  const config = getRecoveryConfigStatus()
+  if (!config.ok) {
+    console.error(
+      '[request-recovery] unavailable: configuration invalid',
+      JSON.stringify({ problems: config.problems, ...config.diagnostics }),
+    )
     return reply({ status: 'unavailable' }, 503)
   }
+  const { secret } = config
 
   const declaredLength = Number(request.headers.get('content-length'))
   if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) return reply({ status: 'invalid_input' }, 413)
@@ -69,9 +80,10 @@ export async function handleRecoveryRequest(request: Request): Promise<Response>
     return reply({ status: 'invalid_input' }, 400)
   }
 
-  const action = body.action
-  if (action !== 'lookup' && action !== 'verify' && action !== 'resend') return reply({ status: 'invalid_input' }, 400)
+  const action = body.action as RecoveryAction
+  if (!ACTIONS.includes(action)) return reply({ status: 'invalid_input' }, 400)
   if (limiters[action].isLimited(clientKeyFromRequest(request))) return reply({ status: 'rate_limited' }, 429)
+  if (action === 'status') return reply({ status: 'ready' })
 
   const locale: Locale = typeof body.locale === 'string' && isLocale(body.locale) ? body.locale : defaultLocale
   const deps: RecoveryDeps = {
@@ -94,8 +106,9 @@ export async function handleRecoveryRequest(request: Request): Promise<Response>
     }
     return reply(await resendCode({ challengeId: body.challengeId }, deps))
   } catch (err) {
-    // Repository errors are already logged without customer data.
-    console.error('[request-recovery] action failed:', action, err instanceof Error ? err.message : 'unknown')
+    // Repository errors are already logged without customer data; the
+    // message here is one of our own codes (recovery_lookup_failed, …).
+    console.error('[request-recovery] unavailable: action failed', action, err instanceof Error ? err.message : 'unknown')
     return reply({ status: 'unavailable' }, 503)
   }
 }

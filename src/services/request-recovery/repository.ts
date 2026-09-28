@@ -9,7 +9,6 @@ import type { RecoveredRequestRecord, RecoveryCandidate, RecoveryChallenge, Reco
 // session, so the safety boundary is this module — only the columns below
 // are ever read, and only flow.ts decides what leaves the server.
 
-const TABLES: Record<RecoveryRequestKind, string> = { parts: 'parts_requests', vehicle: 'vehicle_requests' }
 const CHALLENGES = 'request_recovery_challenges'
 const MAX_CANDIDATES_PER_TABLE = 50
 // Stored phones are free-form ("+221 77 123 45 67"), so the pre-filter
@@ -17,13 +16,54 @@ const MAX_CANDIDATES_PER_TABLE = 50
 // normalized numbers exactly.
 const PHONE_SUFFIX_DIGITS = 9
 
-type CandidateRow = {
-  id: string
-  created_at: string
-  customer_name: string | null
-  customer_email: string | null
-  customer_phone: string | null
-  whatsapp_phone: string | null
+type Row = Record<string, unknown>
+
+// One adapter per table: each lists the columns it reads and normalizes its
+// own row shape, so a schema change in one request table can't silently
+// break (or be masked by) the other. Both schemas were verified against the
+// production database on 2026-09-27 and currently use the same contact
+// columns.
+export type CandidateSource = {
+  table: string
+  columns: string
+  emailColumn: string
+  phoneColumns: string[]
+  toCandidate: (row: Row) => RecoveryCandidate
+}
+
+function text(value: unknown): string | null {
+  return typeof value === 'string' && value ? value : null
+}
+
+export const CANDIDATE_SOURCES: Record<RecoveryRequestKind, CandidateSource> = {
+  parts: {
+    table: 'parts_requests',
+    columns: 'id, created_at, customer_name, customer_email, customer_phone, whatsapp_phone',
+    emailColumn: 'customer_email',
+    phoneColumns: ['customer_phone', 'whatsapp_phone'],
+    toCandidate: (row) => ({
+      kind: 'parts',
+      requestId: String(row.id),
+      createdAt: String(row.created_at),
+      customerName: text(row.customer_name),
+      email: text(row.customer_email),
+      phones: [text(row.customer_phone), text(row.whatsapp_phone)].filter((p): p is string => p !== null),
+    }),
+  },
+  vehicle: {
+    table: 'vehicle_requests',
+    columns: 'id, created_at, customer_name, customer_email, customer_phone, whatsapp_phone',
+    emailColumn: 'customer_email',
+    phoneColumns: ['customer_phone', 'whatsapp_phone'],
+    toCandidate: (row) => ({
+      kind: 'vehicle',
+      requestId: String(row.id),
+      createdAt: String(row.created_at),
+      customerName: text(row.customer_name),
+      email: text(row.customer_email),
+      phones: [text(row.customer_phone), text(row.whatsapp_phone)].filter((p): p is string => p !== null),
+    }),
+  },
 }
 
 type ChallengeRow = {
@@ -43,32 +83,36 @@ function escapeLike(value: string): string {
   return value.replace(/[\\%_]/g, (c) => `\\${c}`)
 }
 
-function logError(context: string, error: { message: string; code?: string } | null) {
-  // Error text only — never the contact, name or code being looked up.
-  if (error) console.error(`[request-recovery] ${context}:`, error.code ?? '', error.message)
+function logError(context: string, error: { message: string; code?: string } | null, status?: number) {
+  // Error text only — never the contact, name or code being looked up. The
+  // HTTP status matters for count (HEAD) queries, whose errors have no body.
+  if (error) console.error(`[request-recovery] ${context}:`, `status=${status ?? 'n/a'}`, error.code ?? '', error.message)
+}
+
+// request_refs is jsonb. supabase-js serializes an *array* passed to
+// .contains() as a Postgres array literal (`cs.{[object Object]}`), which
+// PostgREST rejects with HTTP 400 — so the filter must be sent as JSON text
+// (`cs.[{"kind":…,"id":…}]`). Passing the array broke every lookup that
+// found a real match (production, found 2026-09-27).
+export function requestRefsContainsFilter(ref: RecoveryRequestRef): string {
+  return JSON.stringify([{ kind: ref.kind, id: ref.id }])
 }
 
 async function findInTable(kind: RecoveryRequestKind, contact: RecoveryContact): Promise<RecoveryCandidate[]> {
-  let query = supabaseAdmin.from(TABLES[kind]).select('id, created_at, customer_name, customer_email, customer_phone, whatsapp_phone')
+  const source = CANDIDATE_SOURCES[kind]
+  let query = supabaseAdmin.from(source.table).select(source.columns)
   if (contact.kind === 'email') {
-    query = query.ilike('customer_email', escapeLike(contact.email))
+    query = query.ilike(source.emailColumn, escapeLike(contact.email))
   } else {
     const pattern = `%${contact.digits.slice(-PHONE_SUFFIX_DIGITS).split('').join('%')}%`
-    query = query.or(`customer_phone.ilike.${pattern},whatsapp_phone.ilike.${pattern}`)
+    query = query.or(source.phoneColumns.map((column) => `${column}.ilike.${pattern}`).join(','))
   }
-  const { data, error } = await query.order('created_at', { ascending: false }).limit(MAX_CANDIDATES_PER_TABLE)
+  const { data, error, status } = await query.order('created_at', { ascending: false }).limit(MAX_CANDIDATES_PER_TABLE)
   if (error) {
-    logError(`candidate lookup (${kind}) failed`, error)
+    logError(`candidate lookup (${kind}) failed`, error, status)
     throw new Error('recovery_lookup_failed')
   }
-  return ((data ?? []) as CandidateRow[]).map((row) => ({
-    kind,
-    requestId: String(row.id),
-    createdAt: row.created_at,
-    customerName: row.customer_name,
-    email: row.customer_email,
-    phones: [row.customer_phone, row.whatsapp_phone].filter((p): p is string => Boolean(p)),
-  }))
+  return ((data ?? []) as unknown as Row[]).map(source.toCandidate)
 }
 
 function mapChallenge(row: ChallengeRow): RecoveryChallenge {
@@ -100,13 +144,13 @@ export const supabaseRecoveryRepository: RecoveryRepository = {
   },
 
   async countChallengesSince(ref, sinceIso) {
-    const { count, error } = await supabaseAdmin
+    const { count, error, status } = await supabaseAdmin
       .from(CHALLENGES)
       .select('id', { count: 'exact', head: true })
-      .contains('request_refs', [{ kind: ref.kind, id: ref.id }])
+      .contains('request_refs', requestRefsContainsFilter(ref))
       .gte('created_at', sinceIso)
     if (error) {
-      logError('challenge count failed', error)
+      logError('challenge count failed', error, status)
       throw new Error('recovery_store_failed')
     }
     return count ?? 0
@@ -161,12 +205,13 @@ export const supabaseRecoveryRepository: RecoveryRepository = {
   },
 
   async getRequestEmail(kind, requestId) {
-    const { data, error } = await supabaseAdmin.from(TABLES[kind]).select('customer_email').eq('id', requestId).maybeSingle()
+    const source = CANDIDATE_SOURCES[kind]
+    const { data, error } = await supabaseAdmin.from(source.table).select(source.emailColumn).eq('id', requestId).maybeSingle()
     if (error) {
       logError('request email read failed', error)
       throw new Error('recovery_lookup_failed')
     }
-    return (data?.customer_email as string | null | undefined) || null
+    return text((data as Row | null)?.[source.emailColumn])
   },
 
   async getRecoveredRequest(kind, requestId): Promise<RecoveredRequestRecord | null> {
@@ -176,7 +221,11 @@ export const supabaseRecoveryRepository: RecoveryRepository = {
         .select('request_number, status, tracking_token, created_at, vehicles(year, make, model)')
         .eq('id', requestId)
         .maybeSingle()
-      if (error) logError('parts request read failed', error)
+      if (error) {
+      // A read failure is "unavailable", never a silent "expired".
+      logError('parts request read failed', error)
+      throw new Error('recovery_lookup_failed')
+    }
       if (!data) return null
       const vehicle = (Array.isArray(data.vehicles) ? data.vehicles[0] : data.vehicles) as { year: number | null; make: string; model: string } | null
       return {
@@ -194,7 +243,11 @@ export const supabaseRecoveryRepository: RecoveryRepository = {
       .select('request_number, status, tracking_token, created_at, make, model, year_from, year_to')
       .eq('id', requestId)
       .maybeSingle()
-    if (error) logError('vehicle request read failed', error)
+    if (error) {
+      // A read failure is "unavailable", never a silent "expired".
+      logError('vehicle request read failed', error)
+      throw new Error('recovery_lookup_failed')
+    }
     if (!data) return null
     const years = [data.year_from, data.year_to].filter(Boolean)
     const yearLabel = years.length === 2 && years[0] !== years[1] ? `${years[0]}–${years[1]}` : years[0] ? String(years[0]) : null
