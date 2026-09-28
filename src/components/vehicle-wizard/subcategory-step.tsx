@@ -1,5 +1,5 @@
 import type { Dictionary } from '@/src/i18n/dictionaries'
-import { OtherPartIcon, SubcategoryIcon } from '@/src/components/home/icons'
+import { ChevronLeftIcon, OtherPartIcon, SubcategoryIcon } from '@/src/components/home/icons'
 import { OTHER_KEY, PART_SUBCATEGORY_KEYS, type PartCategoryKey } from '@/src/lib/parts-catalog'
 
 export function SubcategoryStep({
@@ -31,9 +31,7 @@ export function SubcategoryStep({
         onClick={onBack}
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-md"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-          <path d="M15 6l-6 6 6 6" />
-        </svg>
+        <ChevronLeftIcon className="h-4 w-4" />
         {dict.wizard.parts.changeCategory}
       </button>
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode, type RefObject } from 'react'
-import { Trash2 } from 'lucide-react'
 import type { Locale } from '@/src/i18n/config'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import {
@@ -15,6 +14,7 @@ import {
   OtherPartIcon,
   RefreshIcon,
   SubcategoryIcon,
+  TrashIcon,
   UploadIcon,
   XIcon,
 } from '@/src/components/home/icons'
@@ -411,7 +411,7 @@ export function IdentifyPhotoModal({
                       onClick={handleRemove}
                       className="inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border/70 bg-surface/60 px-3 text-xs font-medium text-muted-foreground transition duration-200 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-600 focus-visible:border-red-500/50 focus-visible:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 dark:hover:text-red-400 dark:focus-visible:text-red-400"
                     >
-                      <Trash2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                      <TrashIcon className="h-3.5 w-3.5 shrink-0" />
                       {t.remove}
                     </button>
                   </div>

@@ -1,7 +1,35 @@
 import type { ComponentType } from 'react'
 import { PART_CATEGORY_SVG, PART_SUBCATEGORY_SVG } from '@/src/lib/parts-svg-icons'
+import {
+  EngineSpecIcon,
+  FastIcon,
+  GlobalIcon,
+  QualityIcon,
+  SupportIcon,
+  TransmissionSpecIcon,
+  DrivetrainSpecIcon,
+  BodyTypeIcon,
+  gearTeeth,
+  iconBase as shared,
+  type IconProps,
+} from '@/src/components/ui/dakar-icons'
 
-type IconProps = { className?: string }
+// Every generic UI icon (automotive, specs, actions, contact, status) lives
+// in the central Dakar Auto icon system; re-exported here so existing
+// `@/src/components/home/icons` imports keep working. This module keeps
+// only what is specific to it: the parts illustrations (CategoryIcon /
+// SubcategoryIcon and their line-art fallbacks) and decorative art.
+export * from '@/src/components/ui/dakar-icons'
+
+// Legacy names for the vehicle result cards' spec grid — same components
+// as the central spec set, so the homepage/wizard result cards, the
+// inventory cards and the vehicle detail page all share one spec language.
+export {
+  EngineSpecIcon as ResultEngineIcon,
+  BodyTypeIcon as ResultBodyIcon,
+  DrivetrainSpecIcon as ResultDrivetrainIcon,
+  TransmissionSpecIcon as ResultTransmissionIcon,
+}
 
 // Renders a real SVG file from the Dakar Auto icon library (public/parts/
 // svg/...) natively — its own baked-in multi-tone colors (a Dakar-orange
@@ -18,32 +46,6 @@ type IconProps = { className?: string }
 function SvgArtIcon({ src, className = 'h-6 w-6' }: { src: string; className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element -- static asset from public/parts/svg, not an optimizable content image
   return <img src={src} alt="" aria-hidden="true" className={`inline-block shrink-0 object-contain ${className}`} />
-}
-
-const shared = {
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 1.75,
-  strokeLinecap: 'round' as const,
-  strokeLinejoin: 'round' as const,
-}
-
-function gearTeeth(cx: number, cy: number, inner: number, outer: number, count: number) {
-  const step = 360 / count
-  return Array.from({ length: count }, (_, i) => {
-    const deg = i * step
-    return (
-      <line
-        key={deg}
-        x1={cx}
-        y1={cy - outer}
-        x2={cx}
-        y2={cy - inner}
-        transform={`rotate(${deg} ${cx} ${cy})`}
-      />
-    )
-  })
 }
 
 export function LightingIcon({ className = 'h-6 w-6' }: IconProps) {
@@ -68,15 +70,6 @@ export function BrakingIcon({ className = 'h-6 w-6' }: IconProps) {
   )
 }
 
-export function EngineIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="3.2" />
-      {gearTeeth(12, 12, 5, 7, 6)}
-    </svg>
-  )
-}
-
 export function SuspensionIcon({ className = 'h-6 w-6' }: IconProps) {
   return (
     <svg {...shared} className={className}>
@@ -94,67 +87,6 @@ export function BodyIcon({ className = 'h-6 w-6' }: IconProps) {
     <svg {...shared} className={className}>
       <path d="M4 16l1.5-4.5A2 2 0 0 1 7.4 10h9.2a2 2 0 0 1 1.9 1.5L20 16" />
       <path d="M3 16h18v2a1 1 0 0 1-1 1h-1.5a1.5 1.5 0 0 1-3 0h-7a1.5 1.5 0 0 1-3 0H4a1 1 0 0 1-1-1v-2Z" />
-    </svg>
-  )
-}
-
-// The four icons below are dedicated to the vehicle result cards' spec
-// grid (see hero-vehicle-result.tsx) — deliberately separate from
-// EngineIcon/BodyIcon/DrivetrainIcon/TransmissionIcon above, which are
-// also the Parts page's shared category icons; redesigning those directly
-// would change the Parts page too, outside this fix's scope.
-export function ResultEngineIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="5" y="10" width="14" height="8" rx="1.5" />
-      <path d="M8 10V6.5h3V10M13 10V6.5h3V10" />
-      <path d="M5 14.5H3M21 14.5h-2" />
-      <circle cx="9" cy="14" r="1" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="14" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function ResultBodyIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M3 15.5l1.3-4.4A2.3 2.3 0 0 1 6.5 9.5h11a2.3 2.3 0 0 1 2.2 1.6l1.3 4.4" />
-      <path d="M2 15.5h20v2.3a1 1 0 0 1-1 1h-1.3" />
-      <path d="M2 15.5v2.3a1 1 0 0 0 1 1h1.3" />
-      <circle cx="7" cy="17.8" r="1.7" />
-      <circle cx="17" cy="17.8" r="1.7" />
-    </svg>
-  )
-}
-
-export function ResultDrivetrainIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="5" cy="6" r="1.8" />
-      <circle cx="19" cy="6" r="1.8" />
-      <circle cx="5" cy="18" r="1.8" />
-      <circle cx="19" cy="18" r="1.8" />
-      <path d="M5 6h14M5 18h14M12 6v12" />
-    </svg>
-  )
-}
-
-export function ResultTransmissionIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="4" />
-      {gearTeeth(12, 12, 6, 8.5, 8)}
-      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function FuelIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 20V8a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v12" />
-      <path d="M3 20h11" />
-      <path d="M13 9h2l3 3v4.5a1.5 1.5 0 0 1-3 0V13h-2" />
     </svg>
   )
 }
@@ -201,18 +133,6 @@ export function InteriorIcon({ className = 'h-6 w-6' }: IconProps) {
   )
 }
 
-export function TransmissionIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="9" cy="9" r="2.6" />
-      {gearTeeth(9, 9, 3.6, 5, 4)}
-      <circle cx="16" cy="16" r="2.6" />
-      {gearTeeth(16, 16, 3.6, 5, 4)}
-      <path d="M11 10.5l3 3" />
-    </svg>
-  )
-}
-
 export function FiltersIcon({ className = 'h-6 w-6' }: IconProps) {
   return (
     <svg {...shared} className={className}>
@@ -224,70 +144,21 @@ export function FiltersIcon({ className = 'h-6 w-6' }: IconProps) {
 const categoryIcons: Record<string, ComponentType<IconProps>> = {
   lighting: LightingIcon,
   braking: BrakingIcon,
-  engine: EngineIcon,
+  engine: EngineSpecIcon,
   suspension: SuspensionIcon,
   body: BodyIcon,
   electrical: ElectricalIcon,
   cooling: CoolingIcon,
   interior: InteriorIcon,
-  transmission: TransmissionIcon,
+  transmission: TransmissionSpecIcon,
   filters: FiltersIcon,
 }
 
 export function CategoryIcon({ name, className }: { name: string; className?: string }) {
   const svg = PART_CATEGORY_SVG[name as keyof typeof PART_CATEGORY_SVG]
   if (svg) return <SvgArtIcon src={svg} className={className} />
-  const Icon = categoryIcons[name] ?? EngineIcon
+  const Icon = categoryIcons[name] ?? EngineSpecIcon
   return <Icon className={className} />
-}
-
-export function QualityIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  )
-}
-
-export function GlobalIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16" />
-    </svg>
-  )
-}
-
-export function FastIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 15a8 8 0 1 1 16 0" />
-      <path d="M12 15l4-4" />
-      <circle cx="12" cy="15" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function ShippingIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M3 8l9-4 9 4-9 4-9-4Z" />
-      <path d="M3 8v8l9 4 9-4V8" />
-      <path d="M12 12v8" />
-    </svg>
-  )
-}
-
-export function SupportIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 13a8 8 0 0 1 16 0" />
-      <path d="M4 13v3a2 2 0 0 0 2 2h1v-6H5a1 1 0 0 0-1 1Z" />
-      <path d="M20 13v3a2 2 0 0 1-2 2h-1v-6h1a1 1 0 0 1 1 1Z" />
-      <path d="M9 19h3a2 2 0 0 0 2-2" />
-    </svg>
-  )
 }
 
 const trustIcons = [QualityIcon, GlobalIcon, FastIcon, SupportIcon]
@@ -295,145 +166,6 @@ const trustIcons = [QualityIcon, GlobalIcon, FastIcon, SupportIcon]
 export function TrustIcon({ index, className }: { index: number; className?: string }) {
   const Icon = trustIcons[index % trustIcons.length]
   return <Icon className={className} />
-}
-
-export function ScanIcon({ className = 'h-5 w-5' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 8V6a2 2 0 0 1 2-2h2" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-      <path d="M20 16v2a2 2 0 0 1-2 2h-2" />
-      <path d="M8 20H6a2 2 0 0 1-2-2v-2" />
-      <path d="M4 12h16" strokeOpacity="0.5" />
-    </svg>
-  )
-}
-
-export function MailIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3.5 6 8.5 7 8.5-7" />
-    </svg>
-  )
-}
-
-export function PhoneIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M6 3h3l1.5 4.5L8 9a12 12 0 0 0 7 7l1.5-2.5L21 15v3a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2Z" />
-    </svg>
-  )
-}
-
-export function WhatsAppIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M7 18l-3 1 1-3a8 8 0 1 1 2 2Z" />
-      <path d="M9 10c0 3 2 5 5 5" />
-    </svg>
-  )
-}
-
-export function InstagramIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function FacebookIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <path d="M14 8.5h-1.3c-.7 0-1.2.5-1.2 1.2V11H14l-.3 2H11.5v5.5" />
-    </svg>
-  )
-}
-
-export function OtherIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function CameraIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
-      <circle cx="12" cy="12.5" r="3.2" />
-    </svg>
-  )
-}
-
-export function UploadIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 15V4M12 4 8 8M12 4l4 4" />
-      <path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" />
-    </svg>
-  )
-}
-
-export function SearchIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="10.5" cy="10.5" r="6.5" />
-      <path d="M20 20l-5-5" />
-    </svg>
-  )
-}
-
-export function LayersIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 3l9 5-9 5-9-5 9-5Z" />
-      <path d="M3 13l9 5 9-5" strokeOpacity="0.55" />
-    </svg>
-  )
-}
-
-export function SendIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M21 3 3 10.5l7.5 3L13.5 21 21 3Z" />
-      <path d="M10.5 13.5 21 3" />
-    </svg>
-  )
-}
-
-export function RouteIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="5.5" cy="6" r="2" />
-      <circle cx="18.5" cy="18" r="2" />
-      <path d="M5.5 8v3a3 3 0 0 0 3 3h7a3 3 0 0 1 3 3" strokeDasharray="2.5 3" />
-    </svg>
-  )
-}
-
-export function CheckCircleIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8 12.5l2.5 2.5L16 9.5" />
-    </svg>
-  )
-}
-
-export function XIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M6 6l12 12M18 6 6 18" />
-    </svg>
-  )
 }
 
 // Larger decorative line-art — automotive-character accents for section
@@ -536,19 +268,10 @@ export function FilterArt({ className = 'h-24 w-24' }: IconProps) {
   )
 }
 
-// Arrow used for the category-card affordance — nudges on hover.
-export function ArrowRightIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M5 12h13M13 6l6 6-6 6" />
-    </svg>
-  )
-}
-
 // -----------------------------------------------------------------------
 // Subcategory icons — the second-level parts selector (see
 // src/lib/parts-catalog.ts). Same shared stroke language as the top-level
-// category icons above (round caps/joins, 1.75 stroke), scaled for smaller
+// category icons above (round caps/joins, 1.8 stroke), scaled for smaller
 // tiles. Grouped here by real-world part; several subcategory keys reuse
 // the same icon where they represent the same physical component (e.g. a
 // brake hose and a coolant hose render the same way).
@@ -1352,276 +1075,3 @@ export function SubcategoryIcon({ name, className }: { name: string; className?:
   return <Icon className={className} />
 }
 
-// VIN-input glyph and the "vehicle intelligence panel" car mark — a plain
-// side-profile silhouette, not tied to any category.
-export function CarSideIcon({ className = 'h-5 w-5' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M3 15.5V13l2-4.5A2 2 0 0 1 6.85 7h10.3a2 2 0 0 1 1.85 1.5L20 13v2.5" />
-      <path d="M3 15.5h18" />
-      <path d="M5 15.5v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1" />
-      <path d="M16 15.5v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1" />
-      <circle cx="7.5" cy="15.5" r="1.6" />
-      <circle cx="16.5" cy="15.5" r="1.6" />
-      <path d="M6 10h12" strokeOpacity="0.5" />
-    </svg>
-  )
-}
-
-export function InfoIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 11v5.5" />
-      <circle cx="12" cy="7.75" r="0.75" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-// Bare checkmark (no circle) — for a badge that already supplies its own
-// circular/pill background, e.g. a completed step indicator.
-export function CheckIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M5 12.5l4.5 4.5L19 7" />
-    </svg>
-  )
-}
-
-// Dropdown/combobox affordance (BrandSelect) — a plain chevron, rotated via
-// the caller's className when the panel is open.
-export function ChevronDownIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  )
-}
-
-// Manual-selection affordance ("Sélectionner manuellement") — three
-// horizontal sliders, distinct from EditIcon's pencil.
-export function SlidersIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 6h8M16 6h4M4 12h4M12 12h8M4 18h11M19 18h1" />
-      <circle cx="14" cy="6" r="2" fill="currentColor" stroke="none" />
-      <circle cx="8" cy="12" r="2" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="18" r="2" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function EditIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-    </svg>
-  )
-}
-
-export function CopyIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="9" y="9" width="12" height="12" rx="2" />
-      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
-    </svg>
-  )
-}
-
-export function RefreshIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-      <path d="M21 3v5h-5" />
-      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
-      <path d="M3 21v-5h5" />
-    </svg>
-  )
-}
-
-export function SunIcon({ className = 'h-[18px] w-[18px]' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="4.25" />
-      <path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" />
-    </svg>
-  )
-}
-
-export function MoonIcon({ className = 'h-[18px] w-[18px]' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" />
-    </svg>
-  )
-}
-
-export function AlertCircleIcon({ className = 'h-5 w-5' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7.5v6" />
-      <circle cx="12" cy="16.5" r="0.75" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function ClockIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5.5l3.5 2" />
-    </svg>
-  )
-}
-
-export function CalendarIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3.5" y="5" width="17" height="15" rx="2" />
-      <path d="M3.5 9.5h17M8 3v3.5M16 3v3.5" />
-    </svg>
-  )
-}
-
-export function PaletteIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 3a9 8 0 1 0 0 16c1 0 1.7-.7 1.7-1.6 0-.4-.2-.8-.4-1.1-.2-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16c2.2 0 4-1.6 4-4C20 6 16.4 3 12 3Z" />
-      <circle cx="7.5" cy="11" r="1" fill="currentColor" stroke="none" />
-      <circle cx="9.5" cy="7.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="14.5" cy="7" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-export function GaugeIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M4 15a8 8 0 1 1 16 0" />
-      <path d="M12 15l3.5-4" />
-      <path d="M4 15h1M19 15h1M6.5 8.5l.7.7M17.5 8.5l-.7.7" />
-    </svg>
-  )
-}
-
-export function PriceTagIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M11.5 4H19a1 1 0 0 1 1 1v7.5a1 1 0 0 1-.3.7l-8 8a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.4l8-8a1 1 0 0 1 .2-.1Z" />
-      <circle cx="15.5" cy="8.5" r="1.5" />
-    </svg>
-  )
-}
-
-export function NotesIcon({ className = 'h-4 w-4' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M6 3.5h9l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
-      <path d="M14.5 3.5V8h4" />
-      <path d="M8 12h8M8 15.5h8M8 8.5h3" />
-    </svg>
-  )
-}
-
-// Document-with-wrench glyph — the "can't find your part? file a request"
-// CTA's icon, distinct from NotesIcon/OtherPartIcon: it reads as an editable
-// request form, not a generic document or a part.
-export function RequestToolIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
-      <path d="M13.5 3.5V7.5h4" />
-      <path d="M7.5 12h4M7.5 15h3" />
-      <path d="M16.8 14.2a2 2 0 1 0-2.6 2.6l-3.1 3.1 1 1 3.1-3.1a2 2 0 0 0 1.6-3.6Z" />
-    </svg>
-  )
-}
-
-// Outline package/cube — the "Détails de la pièce" step header glyph.
-export function CubeIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9Z" />
-      <path d="M4 7.5 12 12l8-4.5" />
-      <path d="M12 12v9" />
-    </svg>
-  )
-}
-
-// Left/right pair for the "Côté" (side) field.
-export function SideArrowsIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M3 12h18" />
-      <path d="M7 8l-4 4 4 4" />
-      <path d="M17 8l4 4-4 4" />
-    </svg>
-  )
-}
-
-// Gear glyph for the "État préféré" (condition) field — reuses the shared
-// gearTeeth() helper for a real gear silhouette, same as EngineIcon.
-export function SettingsGearIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="12" r="3.2" />
-      {gearTeeth(12, 12, 7, 9, 8)}
-    </svg>
-  )
-}
-
-// "#" glyph for the "Quantité" field.
-export function HashIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M9 3.5 7 20.5M17 3.5l-2 17M4 8.5h16M3 15.5h16" />
-    </svg>
-  )
-}
-
-// Person-in-circle glyph for the "Nom complet" contact field.
-export function PersonIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <circle cx="12" cy="8" r="3.2" />
-      <path d="M5 19.5a7 7 0 0 1 14 0" />
-    </svg>
-  )
-}
-
-// Shield-check glyph for security/trust reassurance text.
-export function ShieldIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  )
-}
-
-// Small ID-card glyph for the VIN metadata row on the review screen.
-export function IdCardIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3" y="5.5" width="18" height="13" rx="2" />
-      <circle cx="8.2" cy="11" r="1.8" />
-      <path d="M5.8 15.5a2.6 2.6 0 0 1 4.8 0" />
-      <path d="M13.5 9.5h5M13.5 13h5" />
-    </svg>
-  )
-}
-
-// Landscape-photo glyph for the "Ajouter des photos" field label —
-// deliberately distinct from UploadIcon (the cloud-upload glyph used inside
-// the dropzone itself).
-export function ImageIcon({ className = 'h-6 w-6' }: IconProps) {
-  return (
-    <svg {...shared} className={className}>
-      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
-      <circle cx="9" cy="10" r="1.6" />
-      <path d="M4.5 17.5 9.5 12.5a1.5 1.5 0 0 1 2.1 0l1.9 1.9M14 14l1.6-1.6a1.5 1.5 0 0 1 2.1 0l1.8 1.8" />
-    </svg>
-  )
-}

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { SITE_NAME, normalizePhoneDigits, buildWhatsAppLinkFrom } from '@/src/lib/contact-info'
 import type { PublicSiteSettings } from '@/src/services/site-settings/types'
-import { MailIcon, PhoneIcon, WhatsAppIcon, InstagramIcon, FacebookIcon } from '@/src/components/home/icons'
+import { MailIcon, PhoneIcon, WhatsAppIcon, InstagramIcon, FacebookIcon, LocationIcon } from '@/src/components/home/icons'
 
 // Permanently dark, like the header/brand-wall (see globals.css --header-*
 // tokens) — the approved footer reference is a rich dark panel in both
@@ -137,10 +137,7 @@ export function SiteFooter({ dict, settings }: { dict: Dictionary; settings: Pub
                 )}
                 {settings.address && (
                   <li className={contactItemClass}>
-                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className={contactIconClass}>
-                      <path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="9.5" r="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <LocationIcon className={contactIconClass} />
                     <span className="min-w-0">{settings.address}</span>
                   </li>
                 )}

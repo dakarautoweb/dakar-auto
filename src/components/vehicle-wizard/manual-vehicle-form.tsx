@@ -5,14 +5,15 @@ import type { Dictionary } from '@/src/i18n/dictionaries'
 import { VEHICLE_ENGINES, getModelsForMake, getVehicleYears } from '@/src/services/vehicle-data/demo-data'
 import { OTHER_BRAND_VALUE, VEHICLE_BRANDS, brandLogoSrc, findBrandByName } from '@/src/lib/vehicle-brands'
 import { buttonClasses, cardClasses, inputClass as selectClass } from '@/src/components/ui/styles'
-import { CalendarIcon, EngineIcon, HashIcon, InfoIcon, PriceTagIcon } from '@/src/components/home/icons'
+import { EngineSpecIcon, InfoIcon, MakeIcon, ModelIcon, YearIcon } from '@/src/components/ui/dakar-icons'
 import { BrandSelect } from './brand-select'
 import type { ConfirmedVehicle, PartialVinMatch } from './types'
 
 // Small, muted icon ahead of a field's label — soft/decorative only (never
 // the sole cue for what the field is), matching the same thin currentColor
 // icon style used everywhere else in the wizard (CalendarIcon in
-// ReviewStep, etc.) rather than a bold/boxed icon.
+// ReviewStep, etc.) rather than a bold/boxed icon. 16px (micro scale) —
+// the car glyphs need that much room to stay legible.
 function FieldLabel({ htmlFor, icon, children }: { htmlFor: string; icon: ReactNode; children: ReactNode }) {
   return (
     <label htmlFor={htmlFor} className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
@@ -147,7 +148,7 @@ export function ManualVehicleForm({
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
-          <FieldLabel htmlFor="manual-year" icon={<CalendarIcon className="h-3.5 w-3.5" />}>
+          <FieldLabel htmlFor="manual-year" icon={<YearIcon className="h-4 w-4" />}>
             {dict.wizard.manual.yearLabel}
           </FieldLabel>
           <select id="manual-year" value={year} onChange={(e) => setYear(e.target.value)} className={selectClass}>
@@ -161,7 +162,7 @@ export function ManualVehicleForm({
         </div>
 
         <div>
-          <FieldLabel htmlFor="manual-make" icon={<PriceTagIcon className="h-3.5 w-3.5" />}>
+          <FieldLabel htmlFor="manual-make" icon={<MakeIcon className="h-4 w-4" />}>
             {dict.wizard.manual.makeLabel}
           </FieldLabel>
           {lockedMake ? (
@@ -187,7 +188,7 @@ export function ManualVehicleForm({
         </div>
 
         <div>
-          <FieldLabel htmlFor="manual-model" icon={<HashIcon className="h-3.5 w-3.5" />}>
+          <FieldLabel htmlFor="manual-model" icon={<ModelIcon className="h-4 w-4" />}>
             {dict.wizard.manual.modelLabel}
           </FieldLabel>
           {models.length > 0 || make === '' ? (
@@ -216,7 +217,7 @@ export function ManualVehicleForm({
         </div>
 
         <div>
-          <FieldLabel htmlFor="manual-engine" icon={<EngineIcon className="h-3.5 w-3.5" />}>
+          <FieldLabel htmlFor="manual-engine" icon={<EngineSpecIcon className="h-4 w-4" />}>
             {dict.wizard.manual.engineLabel}
           </FieldLabel>
           <select id="manual-engine" value={engine} onChange={(e) => setEngine(e.target.value)} className={selectClass}>

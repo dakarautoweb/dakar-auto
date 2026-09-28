@@ -3,7 +3,16 @@
 import { useState } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { buttonClasses, cardClasses, inputClass } from '@/src/components/ui/styles'
-import { CalendarIcon, CarSideIcon, EngineIcon, GaugeIcon, LayersIcon, PaletteIcon, TransmissionIcon } from '@/src/components/home/icons'
+import {
+  EngineSpecIcon,
+  LayersIcon,
+  MakeIcon,
+  MileageIcon,
+  ModelIcon,
+  PaletteIcon,
+  TransmissionSpecIcon,
+  YearIcon,
+} from '@/src/components/ui/dakar-icons'
 import { FieldLabel } from './field-label'
 import type { VehicleWantedFormState } from './types'
 
@@ -56,13 +65,13 @@ export function VehicleStep({
       <div className="mt-6 space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <FieldLabel icon={CarSideIcon} htmlFor="vr-make">
+            <FieldLabel icon={MakeIcon} htmlFor="vr-make">
               {t.makeLabel}
             </FieldLabel>
             <input id="vr-make" value={make} onChange={(e) => setMake(e.target.value)} placeholder={t.makePlaceholder} className={inputClass} />
           </div>
           <div>
-            <FieldLabel icon={CarSideIcon} htmlFor="vr-model">
+            <FieldLabel icon={ModelIcon} htmlFor="vr-model">
               {t.modelLabel}
             </FieldLabel>
             <input
@@ -77,7 +86,7 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <FieldLabel icon={CalendarIcon} htmlFor="vr-year-from">
+            <FieldLabel icon={YearIcon} htmlFor="vr-year-from">
               {t.yearFromLabel}
             </FieldLabel>
             <input
@@ -92,7 +101,7 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <FieldLabel icon={CalendarIcon} htmlFor="vr-year-to">
+            <FieldLabel icon={YearIcon} htmlFor="vr-year-to">
               {t.yearToLabel}
             </FieldLabel>
             <input
@@ -137,7 +146,7 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <FieldLabel icon={EngineIcon} htmlFor="vr-engine">
+            <FieldLabel icon={EngineSpecIcon} htmlFor="vr-engine">
               {t.engineLabel}
             </FieldLabel>
             <input
@@ -149,7 +158,7 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <FieldLabel icon={TransmissionIcon} htmlFor="vr-transmission">
+            <FieldLabel icon={TransmissionSpecIcon} htmlFor="vr-transmission">
               {t.transmissionLabel}
             </FieldLabel>
             <input
@@ -164,7 +173,7 @@ export function VehicleStep({
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <FieldLabel icon={GaugeIcon} htmlFor="vr-mileage-min">
+            <FieldLabel icon={MileageIcon} htmlFor="vr-mileage-min">
               {t.mileageMinLabel}
             </FieldLabel>
             <input
@@ -178,7 +187,7 @@ export function VehicleStep({
             />
           </div>
           <div>
-            <FieldLabel icon={GaugeIcon} htmlFor="vr-mileage-max">
+            <FieldLabel icon={MileageIcon} htmlFor="vr-mileage-max">
               {t.mileageMaxLabel}
             </FieldLabel>
             <input

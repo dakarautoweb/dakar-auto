@@ -3,7 +3,6 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MessageCircle, X, ChevronLeft, LayoutGrid, RotateCcw, ArrowRight } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import type { PublicFaqItem } from '@/src/services/faq/types'
 import type { PublicSiteSettings } from '@/src/services/site-settings/types'
@@ -11,7 +10,17 @@ import type { AssistantAction, ChatErrorCode, ChatMessage, QuickAction } from '@
 import { CHAT_ROUTES, type ChatRouteId } from '@/src/lib/chat/routes'
 import { buildAiHistory } from '@/src/lib/chat/history'
 import { postChatMessage } from '@/src/lib/chat/client'
-import { MailIcon, PhoneIcon, WhatsAppIcon } from '@/src/components/home/icons'
+import {
+  ArrowRightIcon,
+  ChatIcon,
+  ChevronLeftIcon,
+  GridIcon,
+  MailIcon,
+  PhoneIcon,
+  ResetIcon,
+  WhatsAppIcon,
+  XIcon,
+} from '@/src/components/ui/dakar-icons'
 import { normalizePhoneDigits, buildWhatsAppLinkFrom } from '@/src/lib/contact-info'
 import { buildQuickActions } from './quick-actions'
 import { ChatComposer } from './chat-composer'
@@ -329,7 +338,7 @@ export function ChatWidget({
       return (
         <Link href={action.href} onClick={() => setOpen(false)} className={chipClass}>
           {label}
-          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.25} />
+          <ArrowRightIcon className="h-3.5 w-3.5" />
         </Link>
       )
     }
@@ -355,7 +364,7 @@ export function ChatWidget({
         aria-haspopup="dialog"
         className={`fixed right-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-50 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-accent-hover hover:shadow-glow active:translate-y-0 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:right-6 sm:bottom-6 sm:h-14 sm:w-14 ${open ? 'ring-2 ring-accent/40 ring-offset-2 ring-offset-background max-sm:hidden' : ''} ${fieldFocused ? 'max-sm:hidden' : ''}`}
       >
-        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+        <ChatIcon className="h-5 w-5 sm:h-6 sm:w-6" />
         {showAttention && !open && (
           <span
             aria-hidden="true"
@@ -387,7 +396,7 @@ export function ChatWidget({
               aria-label={dict.closeLabel}
               className="-mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground transition duration-200 hover:bg-accent-soft/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:mr-0 sm:h-9 sm:w-9"
             >
-              <X className="h-[18px] w-[18px]" strokeWidth={2} />
+              <XIcon className="h-[18px] w-[18px]" />
             </button>
           </div>
 
@@ -411,7 +420,7 @@ export function ChatWidget({
                 {renderAction(message)}
                 {message.failed && message === lastMessage && (
                   <button type="button" onClick={retry} disabled={pending} className={`${chipClass} disabled:opacity-50`}>
-                    <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.25} />
+                    <ResetIcon className="h-3.5 w-3.5" />
                     {dict.retry}
                   </button>
                 )}
@@ -463,7 +472,7 @@ export function ChatWidget({
                     onClick={() => setStage('menu')}
                     className="-mt-1.5 mb-0.5 inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover sm:mt-0 sm:mb-2 sm:min-h-0"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    <ChevronLeftIcon className="h-3.5 w-3.5" />
                     {dict.backToMenu}
                   </button>
                 )}
@@ -564,7 +573,7 @@ export function ChatWidget({
                 onClick={() => setStage('menu')}
                 className="-my-1 inline-flex min-h-11 items-center gap-1.5 text-xs sm:my-0 sm:min-h-0 font-semibold text-accent hover:text-accent-hover"
               >
-                <LayoutGrid className="h-3.5 w-3.5" strokeWidth={2.25} />
+                <GridIcon className="h-3.5 w-3.5" />
                 {dict.menu}
               </button>
             </div>

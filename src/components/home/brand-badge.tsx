@@ -1,4 +1,4 @@
-import { CarSideIcon } from './icons'
+import { MakeIcon } from './icons'
 
 // Real manufacturer logos are trademarked assets we don't have a license to
 // ship — scraping/embedding them would repeat the "no copyrighted third-
@@ -38,7 +38,7 @@ export function BrandBadge({ make, className = '' }: { make: string | null | und
       className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface-raised text-sm font-bold tracking-wide text-accent shadow-glow ${className}`}
       aria-hidden="true"
     >
-      {monogram || <CarSideIcon className="h-5 w-5" />}
+      {monogram || <MakeIcon className="h-5 w-5" />}
     </span>
   )
 }

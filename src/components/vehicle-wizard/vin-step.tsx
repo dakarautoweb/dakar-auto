@@ -7,7 +7,7 @@ import { normalizeVin, validateVin } from '@/src/lib/vin'
 import { DEMO_VINS } from '@/src/services/vin/demo-vins'
 import type { VinLookupResult } from '@/src/services/vin/types'
 import { buttonClasses, cardClasses } from '@/src/components/ui/styles'
-import { CarSideIcon, ScanIcon, SearchIcon, SlidersIcon } from '@/src/components/home/icons'
+import { ScanIcon, SearchIcon, SlidersIcon, VehicleSearchIcon } from '@/src/components/home/icons'
 import { partialResultToMatch, vehicleResultToConfirmed, type ConfirmedVehicle, type PartialVinMatch } from './types'
 import { VehicleResultCard } from './vehicle-result-card'
 import { VehicleResultCardParts } from './vehicle-result-card-parts'
@@ -111,7 +111,7 @@ export function VinStep({
   return (
     <div className={cardClasses()}>
       <div className="flex items-center gap-4">
-        <CarSideIcon className="h-11 w-11 shrink-0 text-accent" />
+        <VehicleSearchIcon className="h-11 w-11 shrink-0 text-accent [stroke-width:1.5]" />
         <div>
           <h2 className="text-xl font-bold tracking-tight">{dict.wizard.vin.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{dict.wizard.vin.description}</p>

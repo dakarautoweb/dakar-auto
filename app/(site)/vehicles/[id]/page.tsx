@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
 import { getCurrentLocale } from '@/src/i18n/server'
 import { getDictionary } from '@/src/i18n/dictionaries'
 import { getPublicVehicleById, getRelatedVehicles } from '@/src/services/inventory/queries'
@@ -11,20 +10,22 @@ import { VehicleCard } from '@/src/components/vehicles/vehicle-card'
 import { buttonClasses, cardClasses } from '@/src/components/ui/styles'
 import { getBrandLogoPath } from '@/src/lib/brand-logos'
 import {
-  GaugeIcon,
-  EngineIcon,
-  TransmissionIcon,
+  MileageIcon,
+  EngineSpecIcon,
+  TransmissionSpecIcon,
   FuelIcon,
   PaletteIcon,
-  CalendarIcon,
-  CarSideIcon,
-  QualityIcon,
+  YearIcon,
+  MakeIcon,
+  ModelIcon,
+  VehicleInventoryIcon,
   MailIcon,
   PhoneIcon,
   WhatsAppIcon,
   CheckIcon,
+  ArrowLeftIcon,
   ArrowRightIcon,
-} from '@/src/components/home/icons'
+} from '@/src/components/ui/dakar-icons'
 
 function formatPrice(price: number | null, currency: string, locale: string, fallback: string): string {
   if (price === null) return fallback
@@ -45,29 +46,29 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
   const logo = getBrandLogoPath(vehicle.make)
 
   const specs = [
-    vehicle.mileage !== null && { icon: GaugeIcon, label: t.mileageLabel, value: `${vehicle.mileage.toLocaleString(locale === 'fr' ? 'fr-CA' : 'en-CA')} ${t.kmSuffix}` },
-    vehicle.engineDisplacement && { icon: EngineIcon, label: t.engineLabel, value: vehicle.engineDisplacement },
-    vehicle.transmission && { icon: TransmissionIcon, label: t.transmissionLabel, value: vehicle.transmission },
+    vehicle.mileage !== null && { icon: MileageIcon, label: t.mileageLabel, value: `${vehicle.mileage.toLocaleString(locale === 'fr' ? 'fr-CA' : 'en-CA')} ${t.kmSuffix}` },
+    vehicle.engineDisplacement && { icon: EngineSpecIcon, label: t.engineLabel, value: vehicle.engineDisplacement },
+    vehicle.transmission && { icon: TransmissionSpecIcon, label: t.transmissionLabel, value: vehicle.transmission },
     vehicle.fuelType && { icon: FuelIcon, label: t.fuelTypeLabel, value: vehicle.fuelType },
     vehicle.color && { icon: PaletteIcon, label: t.colorLabel, value: vehicle.color },
-    { icon: CalendarIcon, label: t.yearLabel, value: String(vehicle.year) },
-    { icon: QualityIcon, label: t.makeLabel, value: vehicle.make },
-    { icon: CarSideIcon, label: t.modelLabel, value: vehicle.model },
-  ].filter(Boolean) as { icon: typeof GaugeIcon; label: string; value: string }[]
+    { icon: YearIcon, label: t.yearLabel, value: String(vehicle.year) },
+    { icon: MakeIcon, label: t.makeLabel, value: vehicle.make },
+    { icon: ModelIcon, label: t.modelLabel, value: vehicle.model },
+  ].filter(Boolean) as { icon: typeof MileageIcon; label: string; value: string }[]
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
       <Link href="/vehicles" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition duration-200 hover:text-accent">
-        <ArrowLeft className="h-4 w-4" strokeWidth={2} />
+        <ArrowLeftIcon className="h-4 w-4" />
         {t.backToList}
       </Link>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-12">
-        <div className="lg:sticky lg:top-24">
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-12">
+        <div className="min-w-0 lg:sticky lg:top-24">
           <VehicleGallery photos={vehicle.photos} alt={`${vehicle.make} ${vehicle.model}`} />
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           {/* Summary panel — large bare logo and a big make/model lockup on
               top, then year and price split left/right under a hairline. A
               faint oversized logo watermark fills the right side so the
@@ -97,16 +98,16 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                   <span className="text-sm font-semibold tracking-[0.25em] text-accent-gold uppercase">{vehicle.make}</span>
                   {vehicle.status === 'reserved' && <span className="rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-semibold text-white">{t.reserved}</span>}
                 </div>
-                <h1 className="mt-1 text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-5xl">{vehicle.model}</h1>
+                <h1 className="mt-1 text-4xl leading-[1.05] font-bold tracking-tight text-balance break-words sm:text-5xl">{vehicle.model}</h1>
               </div>
             </div>
 
-            <div className="relative mt-7 flex items-end justify-between gap-6 border-t border-border pt-5">
+            <div className="relative mt-7 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-t border-border pt-5">
               <div>
                 <p className="text-[0.7rem] font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.yearLabel}</p>
                 <p className="mt-1 text-2xl font-bold tracking-tight text-foreground tabular-nums">{vehicle.year}</p>
               </div>
-              <div className="min-w-0 text-right">
+              <div className="ml-auto min-w-0 text-right">
                 <p className="text-[0.7rem] font-semibold tracking-[0.2em] text-muted-foreground uppercase">{t.priceLabel}</p>
                 <p className="mt-1 text-3xl font-bold tracking-tight text-accent tabular-nums sm:text-4xl">{formatPrice(vehicle.price, vehicle.currency, locale, t.priceOnRequest)}</p>
               </div>
@@ -126,12 +127,12 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 {specs.map((spec, i) => (
                   <div
                     key={spec.label}
-                    className={`group/spec flex items-center gap-4 bg-card px-5 py-4 transition-colors duration-200 hover:bg-surface-raised ${specs.length % 2 === 1 && i === specs.length - 1 ? 'col-span-2' : ''}`}
+                    className={`group/spec flex items-center gap-2.5 bg-card px-3.5 py-4 transition-colors min-[390px]:gap-4 min-[390px]:px-5 duration-200 hover:bg-surface-raised ${specs.length % 2 === 1 && i === specs.length - 1 ? 'col-span-2' : ''}`}
                   >
-                    <spec.icon className="h-8 w-8 shrink-0 text-accent-gold transition-transform duration-200 group-hover/spec:scale-110" />
+                    <spec.icon className="h-6 w-6 shrink-0 text-accent-gold min-[390px]:h-7 min-[390px]:w-7 transition-transform duration-200 group-hover/spec:scale-[1.03]" />
                     <div className="min-w-0">
-                      <p className="text-[0.7rem] font-medium tracking-wide text-muted-foreground uppercase">{spec.label}</p>
-                      <p className="mt-0.5 truncate text-base font-semibold text-foreground">{spec.value}</p>
+                      <p className="text-[0.62rem] font-medium text-muted-foreground uppercase min-[390px]:text-[0.7rem] min-[390px]:tracking-wide">{spec.label}</p>
+                      <p className="mt-0.5 text-[0.9rem] font-semibold break-words text-foreground min-[390px]:truncate min-[390px]:text-base">{spec.value}</p>
                     </div>
                   </div>
                 ))}
@@ -233,7 +234,11 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                   }`,
                 })}
               >
-                <CarSideIcon className="h-12 w-12 text-accent-gold transition-transform duration-200 group-hover:scale-105" />
+                {/* Framed mark sized for the empty-state scale (52px icon);
+                    the only place a soft gold glow is used, on hover. */}
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl border border-accent-gold/25 bg-accent-gold-soft text-accent-gold transition duration-300 group-hover:scale-[1.03] group-hover:border-accent-gold/45 group-hover:shadow-glow-gold">
+                  <VehicleInventoryIcon className="h-[52px] w-[52px]" />
+                </span>
                 <p className="max-w-sm text-base leading-relaxed text-muted-foreground">{t.relatedBrowseText}</p>
                 <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground transition duration-200 group-hover:text-accent">
                   {t.relatedBrowseCta}

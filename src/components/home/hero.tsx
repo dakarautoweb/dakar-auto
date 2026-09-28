@@ -13,7 +13,7 @@ import { QUOTE_FOCUS_EVENT, QUOTE_PARAM } from '@/src/lib/quote-cta'
 import { HeroVisual } from './hero-visual'
 import { HomeHeroPhoto } from './home-hero-photo'
 import { HeroVehicleResult } from './hero-vehicle-result'
-import { ScanIcon, SearchIcon, LayersIcon, SendIcon, RouteIcon, CarSideIcon, InfoIcon } from './icons'
+import { ScanIcon, SearchIcon, LayersIcon, SendIcon, RouteIcon, VINIcon, InfoIcon } from './icons'
 
 const FEATURE_ICONS = [SearchIcon, LayersIcon, SendIcon, RouteIcon]
 const FEATURE_HREFS = ['/vehicle/identify', '/#parts-categories', '/source-a-vehicle', '/track']
@@ -197,7 +197,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
                 </label>
                 <div className="flex flex-col sm:flex-row">
                   <div className="relative sm:flex-1">
-                    <CarSideIcon className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                    <VINIcon className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                     <input
                       ref={vinInputRef}
                       id="vin"
@@ -339,7 +339,7 @@ export function Hero({ dict }: { dict: Dictionary }) {
                     href={FEATURE_HREFS[i]}
                     className="group grid h-full w-full grid-rows-[auto_auto_1fr] justify-items-center gap-2 rounded-2xl border border-border bg-card/70 p-4 text-center shadow-card transition duration-200 hover:border-accent/40 hover:bg-card hover:shadow-card-hover"
                   >
-                    <Icon className="h-10 w-10 text-accent transition duration-200 group-hover:scale-105 sm:h-11 sm:w-11 lg:h-12 lg:w-12" />
+                    <Icon className="h-10 w-10 text-accent transition duration-200 group-hover:scale-[1.03] sm:h-11 sm:w-11 lg:h-12 lg:w-12" />
                     <span className="flex min-h-[2.5rem] items-center text-sm leading-tight font-semibold">{feature.title}</span>
                     <span className="block min-h-[2rem] text-xs leading-snug text-muted-foreground">{feature.description}</span>
                   </Link>

@@ -1,10 +1,9 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { RotateCcw } from 'lucide-react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { inputClass, cardClasses } from '@/src/components/ui/styles'
-import { CarSideIcon, CalendarIcon, PriceTagIcon, ChevronDownIcon } from '@/src/components/home/icons'
+import { MakeIcon, YearIcon, PriceTagIcon, ChevronDownIcon, ResetIcon } from '@/src/components/ui/dakar-icons'
 
 // Lightweight, URL-search-param-driven filters — no client-side filtering
 // library and no local state beyond the controlled inputs themselves. Every
@@ -57,7 +56,7 @@ export function VehiclesFilters({
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <label className="block">
           <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            <CarSideIcon className="h-3.5 w-3.5" />
+            <MakeIcon className="h-4 w-4 shrink-0" />
             {t.makeLabel}
           </span>
           <div className="relative">
@@ -75,7 +74,7 @@ export function VehiclesFilters({
 
         <label className="block">
           <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            <CalendarIcon className="h-3.5 w-3.5" />
+            <YearIcon className="h-4 w-4 shrink-0" />
             {t.yearLabel}
           </span>
           <input type="number" defaultValue={initialYear} placeholder={t.yearAll} onBlur={(e) => update('year', e.target.value)} className={inputClass} />
@@ -83,7 +82,7 @@ export function VehiclesFilters({
 
         <label className="col-span-2 block sm:col-span-1">
           <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            <PriceTagIcon className="h-3.5 w-3.5" />
+            <PriceTagIcon className="h-4 w-4 shrink-0" />
             {t.priceLabel}
           </span>
           <div className="flex items-center gap-2">
@@ -127,7 +126,7 @@ export function VehiclesFilters({
             onClick={() => router.push(pathname)}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition duration-200 hover:text-accent"
           >
-            <RotateCcw className="h-3.5 w-3.5" strokeWidth={2} />
+            <ResetIcon className="h-4 w-4" />
             {t.reset}
           </button>
         </div>

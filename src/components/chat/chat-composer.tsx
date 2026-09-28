@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useLayoutEffect, useRef, useState } from 'react'
-import { SendHorizontal } from 'lucide-react'
+import { SendIcon } from '@/src/components/ui/dakar-icons'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 
 export const MAX_MESSAGE_LENGTH = 1000
@@ -78,7 +78,7 @@ export function ChatComposer({ dict, disabled, onSend }: { dict: Dictionary['cha
           aria-label={dict.composer.send}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition duration-200 hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
         >
-          <SendHorizontal className="h-4 w-4" strokeWidth={2.25} />
+          <SendIcon className="h-4 w-4" />
         </button>
       </div>
       <p id={hintId} className="mt-1 hidden px-1 text-[11px] text-muted-foreground sm:block">

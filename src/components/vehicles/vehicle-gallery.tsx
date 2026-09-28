@@ -11,7 +11,7 @@ export function VehicleGallery({ photos, alt }: { photos: VehiclePhoto[]; alt: s
   if (sorted.length === 0) {
     return (
       <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-border bg-surface">
-        <CarSideIcon className="h-16 w-16 text-muted-foreground/50" />
+        <CarSideIcon className="h-16 w-16 text-muted-foreground/50 [stroke-width:1.4]" />
       </div>
     )
   }

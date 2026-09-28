@@ -11,7 +11,7 @@ import {
   PaletteIcon,
   PhoneIcon,
   PriceTagIcon,
-  SettingsGearIcon,
+  TransmissionSpecIcon,
   WhatsAppIcon,
 } from '@/src/components/home/icons'
 import type { BudgetFormState, VehicleWantedFormState, WizardStep } from './types'
@@ -119,7 +119,7 @@ export function ReviewStep({
             yearRange ? { icon: <CalendarIcon className="h-4 w-4" />, text: yearRange } : null,
             vehicle.color ? { icon: <PaletteIcon className="h-4 w-4" />, text: vehicle.color } : null,
             vehicle.engine ? { icon: <EngineIcon className="h-4 w-4" />, text: vehicle.engine } : null,
-            vehicle.transmission ? { icon: <SettingsGearIcon className="h-4 w-4" />, text: vehicle.transmission } : null,
+            vehicle.transmission ? { icon: <TransmissionSpecIcon className="h-4 w-4" />, text: vehicle.transmission } : null,
             mileageRange ? { icon: <GaugeIcon className="h-4 w-4" />, text: `${mileageRange} km` } : null,
             vehicle.trimLevel ? { text: vehicle.trimLevel } : null,
           ]}

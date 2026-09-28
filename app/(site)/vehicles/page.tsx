@@ -5,7 +5,7 @@ import { getPublicVehicleMakes, getPublicVehicles } from '@/src/services/invento
 import { VehicleCard } from '@/src/components/vehicles/vehicle-card'
 import { VehiclesFilters } from '@/src/components/vehicles/vehicles-filters'
 import { buttonClasses } from '@/src/components/ui/styles'
-import { CarSideIcon } from '@/src/components/home/icons'
+import { VehicleInventoryIcon } from '@/src/components/ui/dakar-icons'
 
 export default async function VehiclesPage({
   searchParams,
@@ -97,8 +97,8 @@ export default async function VehiclesPage({
           </div>
         ) : (
           <div className="mt-10 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-card p-12 text-center shadow-card">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent">
-              <CarSideIcon className="h-7 w-7" />
+            <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent-soft text-accent">
+              <VehicleInventoryIcon className="h-12 w-12" />
             </span>
             <p className="text-muted-foreground">{hasAnyFilter ? t.empty : t.emptyNoInventory}</p>
             <Link href="/source-a-vehicle" className={buttonClasses({ variant: 'gold', size: 'md', pill: true })}>

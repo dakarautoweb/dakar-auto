@@ -4,7 +4,7 @@ import { VehicleRequestWizard } from "@/src/components/vehicle-request-wizard/wi
 import { VehicleSearchHeroImage } from "@/src/components/source-vehicle/vehicle-search-hero-image";
 import { HeroMapOverlay } from "@/src/components/source-vehicle/hero-map-overlay";
 import { buttonClasses, cardClasses, iconCircleClasses } from "@/src/components/ui/styles";
-import { GlobalIcon, QualityIcon, ShippingIcon, SupportIcon } from "@/src/components/home/icons";
+import { ArrowRightIcon, GlobalIcon, QualityIcon, ShippingIcon, SupportIcon } from "@/src/components/home/icons";
 
 // Target of the hero CTA. The form card is focusable (tabIndex -1), so
 // following the link both scrolls (smoothly, via the global
@@ -49,9 +49,7 @@ export default async function SourceAVehiclePage() {
                 className={buttonClasses({ variant: "primary", size: "lg", className: "mt-6 w-full shadow-glow sm:w-auto" })}
               >
                 {t.cta}
-                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-                  <path d="M4 10h12m-5-5 5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <ArrowRightIcon className="h-5 w-5" />
               </a>
             </div>
 

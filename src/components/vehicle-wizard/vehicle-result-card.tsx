@@ -16,7 +16,7 @@ import {
   EditIcon,
   RefreshIcon,
   CopyIcon,
-  CarSideIcon,
+  MakeIcon,
 } from '@/src/components/home/icons'
 import type { ConfirmedVehicle } from './types'
 
@@ -68,7 +68,7 @@ function ResultBrandLogo({ make }: { make: string | null | undefined }) {
       ) : monogram ? (
         <span className="text-xl font-bold tracking-wide text-accent sm:text-2xl">{monogram}</span>
       ) : (
-        <CarSideIcon className="h-8 w-8 text-accent" />
+        <MakeIcon className="h-8 w-8 text-accent" />
       )}
     </span>
   )

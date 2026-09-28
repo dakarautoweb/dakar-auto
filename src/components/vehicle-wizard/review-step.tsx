@@ -15,6 +15,7 @@ import {
   SettingsGearIcon,
   ShieldIcon,
   SideArrowsIcon,
+  VINIcon,
   WhatsAppIcon,
 } from '@/src/components/home/icons'
 import type { ConfirmedVehicle, ContactFormState, PartFormState, SelectedPhoto, WizardStep } from './types'
@@ -91,7 +92,7 @@ export function ReviewStep({
         <p className="text-lg font-bold tracking-tight">{[vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(' ')}</p>
         <MetaRow
           items={[
-            vehicle.vin ? { icon: <IdCardIcon className="h-4 w-4" />, text: `${dict.wizard.result.vinLabel} : ${vehicle.vin}` } : null,
+            vehicle.vin ? { icon: <VINIcon className="h-4 w-4" />, text: `${dict.wizard.result.vinLabel} : ${vehicle.vin}` } : null,
             { icon: <CalendarIcon className="h-4 w-4" />, text: `${dict.wizard.manual.yearLabel} : ${vehicle.year ?? NOT_AVAILABLE}` },
             {
               icon: <IdCardIcon className="h-4 w-4" />,

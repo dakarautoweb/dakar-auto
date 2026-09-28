@@ -19,7 +19,7 @@ import {
   ArrowRightIcon,
   EditIcon,
   RefreshIcon,
-  CarSideIcon,
+  MakeIcon,
 } from './icons'
 
 type IconFn = (props: { className?: string }) => ReactElement
@@ -75,7 +75,7 @@ function HeroBrandLogo({ make }: { make: string | null | undefined }) {
       ) : monogram ? (
         <span className="text-2xl font-bold tracking-wide text-accent">{monogram}</span>
       ) : (
-        <CarSideIcon className="h-9 w-9 text-accent" />
+        <MakeIcon className="h-9 w-9 text-accent" />
       )}
     </span>
   )

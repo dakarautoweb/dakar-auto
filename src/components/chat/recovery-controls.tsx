@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId, useState } from 'react'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldIcon } from '@/src/components/ui/dakar-icons'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import { RECOVERY_PERIODS, type RecoveredRequest, type RecoveryDiscriminator } from '@/src/lib/request-recovery/types'
 import type { RecoveryState } from './use-request-recovery'
@@ -145,7 +145,7 @@ export function RecoveryControls({
       className="space-y-1.5 px-4 py-3 sm:space-y-2"
     >
       <label htmlFor={inputId} className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        <ShieldCheck className="h-3.5 w-3.5 text-accent" strokeWidth={2.25} aria-hidden="true" />
+        <ShieldIcon className="h-3.5 w-3.5 text-accent" />
         {field.label}
       </label>
       <div className="flex gap-2">
