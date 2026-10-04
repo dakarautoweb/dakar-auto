@@ -1,9 +1,9 @@
 import 'server-only'
 import { isValidVin } from '@/src/lib/vin'
+import { isValidEmail, normalizeEmail } from '@/src/lib/contact-validation'
 import { isValidWhatsAppRecipient, resolveWhatsAppInput } from '@/src/services/whatsapp/phone'
 import type { SubmitPartsRequestInput } from './types'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const VALID_SIDES = ['left', 'right', 'both']
 const VALID_CONDITIONS = ['oem', 'aftermarket', 'used', 'no_preference']
 const VALID_CONTACT_METHODS = ['whatsapp', 'phone', 'email']
@@ -28,7 +28,8 @@ export function validateSubmitPartsRequestInput(input: SubmitPartsRequestInput):
 
   if (!contact.name.trim()) return 'missing_name'
   if (!contact.phone.trim()) return 'missing_phone'
-  if (contact.email && !EMAIL_PATTERN.test(contact.email)) return 'invalid_email'
+  const email = normalizeEmail(contact.email)
+  if (email && !isValidEmail(email)) return 'invalid_email'
   if (!VALID_CONTACT_METHODS.includes(contact.preferredContact)) return 'invalid_contact_method'
   // The chosen channel must actually be reachable — the customer
   // confirmation is sent only there (see sendPartsRequestNotifications).
@@ -37,7 +38,7 @@ export function validateSubmitPartsRequestInput(input: SubmitPartsRequestInput):
     if (!whatsapp) return 'missing_whatsapp_phone'
     if (!isValidWhatsAppRecipient(whatsapp)) return 'invalid_whatsapp_phone'
   }
-  if (contact.preferredContact === 'email' && !contact.email.trim()) return 'missing_email'
+  if (contact.preferredContact === 'email' && !email) return 'missing_email'
 
   if (!VALID_LOCALES.includes(locale)) return 'invalid_locale'
 

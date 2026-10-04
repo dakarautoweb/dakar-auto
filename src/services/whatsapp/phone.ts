@@ -9,15 +9,15 @@
 // Accepted shapes (formatting characters: spaces, "-", ".", "(", ")"):
 // - "+<digits>"  e.g. "+221 77 123 45 67"  → 8–15 digits (E.164 range)
 // - "00<digits>" e.g. "00221 77 123 45 67" → the international dialing prefix
-// - "<digits>"   e.g. "1-514-555-1234"      → 11–15 digits only. Anything
-//   shorter is indistinguishable from a local number (Senegal mobiles are
-//   9 digits, North American numbers 10), so it's rejected instead of
-//   having a country code invented for it.
+// - Canadian/NANP national numbers e.g. "(514) 555-1234" → country code 1
+// - "<digits>"   e.g. "1-514-555-1234"      → 11–15 digits otherwise.
 // In every case the country code can't start with 0 — that's a national
 // trunk prefix ("06 12 34 56 78"), i.e. a local number.
 //
 // Everything stays a string: phone numbers are never converted with
 // Number()/parseInt, which would drop leading digits or lose precision.
+
+import { normalizeContactPhone } from '@/src/lib/contact-validation'
 
 const E164_MIN_DIGITS = 8
 const E164_MAX_DIGITS = 15
@@ -26,7 +26,7 @@ const ALLOWED_CHARACTERS = /^\+?[\d\s\-.()]+$/
 
 export function normalizeWhatsAppRecipient(raw: string | null | undefined): string | null {
   if (typeof raw !== 'string') return null
-  const trimmed = raw.trim()
+  const trimmed = normalizeContactPhone(raw)
   if (!trimmed || !ALLOWED_CHARACTERS.test(trimmed)) return null
 
   let digits = trimmed.replace(/\D/g, '')
@@ -54,5 +54,5 @@ export function resolveWhatsAppInput(contact: {
   whatsappSameAsPhone: boolean
   whatsappPhone: string | null
 }): string {
-  return (contact.whatsappSameAsPhone ? contact.phone : contact.whatsappPhone ?? '').trim()
+  return normalizeContactPhone(contact.whatsappSameAsPhone ? contact.phone : contact.whatsappPhone ?? '')
 }

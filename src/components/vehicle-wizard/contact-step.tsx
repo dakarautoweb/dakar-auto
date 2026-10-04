@@ -4,12 +4,10 @@ import { useState, type ComponentType, type ReactNode } from 'react'
 import type { Dictionary } from '@/src/i18n/dictionaries'
 import type { PreferredContact } from '@/src/services/requests/types'
 import { isValidWhatsAppRecipient, resolveWhatsAppInput } from '@/src/services/whatsapp/phone'
+import { isValidEmail, normalizeContactValues, normalizeEmail } from '@/src/lib/contact-validation'
 import { buttonClasses, cardClasses, inputClass } from '@/src/components/ui/styles'
 import { ArrowRightIcon, CheckIcon, MailIcon, PersonIcon, PhoneIcon, WhatsAppIcon } from '@/src/components/home/icons'
 import type { ContactFormState } from './types'
-
-// Same pattern the server enforces (src/services/requests/validate.ts).
-const EMAIL_PATTERN = /^[^s@]+@[^s@]+.[^s@]+$/
 
 type ContactErrors = { email?: string; whatsapp?: string }
 
@@ -78,9 +76,9 @@ export function ContactStep({
   // method is chosen must still be well-formed — the server rejects it.
   const whatsappInput = resolveWhatsAppInput({ phone, whatsappSameAsPhone, whatsappPhone })
   const errors: ContactErrors = {}
-  const trimmedEmail = email.trim()
+  const trimmedEmail = normalizeEmail(email)
   if (preferredContact === 'email' && !trimmedEmail) errors.email = dict.wizard.contact.errors.emailRequired
-  else if (trimmedEmail && !EMAIL_PATTERN.test(trimmedEmail)) errors.email = dict.wizard.contact.errors.emailInvalid
+  else if (trimmedEmail && !isValidEmail(trimmedEmail)) errors.email = dict.wizard.contact.errors.emailInvalid
   if (preferredContact === 'whatsapp') {
     if (!whatsappInput) errors.whatsapp = dict.wizard.contact.errors.whatsappRequired
     else if (!isValidWhatsAppRecipient(whatsappInput)) errors.whatsapp = dict.wizard.contact.errors.whatsappInvalid
@@ -105,14 +103,14 @@ export function ContactStep({
       document.getElementById(target)?.focus()
       return
     }
-    onContinue({
+    onContinue(normalizeContactValues({
       name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
+      email,
+      phone,
       whatsappSameAsPhone,
-      whatsappPhone: whatsappPhone.trim(),
+      whatsappPhone,
       preferredContact,
-    })
+    }))
   }
 
   const contactOptions: { value: PreferredContact; label: string }[] = [

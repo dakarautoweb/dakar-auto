@@ -3,6 +3,7 @@
 import { after } from 'next/server'
 import { sendPartsRequestNotifications } from '@/src/services/notifications/send-parts-request-notifications'
 import { buildTrackingUrl } from '@/src/lib/contact-info'
+import { normalizeContactValues } from '@/src/lib/contact-validation'
 import { finalizePartsRequestAttachments } from '@/src/services/attachments/finalize'
 import type { PendingAttachmentRef } from '@/src/services/attachments/types'
 import { verifyTurnstileToken } from '@/src/services/turnstile/verify'
@@ -31,13 +32,17 @@ export async function submitPartsRequestAction(
     return { ok: false, error: 'turnstile', message: turnstileResult.reason }
   }
 
-  const validationError = validateSubmitPartsRequestInput(input)
+  const normalizedInput: SubmitPartsRequestInput = {
+    ...input,
+    contact: normalizeContactValues(input.contact),
+  }
+  const validationError = validateSubmitPartsRequestInput(normalizedInput)
   if (validationError) {
     return { ok: false, error: 'validation', message: validationError }
   }
 
   try {
-    const created = await createPartsRequestRecord(input)
+    const created = await createPartsRequestRecord(normalizedInput)
 
     // The request row is already committed at this point — everything
     // below is best-effort per attachment and must never turn a saved
@@ -60,29 +65,29 @@ export async function submitPartsRequestAction(
         await sendPartsRequestNotifications({
           requestNumber: created.requestNumber,
           trackingUrl: buildTrackingUrl(created.trackingToken),
-          locale: input.locale,
+          locale: normalizedInput.locale,
           submittedAt: new Date(),
           attachmentCount,
           vehicle: {
-            vin: input.vehicle.vin,
-            year: input.vehicle.year,
-            make: input.vehicle.make,
-            model: input.vehicle.model,
+            vin: normalizedInput.vehicle.vin,
+            year: normalizedInput.vehicle.year,
+            make: normalizedInput.vehicle.make,
+            model: normalizedInput.vehicle.model,
           },
           part: {
-            categoryKey: input.part.category,
-            partName: input.part.partName.trim(),
-            side: input.part.side,
-            condition: input.part.condition,
-            quantity: input.part.quantity,
-            description: input.part.description.trim(),
+            categoryKey: normalizedInput.part.category,
+            partName: normalizedInput.part.partName.trim(),
+            side: normalizedInput.part.side,
+            condition: normalizedInput.part.condition,
+            quantity: normalizedInput.part.quantity,
+            description: normalizedInput.part.description.trim(),
           },
           contact: {
-            name: input.contact.name.trim(),
-            email: input.contact.email.trim() || null,
-            phone: input.contact.phone.trim(),
+            name: normalizedInput.contact.name,
+            email: normalizedInput.contact.email || null,
+            phone: normalizedInput.contact.phone,
             whatsappPhone: created.whatsappPhone,
-            preferredContact: input.contact.preferredContact,
+            preferredContact: normalizedInput.contact.preferredContact,
           },
         })
       } catch (err) {

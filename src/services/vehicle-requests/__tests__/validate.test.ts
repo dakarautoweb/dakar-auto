@@ -34,6 +34,13 @@ function buildInput(contact: Partial<SubmitVehicleContactInput>): SubmitVehicleR
 }
 
 describe('validateSubmitVehicleRequestInput — contact method', () => {
+  it.each(['5145820204', '(514) 582-0204', '+1 514 582 0204', '+221 77 123 45 67'])(
+    'accepts WhatsApp using supported phone format %j',
+    (phone) => {
+      expect(validateSubmitVehicleRequestInput(buildInput({ preferredContact: 'whatsapp', phone }))).toBeNull()
+    }
+  )
+
   it('accepts WhatsApp with an international phone number reused as WhatsApp', () => {
     expect(validateSubmitVehicleRequestInput(buildInput({ preferredContact: 'whatsapp' }))).toBeNull()
   })
@@ -67,6 +74,12 @@ describe('validateSubmitVehicleRequestInput — contact method', () => {
 
   it('accepts email with a valid address', () => {
     expect(validateSubmitVehicleRequestInput(buildInput({ preferredContact: 'email', email: 'awa@example.com' }))).toBeNull()
+  })
+
+  it.each(['fr', 'en'] as const)('trims and accepts a valid Gmail address for locale %s', (locale) => {
+    const input = buildInput({ preferredContact: 'email', email: '  sharofmk@gmail.com  ' })
+    input.locale = locale
+    expect(validateSubmitVehicleRequestInput(input)).toBeNull()
   })
 
   it('accepts phone with just name and a local phone number', () => {

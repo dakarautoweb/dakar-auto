@@ -3,6 +3,10 @@ import { isValidWhatsAppRecipient, normalizeWhatsAppRecipient, resolveWhatsAppIn
 
 describe('normalizeWhatsAppRecipient', () => {
   it.each([
+    ['5145820204', '15145820204'],
+    ['514-582-0204', '15145820204'],
+    ['(514) 582-0204', '15145820204'],
+    ['+1 514 582 0204', '15145820204'],
     ['+1 514 555 1234', '15145551234'],
     ['+221 77 123 45 67', '221771234567'],
     ['1-514-555-1234', '15145551234'],
@@ -24,7 +28,6 @@ describe('normalizeWhatsAppRecipient', () => {
     ['empty', ''],
     ['whitespace', '   '],
     ['Senegal local mobile', '77 123 45 67'],
-    ['North American local number', '514-555-1234'],
     ['French national format', '06 12 34 56 78'],
     ['country code starting with 0', '+0 221 77 123 45 67'],
     ['too short with +', '+1234567'],
@@ -46,13 +49,13 @@ describe('normalizeWhatsAppRecipient', () => {
 describe('resolveWhatsAppInput', () => {
   it('uses the phone number when WhatsApp is the same as phone', () => {
     expect(resolveWhatsAppInput({ phone: ' +221 77 123 45 67 ', whatsappSameAsPhone: true, whatsappPhone: '+1 514 555 1234' })).toBe(
-      '+221 77 123 45 67'
+      '+221771234567'
     )
   })
 
   it('uses the separate WhatsApp number otherwise', () => {
     expect(resolveWhatsAppInput({ phone: '+221 77 123 45 67', whatsappSameAsPhone: false, whatsappPhone: '+1 514 555 1234' })).toBe(
-      '+1 514 555 1234'
+      '+15145551234'
     )
   })
 

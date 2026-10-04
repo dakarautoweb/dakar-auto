@@ -3,6 +3,7 @@
 import { after } from 'next/server'
 import { sendVehicleRequestNotifications } from '@/src/services/notifications/send-vehicle-request-notifications'
 import { buildTrackingUrl } from '@/src/lib/contact-info'
+import { normalizeContactValues } from '@/src/lib/contact-validation'
 import { verifyTurnstileToken } from '@/src/services/turnstile/verify'
 import { createVehicleRequestRecord } from './create-request'
 import { validateSubmitVehicleRequestInput } from './validate'
@@ -17,13 +18,17 @@ export async function submitVehicleRequestAction(
     return { ok: false, error: 'turnstile', message: turnstileResult.reason }
   }
 
-  const validationError = validateSubmitVehicleRequestInput(input)
+  const normalizedInput: SubmitVehicleRequestInput = {
+    ...input,
+    contact: normalizeContactValues(input.contact),
+  }
+  const validationError = validateSubmitVehicleRequestInput(normalizedInput)
   if (validationError) {
     return { ok: false, error: 'validation', message: validationError }
   }
 
   try {
-    const created = await createVehicleRequestRecord(input)
+    const created = await createVehicleRequestRecord(normalizedInput)
 
     // Fire the admin notification and the customer confirmation (on the
     // customer's chosen channel only — WhatsApp, email, or none for phone)
@@ -36,15 +41,15 @@ export async function submitVehicleRequestAction(
         await sendVehicleRequestNotifications({
           requestNumber: created.requestNumber,
           trackingUrl: buildTrackingUrl(created.trackingToken),
-          locale: input.locale,
+          locale: normalizedInput.locale,
           submittedAt: new Date(),
-          vehicle: { ...input.vehicle },
+          vehicle: { ...normalizedInput.vehicle },
           contact: {
-            name: input.contact.name.trim(),
-            email: input.contact.email.trim() || null,
-            phone: input.contact.phone.trim(),
+            name: normalizedInput.contact.name,
+            email: normalizedInput.contact.email || null,
+            phone: normalizedInput.contact.phone,
             whatsappPhone: created.whatsappPhone,
-            preferredContact: input.contact.preferredContact,
+            preferredContact: normalizedInput.contact.preferredContact,
           },
         })
       } catch (err) {

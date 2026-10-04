@@ -160,7 +160,22 @@ export function Hero({ dict }: { dict: Dictionary }) {
   return (
     <section id="hero" className="relative overflow-hidden">
       <HomeHeroPhoto />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/40 to-transparent" />
+      {/* Dedicated contrast layer: the mobile treatment stays strong and
+          nearly even beneath the full-width copy, while desktop gradually
+          reveals the warehouse photo to the right. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[360px] lg:hidden"
+        style={{ background: 'linear-gradient(to right, rgba(4,5,7,.98) 0%, rgba(4,5,7,.96) 65%, rgba(4,5,7,.90) 100%)' }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 hidden lg:block"
+        style={{
+          background:
+            'linear-gradient(to right, rgba(4,5,7,.98) 0%, rgba(4,5,7,.94) 28%, rgba(4,5,7,.78) 48%, rgba(4,5,7,.35) 68%, rgba(4,5,7,.05) 100%)',
+        }}
+      />
 
       <div className="mx-auto max-w-[90rem] px-4 pt-8 pb-10 sm:px-6 lg:px-10 lg:pt-10 lg:pb-12 xl:px-14 2xl:px-20">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.15fr] lg:items-center lg:gap-10">
@@ -169,13 +184,13 @@ export function Hero({ dict }: { dict: Dictionary }) {
             {dict.hero.label}
           </span>
 
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-[3.75rem] lg:leading-[1.03]">
+          <h1 className="mt-5 text-4xl font-bold tracking-tight text-balance text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.72)] sm:text-5xl lg:text-[3.75rem] lg:leading-[1.03]">
             {dict.hero.headlineStart}
             <span className="text-accent">{dict.hero.headlineHighlight}</span>
             {dict.hero.headlineEnd}
           </h1>
 
-          <p className="mt-5 max-w-xl text-lg text-muted-foreground">{dict.hero.description}</p>
+          <p className="mt-5 max-w-xl text-lg text-white/90 [text-shadow:0_2px_10px_rgba(0,0,0,0.72)]">{dict.hero.description}</p>
 
           {found ? (
             <div id="hero-request" className="mt-7 scroll-mt-24">
