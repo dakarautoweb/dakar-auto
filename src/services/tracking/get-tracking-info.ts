@@ -19,7 +19,7 @@ export async function getTrackingInfo(token: string): Promise<TrackingInfo | nul
   const { data: request, error } = await supabaseAdmin
     .from('parts_requests')
     .select(
-      `id, request_number, created_at, status, preferred_contact_method,
+      `id, request_number, customer_name, created_at, status, preferred_contact_method,
        vehicles(year, make, model),
        parts_request_items(category, part_name, quantity, condition_preference, description)`
     )
@@ -67,6 +67,7 @@ export async function getTrackingInfo(token: string): Promise<TrackingInfo | nul
 
   return {
     requestNumber: request.request_number as string,
+    customerName: request.customer_name as string,
     createdAt: request.created_at as string,
     status,
     vehicle: vehicleRow ? { year: (vehicleRow.year as number | null) ?? null, make: vehicleRow.make as string, model: vehicleRow.model as string } : null,

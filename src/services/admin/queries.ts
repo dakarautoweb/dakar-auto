@@ -1,5 +1,6 @@
 import 'server-only'
 import { createSupabaseServerClient } from '@/src/lib/supabase/auth-server'
+import { safeFoundVehicleImageUrl } from '@/src/services/vehicle-request-matches/storage'
 import { REQUEST_STATUSES, type RequestStatus } from './statuses'
 import { VEHICLE_REQUEST_STATUSES, type VehicleRequestStatus } from './vehicle-request-statuses'
 
@@ -399,6 +400,82 @@ export async function getVehicleRequestDetail(id: string): Promise<VehicleReques
   return (data as VehicleRequestDetail) ?? null
 }
 
+export type VehicleRequestMatchDetail = {
+  id: string
+  make: string
+  model: string
+  year: number
+  price: number | null
+  currency: string
+  imageUrl: string | null
+  createdAt: string
+}
+
+export async function getCurrentVehicleRequestMatch(requestId: string): Promise<VehicleRequestMatchDetail | null> {
+  const supabase = await createSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('vehicle_request_matches')
+    .select('id, make, model, year, price, currency, image_bucket, image_path, created_at')
+    .eq('vehicle_request_id', requestId)
+    .eq('is_current', true)
+    .maybeSingle()
+
+  if (error) {
+    console.error('[admin] getCurrentVehicleRequestMatch failed:', error.message)
+    return null
+  }
+  if (!data) return null
+
+  return {
+    id: data.id as string,
+    make: data.make as string,
+    model: data.model as string,
+    year: data.year as number,
+    price: data.price === null ? null : Number(data.price),
+    currency: data.currency as string,
+    imageUrl:
+      await safeFoundVehicleImageUrl(
+        data.image_bucket && data.image_path
+          ? { bucket: data.image_bucket as string, path: data.image_path as string }
+          : null
+      ),
+    createdAt: data.created_at as string,
+  }
+}
+
+export async function getVehicleRequestStatusHistory(requestId: string): Promise<StatusHistoryEntry[]> {
+  const supabase = await createSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('vehicle_request_status_history')
+    .select('id, old_status, new_status, created_at, changed_by')
+    .eq('vehicle_request_id', requestId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[admin] getVehicleRequestStatusHistory failed:', error.message)
+    return []
+  }
+
+  const rows = data ?? []
+  const adminIds = [...new Set(rows.map((row) => row.changed_by).filter((value): value is string => Boolean(value)))]
+  const adminLabels = new Map<string, string>()
+  if (adminIds.length > 0) {
+    const { data: admins } = await supabase.from('admins').select('id, full_name, email').in('id', adminIds)
+    for (const admin of admins ?? []) {
+      adminLabels.set(admin.id as string, (admin.full_name as string | null) || (admin.email as string))
+    }
+  }
+
+  return rows.map((row) => ({
+    id: row.id as string,
+    old_status: (row.old_status as string | null) ?? null,
+    new_status: row.new_status as string,
+    note: null,
+    created_at: row.created_at as string,
+    changedByLabel: row.changed_by ? (adminLabels.get(row.changed_by as string) ?? null) : null,
+  }))
+}
+
 export type VehicleRequestsStats = {
   total: number
   today: number
@@ -639,8 +716,9 @@ export async function getAdminStatistics(): Promise<AdminStatistics> {
   // Average processing time: the elapsed time between a parts_request's own
   // created_at and the first time it was moved into a resolved status
   // ('parts_found' or 'closed'), per the request_status_history audit trail.
-  // vehicle_requests has no equivalent history table yet (see
-  // vehicleRequestDetail.historyNotTracked), so this is parts-requests only.
+  // This KPI intentionally remains parts-only. Vehicle sourcing now has its
+  // own history, but is a separate workflow and should not silently change
+  // the established parts-processing metric.
   const { data: historyRows } = await supabase
     .from('request_status_history')
     .select('request_id, new_status, created_at')

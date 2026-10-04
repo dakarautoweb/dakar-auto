@@ -6,10 +6,11 @@
 // storage paths, no vin_api_data/identification metadata. Anything not
 // listed here must never be added without re-checking against that list.
 import type { RequestStatus } from '@/src/services/admin/statuses'
+import type { VehicleRequestStatus } from '@/src/services/admin/vehicle-request-statuses'
 
 export type TrackingStatusEvent = {
-  oldStatus: RequestStatus | null
-  newStatus: RequestStatus
+  oldStatus: RequestStatus | VehicleRequestStatus | null
+  newStatus: RequestStatus | VehicleRequestStatus
   createdAt: string
 }
 
@@ -23,6 +24,7 @@ export type TrackingItem = {
 
 export type TrackingInfo = {
   requestNumber: string
+  customerName: string
   createdAt: string
   status: RequestStatus
   vehicle: {

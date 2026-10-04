@@ -24,11 +24,13 @@ export type WhatsAppConfigResult = { ok: true; config: WhatsAppConfig } | { ok: 
 // Each request type has its own approved template (different wording) and
 // its own env variables, so a missing vehicle template never disables the
 // parts confirmation, or vice versa.
-export type WhatsAppTemplateSet = 'parts_request' | 'vehicle_request'
+export type WhatsAppTemplateSet = 'parts_request' | 'vehicle_request' | 'status' | 'vehicle_found'
 
 const TEMPLATE_ENV_PREFIX: Record<WhatsAppTemplateSet, string> = {
   parts_request: 'WHATSAPP_TEMPLATE',
   vehicle_request: 'WHATSAPP_VEHICLE_TEMPLATE',
+  status: 'WHATSAPP_STATUS_TEMPLATE',
+  vehicle_found: 'WHATSAPP_VEHICLE_FOUND_TEMPLATE',
 }
 
 function env(name: string): string {

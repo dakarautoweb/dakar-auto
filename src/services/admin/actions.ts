@@ -3,7 +3,8 @@
 import { after } from 'next/server'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/src/lib/supabase/auth-server'
-import { sendStatusUpdateEmail } from '@/src/services/email'
+import { buildTrackingUrl } from '@/src/lib/contact-info'
+import { sendPartsStatusNotification } from '@/src/services/notifications/send-parts-status-notification'
 import { requireAdmin } from './auth'
 import { isRequestStatus } from './statuses'
 
@@ -61,18 +62,20 @@ export async function updateRequestStatusAction(
 
   const { data: current, error: currentError } = await supabase
     .from('parts_requests')
-    .select('status, request_number, customer_name, customer_email, locale')
+    .select('status, request_number, customer_name, customer_email, whatsapp_phone, preferred_contact_method, locale, tracking_token')
     .eq('id', requestId)
     .maybeSingle()
 
   if (currentError || !current) return { ok: false, error: 'not_found' }
 
   const oldStatus = current.status as string
+  if (oldStatus === newStatus) return { ok: false, error: 'no_change' }
 
   const { data: updated, error: updateError } = await supabase
     .from('parts_requests')
     .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq('id', requestId)
+    .eq('status', oldStatus)
     .select('id')
     .maybeSingle()
 
@@ -94,17 +97,17 @@ export async function updateRequestStatusAction(
     // truth — a missing history row is logged, not surfaced as a failure.
   }
 
-  const customerEmail = (current.customer_email as string | null) ?? null
-  const customerName = current.customer_name as string
-  const requestNumber = current.request_number as string
-  const locale = (current.locale as string) === 'en' ? 'en' : 'fr'
-
   after(async () => {
-    try {
-      await sendStatusUpdateEmail({ requestNumber, locale, status: newStatus, customerName }, customerEmail)
-    } catch (err) {
-      console.error('[email] Unexpected error sending status update email:', err instanceof Error ? err.message : 'Unknown error')
-    }
+    await sendPartsStatusNotification({
+      requestNumber: current.request_number as string,
+      customerName: current.customer_name as string,
+      customerEmail: (current.customer_email as string | null) ?? null,
+      whatsappPhone: (current.whatsapp_phone as string | null) ?? null,
+      preferredContact: current.preferred_contact_method as 'whatsapp' | 'email' | 'phone',
+      locale: (current.locale as string) === 'en' ? 'en' : 'fr',
+      status: newStatus,
+      trackingUrl: buildTrackingUrl(current.tracking_token as string),
+    })
   })
 
   return { ok: true }

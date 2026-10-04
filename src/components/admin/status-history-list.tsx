@@ -13,10 +13,12 @@ export function StatusHistoryList({
   dict,
   entries,
   locale,
+  statusMap,
 }: {
   dict: Dictionary
   entries: StatusHistoryEntry[]
   locale: string
+  statusMap?: Record<string, string>
 }) {
   const t = dict.admin.detail
 
@@ -38,10 +40,10 @@ export function StatusHistoryList({
           <p className="text-sm font-medium">
             {entry.old_status ? (
               <>
-                {statusLabel(dict, entry.old_status)} → {statusLabel(dict, entry.new_status)}
+                {statusLabel(dict, entry.old_status, statusMap)} → {statusLabel(dict, entry.new_status, statusMap)}
               </>
             ) : (
-              statusLabel(dict, entry.new_status)
+              statusLabel(dict, entry.new_status, statusMap)
             )}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">

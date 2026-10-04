@@ -14,12 +14,16 @@ export async function sendWhatsAppCustomerConfirmation({
   locale,
   whatsappPhone,
   bodyParameters,
+  headerImageUrl,
+  urlButtonParameter,
 }: {
   templateSet: WhatsAppTemplateSet
   requestNumber: string
   locale: Locale
   whatsappPhone: string | null
   bodyParameters: string[]
+  headerImageUrl?: string
+  urlButtonParameter?: string
 }): Promise<WhatsAppSendResult> {
   const configResult = getWhatsAppConfig(templateSet)
   if (!configResult.ok) {
@@ -39,6 +43,8 @@ export async function sendWhatsAppCustomerConfirmation({
     to,
     template: config.templates[locale],
     bodyParameters,
+    headerImageUrl,
+    urlButtonParameter,
   })
   if (!result.ok) {
     const detail =

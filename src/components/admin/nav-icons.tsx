@@ -112,22 +112,6 @@ export function FaqFilledIcon({ className = 'h-5 w-5' }: IconProps) {
   )
 }
 
-// Parts sourcing / supplier search — a magnifying glass (a tinted lens
-// fill plus a stroked ring/handle, rather than this file's usual pure
-// fill, since a lens ring is the one shape that genuinely needs a hole)
-// with a small solid "part" rectangle inside it, so this reads clearly
-// distinct from PartsFilledIcon's wrench and InventoryFilledIcon's car.
-export function SuppliersFilledIcon({ className = 'h-5 w-5' }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <circle cx="10.5" cy="10.5" r="6.3" fill="currentColor" opacity="0.16" />
-      <circle cx="10.5" cy="10.5" r="6.3" stroke="currentColor" strokeWidth="2.2" />
-      <path d="M15.3 15.3 20.8 20.8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-      <rect x="7.4" y="8.9" width="6.2" height="3.2" rx="0.9" fill="currentColor" />
-    </svg>
-  )
-}
-
 // A solid gear blob (no center hole) — same single-fill, any-background
 // rule as the rest of this file.
 export function SettingsFilledIcon({ className = 'h-5 w-5' }: IconProps) {

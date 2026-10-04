@@ -26,10 +26,10 @@ export const PHONE_DISPLAY = '+221 00 000 00 00'
 // invent real data). Worth double-checking when these are replaced with
 // real numbers, in case the business phone and WhatsApp number are meant to
 // be the same one.
-export const WHATSAPP_NUMBER = '221000000000'
+export const WHATSAPP_NUMBER = '14388553535'
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`
 
-const PLACEHOLDER_WHATSAPP_NUMBER = '221000000000'
+const PLACEHOLDER_WHATSAPP_NUMBER: string = '221000000000'
 // True once WHATSAPP_NUMBER has been changed from the placeholder above.
 // Email templates use this to decide whether to show a WhatsApp CTA at all
 // instead of linking to a number nobody's watching.

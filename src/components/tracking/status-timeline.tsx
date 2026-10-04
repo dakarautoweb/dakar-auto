@@ -12,7 +12,21 @@ import { CarSideIcon, CheckCircleIcon, ClockIcon, CubeIcon, NotesIcon, PhoneIcon
 export const PARTS_MAIN_STEPS = ['request_received', 'on_treatment', 'parts_found', 'direct_communication'] as const
 export const VEHICLE_MAIN_STEPS = ['request_received', 'on_treatment', 'vehicle_found', 'direct_communication'] as const
 
-type StepState = 'done' | 'current' | 'upcoming'
+export type StepState = 'done' | 'current' | 'upcoming'
+
+export function isTerminalTrackingStatus(status: string): boolean {
+  return status === 'closed' || status === 'cancelled'
+}
+
+export function getTimelineStepStates(status: string, mainSteps: readonly string[]): StepState[] {
+  const currentStepIndex = mainSteps.indexOf(status)
+  return mainSteps.map((_, index) => {
+    if (currentStepIndex < 0) return 'upcoming'
+    if (index < currentStepIndex) return 'done'
+    if (index === currentStepIndex) return 'current'
+    return 'upcoming'
+  })
+}
 
 // One glyph per step id — purely presentational (which icon a status shows),
 // never consulted for status logic/ordering.
@@ -35,7 +49,7 @@ function StepIndicator({ step, state }: { step: string; state: StepState }) {
 
   if (state === 'done') {
     return (
-      <span className={`flex ${size} shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-glow`}>
+      <span data-step-indicator className={`flex ${size} shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-glow`}>
         <Icon className={iconSize} />
       </span>
     )
@@ -45,7 +59,7 @@ function StepIndicator({ step, state }: { step: string; state: StepState }) {
     // A soft ring pulses outward (motion-safe only, per prefers-reduced-motion)
     // around the step's own icon — the "active step" indicator.
     return (
-      <span className={`relative flex ${size} shrink-0 items-center justify-center`}>
+      <span data-step-indicator className={`relative flex ${size} shrink-0 items-center justify-center`}>
         <span className="absolute inset-0 rounded-full bg-accent/20 motion-safe:animate-ping" aria-hidden="true" />
         <span className={`relative flex h-full w-full items-center justify-center rounded-full border-2 border-accent bg-accent-soft text-accent shadow-glow`}>
           <Icon className={iconSize} />
@@ -55,7 +69,7 @@ function StepIndicator({ step, state }: { step: string; state: StepState }) {
   }
 
   return (
-    <span className={`flex ${size} shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground`}>
+    <span data-step-indicator className={`flex ${size} shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground`}>
       <Icon className={iconSize} />
     </span>
   )
@@ -89,7 +103,7 @@ function Step({
   isLast: boolean
 }) {
   return (
-    <li className="relative flex sm:flex-1 sm:flex-col sm:items-center sm:text-center">
+    <li data-status-step={step} className="relative grid h-[4.75rem] grid-cols-[3rem_minmax(0,1fr)] gap-x-4 last:h-12 sm:h-auto sm:grid-cols-1 sm:grid-rows-[3.5rem_minmax(2.75rem,auto)] sm:justify-items-center sm:gap-x-0 sm:last:h-auto sm:text-center">
       {connectorBeforeState !== null && (
         <span
           aria-hidden="true"
@@ -103,24 +117,20 @@ function Step({
         />
       )}
 
-      {/* `sm:contents` drops this wrapper from the sm+ layout so the icon
-          and label become direct children of the centered flex column
-          below — that's what keeps the label centered under the icon
-          instead of under a full-width row. On mobile it stays a real
-          column (icon above its connector) sitting left of the label. */}
-      <div className="flex flex-col items-center sm:contents">
-        <StepIndicator step={step} state={state} />
-        {!isLast && (
-          <div
-            className={`w-0.5 flex-1 rounded-full sm:hidden ${state === 'upcoming' ? 'bg-border' : 'bg-accent'}`}
-            aria-hidden="true"
-          />
-        )}
-      </div>
+      {/* Mobile uses one fixed 48px icon column; desktop promotes every
+          item into the same two-row grid so labels cannot move the icons. */}
+      {!isLast && (
+        <span
+          className={`absolute top-12 bottom-0 left-[calc(1.5rem-1px)] w-0.5 rounded-full sm:hidden ${state === 'upcoming' ? 'bg-border' : 'bg-accent'}`}
+          aria-hidden="true"
+        />
+      )}
 
-      <div className="ml-4 pb-8 last:pb-0 sm:ml-0 sm:max-w-[8rem] sm:pb-0 sm:pt-3 sm:text-center">
+      <StepIndicator step={step} state={state} />
+
+      <div className="col-start-2 row-start-1 flex min-w-0 items-center sm:col-start-1 sm:row-start-2 sm:max-w-[9rem] sm:items-start sm:justify-center sm:pt-3">
         <p
-          className={`text-sm ${
+          className={`min-w-0 text-sm leading-5 ${
             state === 'upcoming' ? 'text-muted-foreground' : state === 'current' ? 'font-semibold text-accent' : 'font-semibold'
           }`}
         >
@@ -142,8 +152,8 @@ export function StatusTimeline({
   dict: Dictionary
   locale: string
   status: string
-  // undefined => no history section rendered at all (vehicle requests have
-  // no status-history table to draw one from — see get-vehicle-tracking-info.ts).
+  // undefined => no history section rendered. Both tracking request types
+  // now pass their persisted history; this remains optional for stepper-only use.
   history?: TrackingStatusEvent[]
   mainSteps: readonly string[]
   // Defaults to dict.admin.statuses (parts) inside statusLabel() when
@@ -151,15 +161,8 @@ export function StatusTimeline({
   statusMap?: Record<string, string>
 }) {
   const t = dict.tracking
-  const isTerminal = status === 'closed' || status === 'cancelled'
-  const currentStepIndex = mainSteps.indexOf(status)
-
-  function stepState(index: number): StepState {
-    if (currentStepIndex < 0) return 'upcoming'
-    if (index < currentStepIndex) return 'done'
-    if (index === currentStepIndex) return 'current'
-    return 'upcoming'
-  }
+  const isTerminal = isTerminalTrackingStatus(status)
+  const stepStates = getTimelineStepStates(status, mainSteps)
 
   return (
     <div>
@@ -179,15 +182,15 @@ export function StatusTimeline({
           {status === 'cancelled' ? t.cancelledNotice : t.closedNotice}
         </div>
       ) : (
-        <ol className="flex flex-col sm:flex-row">
+        <ol className="grid grid-cols-1 sm:grid-cols-4 sm:px-3">
           {mainSteps.map((step, index) => (
             <Step
               key={step}
               step={step}
               label={statusLabel(dict, step, statusMap)}
-              state={stepState(index)}
-              connectorBeforeState={index > 0 ? stepState(index - 1) : null}
-              connectorAfterState={index < mainSteps.length - 1 ? stepState(index) : null}
+              state={stepStates[index]}
+              connectorBeforeState={index > 0 ? stepStates[index - 1] : null}
+              connectorAfterState={index < mainSteps.length - 1 ? stepStates[index] : null}
               isLast={index === mainSteps.length - 1}
             />
           ))}
@@ -196,14 +199,14 @@ export function StatusTimeline({
 
       {history !== undefined && (
         <div className="mt-6 border-t border-border pt-5">
-          <div className="flex items-center gap-2">
+          <div className="ml-16 flex items-center gap-2 sm:ml-0">
             <ClockIcon className="h-4 w-4 text-muted-foreground" />
             <h3 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">{dict.admin.detail.historySection}</h3>
           </div>
           {history.length === 0 ? (
-            <p className="mt-3 text-sm text-muted-foreground">{dict.admin.detail.historyEmpty}</p>
+            <p className="mt-3 ml-16 text-sm text-muted-foreground sm:ml-0">{dict.admin.detail.historyEmpty}</p>
           ) : (
-            <ol className="mt-4 space-y-4 border-l border-border pl-4">
+            <ol className="mt-4 ml-16 space-y-4 border-l border-border pl-4 sm:ml-0">
               {[...history].reverse().map((entry, index) => (
                 <li key={index} className="relative">
                   <span className="absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full bg-accent" />

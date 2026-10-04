@@ -58,6 +58,14 @@ and never prefix them with `NEXT_PUBLIC_`.
 | `WHATSAPP_VEHICLE_TEMPLATE_LANGUAGE_FR` | `fr`                                | Must exactly match that template's approved language code. |
 | `WHATSAPP_VEHICLE_TEMPLATE_NAME_EN`     | `dakar_vehicle_request_received_en` | Approved English template name for vehicle sourcing requests. |
 | `WHATSAPP_VEHICLE_TEMPLATE_LANGUAGE_EN` | `en` or `en_US`                     | Must exactly match that template's approved language code. |
+| `WHATSAPP_STATUS_TEMPLATE_NAME_FR` | *(configure after approval)* | Generic French status-update template. |
+| `WHATSAPP_STATUS_TEMPLATE_LANGUAGE_FR` | *(configure after approval)* | Exact approved French language code. |
+| `WHATSAPP_STATUS_TEMPLATE_NAME_EN` | *(configure after approval)* | Generic English status-update template. |
+| `WHATSAPP_STATUS_TEMPLATE_LANGUAGE_EN` | *(configure after approval)* | Exact approved English language code. |
+| `WHATSAPP_VEHICLE_FOUND_TEMPLATE_NAME_FR` | `dakar_vehicle_found_photo_fr` | French vehicle-found template with IMAGE header. |
+| `WHATSAPP_VEHICLE_FOUND_TEMPLATE_LANGUAGE_FR` | *(approved language code)* | Must exactly match Meta approval. |
+| `WHATSAPP_VEHICLE_FOUND_TEMPLATE_NAME_EN` | `dakar_vehicle_found_photo_en` | English vehicle-found template with IMAGE header. |
+| `WHATSAPP_VEHICLE_FOUND_TEMPLATE_LANGUAGE_EN` | *(approved language code)* | Must exactly match Meta approval. |
 
 The `WHATSAPP_TEMPLATE_*` variables are used for parts requests and the
 `WHATSAPP_VEHICLE_TEMPLATE_*` variables for vehicle requests. The token and
@@ -78,8 +86,9 @@ Existing email variables, unchanged: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
    `whatsapp_business_messaging` and `whatsapp_business_management`
    permissions. Temporary 24-hour tokens from the API Setup page expire and
    are only suitable for testing.
-3. Create four message templates, category **Utility**: parts request and
-   vehicle request, each in French and English. Wait for Meta to approve them. **Sending fails (HTTP 4xx) until each
+3. Create eight message templates, category **Utility**: initial parts,
+   initial vehicle sourcing, generic status update, and vehicle found, each
+   in French and English. Wait for Meta to approve them. **Sending fails (HTTP 4xx) until each
    template is approved** under exactly the name and language set in the
    environment variables.
 4. Add a payment method to the WhatsApp Business Account. Business-initiated
@@ -168,6 +177,117 @@ Track its progress here:
 
 Samples: `Awa`, `VR-2026-000123`, `Toyota RAV4 2018–2021`,
 `https://dakarauto.com/track/…`.
+
+## Generic status-update template
+
+The same FR/EN Utility template is used for every ordinary parts or vehicle
+sourcing status. The code supplies five positional **body** parameters:
+
+1. `{{1}}` customer name
+2. `{{2}}` request number
+3. `{{3}}` localized status label
+4. `{{4}}` localized short status message
+5. `{{5}}` absolute tracking URL
+
+Suggested exact French copy:
+
+```text
+Bonjour {{1}},
+
+le statut de votre demande Dakar Auto {{2}} a été mis à jour.
+
+Nouveau statut : {{3}}
+{{4}}
+
+Suivez votre demande :
+{{5}}
+
+Merci,
+L’équipe Dakar Auto
+```
+
+Suggested exact English copy:
+
+```text
+Hello {{1}},
+
+the status of your Dakar Auto request {{2}} has been updated.
+
+New status: {{3}}
+{{4}}
+
+Track your request:
+{{5}}
+
+Thank you,
+The Dakar Auto Team
+```
+
+The actual names and language codes are deliberately not hardcoded. Configure
+the four `WHATSAPP_STATUS_TEMPLATE_*` variables only after Meta approval.
+
+## Vehicle-found photo template
+
+`vehicle_found` uses the dedicated `dakar_vehicle_found_photo_fr` /
+`dakar_vehicle_found_photo_en` templates (their names are still supplied
+through env). Components and parameter namespaces are:
+
+- Header: one `IMAGE` parameter. The sender uses the actual found vehicle
+  photo when available. Otherwise it uses the absolute URL for
+  `public/brand/dakar-auto-logo.png`, built from `NEXT_PUBLIC_APP_URL`.
+- Body `{{1}}`: customer name.
+- Body `{{2}}`: found vehicle make + model.
+- Body `{{3}}`: found vehicle year.
+- Body `{{4}}`: formatted price + currency, or localized price on request.
+- URL button `{{1}}`: tracking-token suffix only. This is a separate
+  component namespace from body `{{1}}`; Meta combines it with
+  `https://dakarautoweb.com/track/{{1}}`.
+
+Suggested exact French body:
+
+```text
+Bonjour {{1}},
+
+nous avons trouvé un véhicule correspondant à votre demande Dakar Auto.
+
+Véhicule : {{2}}
+Année : {{3}}
+Prix : {{4}}
+
+Vous pouvez consulter les détails de votre demande ci-dessous.
+
+Merci,
+L’équipe Dakar Auto
+```
+
+Suggested exact English body:
+
+```text
+Hello {{1}},
+
+we found a vehicle matching your Dakar Auto request.
+
+Vehicle: {{2}}
+Year: {{3}}
+Price: {{4}}
+
+You can view your request details below.
+
+Thank you,
+The Dakar Auto Team
+```
+
+Inventory and manual match photos are persisted as durable bucket/path
+references. For a private bucket, the sender creates a short-lived signed URL
+at send time; an expiring signed URL is never stored.
+
+## Status-change routing
+
+Status notifications use the same strict channel contract as initial
+confirmation: `whatsapp` sends WhatsApp only, `email` sends email only, and
+`phone` sends nothing automatically. There is no cross-channel fallback.
+Database status/history changes finish before best-effort delivery is queued
+with `after()`, so delivery failure never rolls back saved state.
 
 ## Recipient numbers
 

@@ -4,15 +4,14 @@
 // sourcing request via /track/[token] — the VR- counterpart to
 // tracking/types.ts's TrackingInfo. Deliberately a flat, explicit DTO, not
 // a passthrough of any DB row: no internal IDs, no admin_notes, no
-// changed_by/admin identity. There is also, deliberately, no
-// statusHistory field at all — vehicle_requests has no status-history
-// table (see src/services/admin/vehicle-request-actions.ts), so this type
-// never implies one exists. Anything not listed here must never be added
-// without re-checking against this list.
+// changed_by/admin identity or storage paths. Anything not listed here must
+// never be added without re-checking against this list.
 import type { VehicleRequestStatus } from '@/src/services/admin/vehicle-request-statuses'
+import type { TrackingStatusEvent } from './types'
 
 export type VehicleTrackingInfo = {
   requestNumber: string
+  customerName: string
   createdAt: string
   status: VehicleRequestStatus
   vehicle: {
@@ -32,4 +31,13 @@ export type VehicleTrackingInfo = {
     otherPreferences: string | null
   }
   preferredContactMethod: string
+  statusHistory: TrackingStatusEvent[]
+  foundVehicle: {
+    make: string
+    model: string
+    year: number
+    price: number | null
+    currency: string
+    imageUrl: string | null
+  } | null
 }

@@ -24,13 +24,41 @@ export async function sendWhatsAppTemplate({
   to,
   template,
   bodyParameters,
+  headerImageUrl,
+  urlButtonParameter,
 }: {
   config: WhatsAppConfig
   to: string
   template: WhatsAppTemplateConfig
   bodyParameters: string[]
+  headerImageUrl?: string
+  urlButtonParameter?: string
 }): Promise<WhatsAppSendResult> {
   const url = `https://graph.facebook.com/${encodeURIComponent(config.graphApiVersion)}/${encodeURIComponent(config.phoneNumberId)}/messages`
+  const components: Record<string, unknown>[] = []
+
+  if (headerImageUrl) {
+    components.push({
+      type: 'header',
+      parameters: [{ type: 'image', image: { link: headerImageUrl } }],
+    })
+  }
+
+  if (bodyParameters.length > 0) {
+    components.push({
+      type: 'body',
+      parameters: bodyParameters.map((text) => ({ type: 'text', text: sanitizeTemplateText(text) })),
+    })
+  }
+
+  if (urlButtonParameter) {
+    components.push({
+      type: 'button',
+      sub_type: 'url',
+      index: '0',
+      parameters: [{ type: 'text', text: sanitizeTemplateText(urlButtonParameter) }],
+    })
+  }
 
   try {
     const response = await fetch(url, {
@@ -47,12 +75,7 @@ export async function sendWhatsAppTemplate({
         template: {
           name: template.name,
           language: { code: template.language },
-          components: [
-            {
-              type: 'body',
-              parameters: bodyParameters.map((text) => ({ type: 'text', text: sanitizeTemplateText(text) })),
-            },
-          ],
+          components,
         },
       }),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),

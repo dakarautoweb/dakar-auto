@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { ComponentType } from 'react'
-import { RotateCw } from 'lucide-react'
+import { Clock, RotateCw } from 'lucide-react'
 import { getCurrentLocale } from '@/src/i18n/server'
 import { getDictionary } from '@/src/i18n/dictionaries'
-import { getVehicleRequestDetail } from '@/src/services/admin/queries'
+import { getCurrentVehicleRequestMatch, getVehicleRequestDetail, getVehicleRequestStatusHistory } from '@/src/services/admin/queries'
+import { getAdminVehicles } from '@/src/services/inventory/queries'
 import { saveVehicleRequestNotesAction } from '@/src/services/admin/vehicle-request-actions'
 import { bulkArchiveVehicleRequestsAction, bulkRestoreVehicleRequestsAction } from '@/src/services/admin/bulk-actions'
 import { StatusBadge } from '@/src/components/admin/status-badge'
@@ -13,6 +14,8 @@ import { NotesEditor } from '@/src/components/admin/notes-editor'
 import { VehicleStatusUpdater } from '@/src/components/admin/vehicle-status-updater'
 import { ArchiveToggleButton } from '@/src/components/admin/archive-toggle-button'
 import { VehicleWantedVisual } from '@/src/components/admin/vehicle-wanted-visual'
+import { StatusHistoryList } from '@/src/components/admin/status-history-list'
+import { FoundVehicleCard } from '@/src/components/vehicle-request/found-vehicle-card'
 import { cardClasses } from '@/src/components/ui/styles'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -84,7 +87,12 @@ export default async function AdminVehicleRequestDetailPage({ params }: { params
   const locale = await getCurrentLocale()
   const dict = await getDictionary(locale)
 
-  const detail = await getVehicleRequestDetail(id)
+  const [detail, inventory, statusHistory, currentMatch] = await Promise.all([
+    getVehicleRequestDetail(id),
+    getAdminVehicles(),
+    getVehicleRequestStatusHistory(id),
+    getCurrentVehicleRequestMatch(id),
+  ])
   if (!detail) notFound()
 
   const t = dict.admin.vehicleRequestDetail
@@ -183,6 +191,22 @@ export default async function AdminVehicleRequestDetailPage({ params }: { params
             </div>
           </Section>
 
+          {currentMatch && (
+            <FoundVehicleCard
+              title={t.foundVehicle.panelTitle}
+              imageUrl={currentMatch.imageUrl}
+              make={currentMatch.make}
+              model={currentMatch.model}
+              year={currentMatch.year}
+              price={currentMatch.price}
+              currency={currentMatch.currency}
+              yearLabel={t.foundVehicle.year}
+              priceLabel={t.foundVehicle.price}
+              priceOnRequest={t.foundVehicle.priceOnRequest}
+              locale={locale}
+            />
+          )}
+
           <Section title={t.notesSection}>
             <NotesEditor
               requestId={detail.id}
@@ -202,7 +226,10 @@ export default async function AdminVehicleRequestDetailPage({ params }: { params
 
         <div className="space-y-6">
           <Section title={t.statusUpdateSection} icon={RotateCw}>
-            <VehicleStatusUpdater dict={dict} requestId={detail.id} currentStatus={detail.status} />
+            <VehicleStatusUpdater dict={dict} requestId={detail.id} currentStatus={detail.status} inventory={inventory} />
+          </Section>
+          <Section title={dict.admin.detail.historySection} icon={Clock}>
+            <StatusHistoryList dict={dict} entries={statusHistory} locale={locale} statusMap={dict.admin.vehicleStatuses} />
           </Section>
         </div>
       </div>
